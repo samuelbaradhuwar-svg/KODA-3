@@ -33,6 +33,7 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
+import { Analytics } from "@vercel/analytics/react";
 import KODA_ICON_BLACK from "./assets/koda-icon-black.webp";
 import KODA_ICON_WHITE from "./assets/koda-icon-white.webp";
 import PHOTO_BARBER from "./assets/photo-barber.webp";
@@ -2127,6 +2128,7 @@ export default function App() {
       </main>
       <Footer />
       <WhatsAppButton />
+      <Analytics />
     </div>
   );
 }
