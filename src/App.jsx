@@ -68,6 +68,17 @@ const Linkedin = makeIcon(
 // Set the real number (digits only, with country code, e.g. "27XXXXXXXXX") to switch the phone line and WhatsApp button back on.
 const PHONE = { digits: "", display: "" };
 
+const EMAIL = "info@heykoda.co.za";
+
+// On desktop a plain mailto: link often opens nothing useful, so open a Gmail compose window instead.
+// On phones, and with JavaScript off, the normal mailto: link still opens the visitor's own mail app.
+function openGmailCompose(e) {
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+  e.preventDefault();
+  const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}&su=${encodeURIComponent("Website enquiry")}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 const NAV_LINKS = [
   { label: "Home", id: "home" },
   { label: "Services", id: "services" },
@@ -1917,10 +1928,11 @@ function CtaBand() {
 }
 
 /* ===== components/Contact.jsx ===== */
-function ContactCard({ href, icon: Icon, label, value }) {
+function ContactCard({ href, icon: Icon, label, value, onClick }) {
   return (
     <a
       href={href}
+      onClick={onClick}
       className="panel-dark flex items-center gap-3 transition-colors hover:border-blue-500"
       style={{ padding: "0.75rem 1rem" }}
     >
@@ -1959,7 +1971,7 @@ function Contact() {
 
             <div className="mt-5 grid gap-3">
               {PHONE.digits && <ContactCard href={`tel:+${PHONE.digits}`} icon={Phone} label="Call us" value={PHONE.display} />}
-              <ContactCard href="mailto:info@heykoda.co.za" icon={Mail} label="Email us" value="info@heykoda.co.za" />
+              <ContactCard href={`mailto:${EMAIL}`} onClick={openGmailCompose} icon={Mail} label="Email us" value={EMAIL} />
             </div>
 
             <div className="mt-3 overflow-hidden rounded-2xl border border-white/10" style={{ height: "clamp(110px, 17vh, 170px)" }}>
