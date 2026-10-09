@@ -6,7 +6,7 @@ import "./index.css";
 const root = document.getElementById("root");
 const app = (
   <React.StrictMode>
-    <App />
+    <App path={window.location.pathname.replace(/\/+$/, "") || "/"} />
   </React.StrictMode>
 );
 

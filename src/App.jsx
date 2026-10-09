@@ -251,6 +251,7 @@ const OUTCOMES = [
 function scrollToId(id) {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  else if (typeof window !== "undefined") window.location.assign(`/#${id}`);
 }
 
 /* ===== components/ui/Reveal.jsx ===== */
@@ -1234,8 +1235,8 @@ function Hero() {
 
           <Reveal delay={160}>
             <p className="t-lead mt-4 max-w-lg">
-              We build modern websites, set up and optimise your Google Business profile, and help local businesses
-              turn online visibility into real customers.
+              KODA is a Durban web design studio. We build modern websites, set up and optimise your Google Business
+              profile, and help local businesses turn online visibility into real customers.
             </p>
           </Reveal>
 
@@ -1444,7 +1445,10 @@ function Services() {
           </div>
           <Reveal delay={140}>
             <p className="t-lead">
-              From your first website to ongoing SEO and support, one studio for every step.
+              From your first website to ongoing SEO and support, one studio for every step.{" "}
+              <a href="/website-design-durban" className="font-semibold text-blue-600 hover:text-blue-700">
+                Website design in Durban
+              </a>
             </p>
           </Reveal>
         </div>
@@ -1958,7 +1962,7 @@ function Contact() {
             <div className="mt-3 overflow-hidden rounded-2xl border border-white/10" style={{ height: "clamp(110px, 17vh, 170px)" }}>
               <iframe
                 title="KODA location"
-                src="https://www.google.com/maps?q=Cape+Town,+South+Africa&output=embed"
+                src="https://www.google.com/maps?q=Durban,+South+Africa&output=embed"
                 className="h-full w-full"
                 style={{ border: 0, filter: "grayscale(1) invert(0.92) contrast(1.1)" }}
                 loading="lazy"
@@ -2047,13 +2051,16 @@ function Footer() {
                 {l.label}
               </button>
             ))}
+            <a href="/website-design-durban" className="text-sm text-slate-300 transition-colors hover:text-white">
+              Website design Durban
+            </a>
           </nav>
 
           <div className="flex flex-wrap items-center gap-x-8 gap-y-5">
             <div className="flex items-start gap-2.5">
               <MapPin className="mt-0.5 h-4 w-4 text-blue-400" />
               <div className="leading-tight">
-                <p className="text-sm font-medium text-white">South Africa</p>
+                <p className="text-sm font-medium text-white">Durban, South Africa</p>
                 <p className="mt-0.5 text-xs text-slate-400">Local. Reliable. Results.</p>
               </div>
             </div>
@@ -2136,11 +2143,113 @@ function WhatsAppButton() {
   );
 }
 
+/* ===== pages/WebsiteDesignDurban.jsx ===== */
+function WebsiteDesignDurban() {
+  const included = SERVICES.filter((s) => ["Website Design", "Website Redesign", "Booking Systems", "Ecommerce Stores", "Google Business Profile", "SEO Optimisation", "Website Maintenance"].includes(s.title));
+  return (
+    <main>
+      <section className="hero-sec bg-paper">
+        <div className="mx-auto max-w-4xl px-5 sm:px-8">
+          <Eyebrow>Website design in Durban</Eyebrow>
+          <h1 className="t-display font-display mt-4">Website design for Durban businesses.</h1>
+          <p className="t-lead mt-5 max-w-2xl">
+            KODA is a Durban web design studio. We design and build professional websites for small and medium sized
+            businesses, set up your Google Business profile, and handle the technical side so customers can find you,
+            trust you and get in touch.
+          </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <PrimaryButton onClick={() => scrollToId("contact")}>Book a free consultation</PrimaryButton>
+            <a href="/#pricing" className="inline-flex items-center rounded-full border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-900 transition-colors hover:border-blue-300">
+              See our plans
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="sec bg-white">
+        <div className="mx-auto max-w-4xl px-5 sm:px-8">
+          <h2 className="t-h2">Who our websites are for</h2>
+          <p className="t-lead mt-4 max-w-2xl">
+            We work with small and medium sized businesses that need a professional online presence: service
+            providers, trades, clinics, salons, restaurants, retailers and growing local companies. If customers look
+            for you on Google or check your website before they call, a clear, fast website helps.
+          </p>
+        </div>
+      </section>
+
+      <section className="sec bg-paper">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <h2 className="t-h2 max-w-3xl">What we can build and set up for you</h2>
+          <div className="grid-4 mt-8">
+            {included.map((sv, i) => (
+              <ServiceCard key={sv.title} {...sv} i={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="sec bg-white">
+        <div className="mx-auto max-w-4xl px-5 sm:px-8">
+          <h2 className="t-h2">How a website project works</h2>
+          <ol className="mt-6 grid gap-5">
+            {PROCESS.map((st) => (
+              <li key={st.n} className="flex gap-4">
+                <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-blue-600 text-sm font-bold text-white">{st.n}</span>
+                <div>
+                  <h3 className="t-h3">{st.title}</h3>
+                  <p className="t-body mt-1">{st.desc}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="sec bg-paper">
+        <div className="mx-auto max-w-4xl px-5 sm:px-8">
+          <h2 className="t-h2">Questions about web design in Durban</h2>
+          <div className="mt-6" style={{ borderTop: "1px solid #E2E8F0" }}>
+            {FAQS.map((item) => (
+              <div key={item.q} style={{ borderBottom: "1px solid #E2E8F0", padding: "1rem 0" }}>
+                <h3 className="font-display text-base font-semibold text-slate-900">{item.q}</h3>
+                <p className="t-body mt-1.5">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <CtaBand />
+      <Contact />
+    </main>
+  );
+}
+
+export const PAGES = {
+  "/": {
+    title: "KODA | Website Design in Durban",
+    description:
+      "KODA is a Durban web design studio. We build fast, professional websites for small and medium sized businesses, set up your Google Business profile and help customers find you.",
+  },
+  "/website-design-durban": {
+    title: "Website Design in Durban for Small Businesses | KODA",
+    description:
+      "Professional website design in Durban for small and medium sized businesses. KODA designs and builds websites, sets up Google Business profiles and handles SEO. Book a free consultation.",
+  },
+};
+
 /* ===== App.jsx ===== */
-export default function App() {
+export default function App({ path = "/" }) {
+  const isHome = path === "/" || !PAGES[path];
+  useEffect(() => {
+    // Pages that link to "/#section" land here, so scroll to the section once the page has rendered.
+    const id = window.location.hash.slice(1);
+    if (id) setTimeout(() => scrollToId(id), 50);
+  }, []);
   return (
     <div className="font-sans text-slate-900 antialiased" style={{ scrollBehavior: "smooth" }}>
             <Navbar />
+      {!isHome ? <WebsiteDesignDurban /> : (
       <main>
         <Hero />
         <TrustedBy />
@@ -2155,6 +2264,7 @@ export default function App() {
         <CtaBand />
         <Contact />
       </main>
+      )}
       <Footer />
       <WhatsAppButton />
     </div>

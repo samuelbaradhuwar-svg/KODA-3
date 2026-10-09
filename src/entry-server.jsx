@@ -1,11 +1,13 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
-import App from "./App.jsx";
+import App, { PAGES } from "./App.jsx";
 
-export function render() {
+export const pages = PAGES;
+
+export function render(path) {
   return renderToString(
     <React.StrictMode>
-      <App />
+      <App path={path} />
     </React.StrictMode>
   );
 }
