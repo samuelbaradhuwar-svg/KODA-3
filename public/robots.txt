@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://heykoda.co.za/sitemap.xml
