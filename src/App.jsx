@@ -1494,6 +1494,30 @@ function WhyChooseUs() {
 }
 
 /* ===== components/Portfolio.jsx ===== */
+// A real site screenshot inside a small browser window, so the page's own navigation bar stays fully visible.
+function BrowserShot({ project }) {
+  const host = project.url ? new URL(project.url).hostname.replace(/^www\./, "") : "";
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 px-[4%]">
+      <div className="w-full overflow-hidden rounded-lg bg-white shadow-[0_10px_30px_-8px_rgba(15,23,42,0.35)] ring-1 ring-slate-900/10">
+        <div className="flex items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-2.5 py-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+          <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+          <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+          <span className="ml-2 truncate rounded bg-white px-2 py-0.5 text-[9px] leading-none text-slate-400 ring-1 ring-slate-200">{host}</span>
+        </div>
+        <img
+          src={project.screenshot}
+          alt={`${project.name} website`}
+          loading="lazy"
+          decoding="async"
+          className="block h-auto w-full"
+        />
+      </div>
+    </div>
+  );
+}
+
 function ViewProject({ project }) {
   const cls =
     "absolute bottom-3 left-3 inline-flex h-9 items-center rounded-full bg-slate-900 px-[9px] text-white shadow-lg transition-colors duration-300 hover:bg-blue-600 group-hover:bg-blue-600";
@@ -1526,15 +1550,7 @@ function ProjectCard({ project, i }) {
         <div className="relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-200 transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl" style={{ aspectRatio: "16 / 10" }}>
           <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04]">
             {project.screenshot ? (
-              <img
-                src={project.screenshot}
-                alt={`${project.name} website`}
-                width={960}
-                height={600}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover object-top"
-              />
+              <BrowserShot project={project} />
             ) : (
               <SiteThumb project={project} />
             )}
