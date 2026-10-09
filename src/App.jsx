@@ -1959,7 +1959,7 @@ function Contact() {
 
             <div className="mt-5 grid gap-3">
               {PHONE.digits && <ContactCard href={`tel:+${PHONE.digits}`} icon={Phone} label="Call us" value={PHONE.display} />}
-              <ContactCard href="mailto:hello@koda.co.za" icon={Mail} label="Email us" value="hello@koda.co.za" />
+              <ContactCard href="mailto:hello@heykoda.co.za" icon={Mail} label="Email us" value="hello@heykoda.co.za" />
             </div>
 
             <div className="mt-3 overflow-hidden rounded-2xl border border-white/10" style={{ height: "clamp(110px, 17vh, 170px)" }}>
