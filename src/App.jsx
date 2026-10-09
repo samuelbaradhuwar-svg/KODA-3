@@ -65,6 +65,9 @@ const Linkedin = makeIcon(
 
 
 /* ===== data/content.js ===== */
+// Set the real number (digits only, with country code, e.g. "27XXXXXXXXX") to switch the phone line and WhatsApp button back on.
+const PHONE = { digits: "", display: "" };
+
 const NAV_LINKS = [
   { label: "Home", id: "home" },
   { label: "Services", id: "services" },
@@ -1955,7 +1958,7 @@ function Contact() {
             <p className="t-lead inv mt-3">Fill in the form or reach us directly. We reply within one working day.</p>
 
             <div className="mt-5 grid gap-3">
-              <ContactCard href="tel:+27821234567" icon={Phone} label="Call us" value="+27 82 123 4567" />
+              {PHONE.digits && <ContactCard href={`tel:+${PHONE.digits}`} icon={Phone} label="Call us" value={PHONE.display} />}
               <ContactCard href="mailto:hello@koda.co.za" icon={Mail} label="Email us" value="hello@koda.co.za" />
             </div>
 
@@ -2110,9 +2113,10 @@ const SQUIRCLE = (() => {
 })();
 
 function WhatsAppButton() {
+  if (!PHONE.digits) return null;
   return (
     <a
-      href="https://wa.me/27821234567"
+      href={`https://wa.me/${PHONE.digits}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
