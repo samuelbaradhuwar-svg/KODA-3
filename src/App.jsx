@@ -25,7 +25,6 @@ import {
   ShieldCheck,
   ShoppingCart,
   Smartphone,
-  Smile,
   Star,
   TrendingUp,
   Users,
@@ -36,7 +35,7 @@ import {
 import KODA_ICON_BLACK from "./assets/koda-icon-black.webp";
 import KODA_ICON_WHITE from "./assets/koda-icon-white.webp";
 import PHOTO_BARBER from "./assets/photo-barber.webp";
-import PHOTO_DENTAL from "./assets/photo-dental.webp";
+import SHOT_BLOOMING from "./assets/photo-blooming-bilingual.webp";
 import PHOTO_CAR from "./assets/photo-car.webp";
 
 /* lucide-react no longer ships brand icons, so these are local copies of the old ones. */
@@ -110,17 +109,11 @@ const PORTFOLIO = [
     colors: { bg: "#0D0F14", fg: "#FFFFFF", muted: "rgba(255,255,255,0.66)", line: "rgba(255,255,255,0.09)", btnBg: "#FFFFFF", btnFg: "#0D0F14", artA: "#5B5F6B", artB: "#0D0F14", iconColor: "#FFFFFF" },
   },
   {
-    name: "SmileCare Dental Clinic",
-    category: "Dental Practice",
-    brand: "SmileCare",
-    nav: ["Home", "About", "Services", "Contact"],
-    headline: ["Healthy smiles.", "Brighter futures."],
-    sub: "Modern dental care for the whole family.",
-    cta: "Book Appointment",
-    icon: Smile,
+    name: "The Blooming Bilingual",
+    category: "Online English Tutoring",
     tag: "Website + Online Booking",
-    image: PHOTO_DENTAL,
-    colors: { bg: "#F4F7FB", fg: "#0F172A", muted: "#64748B", line: "rgba(15,23,42,0.08)", btnBg: "#2563EB", btnFg: "#FFFFFF", artA: "#93C5FD", artB: "#EFF6FF", iconColor: "#1D4ED8" },
+    screenshot: SHOT_BLOOMING,
+    url: "https://www.thebloomingbilingual.com/",
   },
   {
     name: "Auto Zone",
@@ -181,7 +174,7 @@ const FAQS = [
 
 const TRUSTED = [
   { name: "The Cut Room", sub: "Barbershop", icon: Scissors },
-  { name: "SmileCare", sub: "Dental Clinic", icon: Smile },
+  { name: "Blooming Bilingual", sub: "English Tutoring", icon: Globe },
   { name: "Auto Zone", sub: "Used Vehicles", icon: Car },
   { name: "Bloom", sub: "Florist & Gifts", icon: Flower2 },
   { name: "Local Fuel", sub: "Convenience", icon: Fuel },
@@ -1508,24 +1501,52 @@ function WhyChooseUs() {
 }
 
 /* ===== components/Portfolio.jsx ===== */
+function ViewProject({ project }) {
+  const cls =
+    "absolute bottom-3 left-3 inline-flex h-9 items-center rounded-full bg-slate-900 px-[9px] text-white shadow-lg transition-colors duration-300 hover:bg-blue-600 group-hover:bg-blue-600";
+  const inner = (
+    <>
+      <ArrowUpRight className="h-[18px] w-[18px]" />
+      <span className="max-w-0 overflow-hidden whitespace-nowrap text-xs font-semibold opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:mr-1 group-hover:max-w-[100px] group-hover:opacity-100">
+        {project.url ? "Visit site" : "View project"}
+      </span>
+    </>
+  );
+  if (project.url) {
+    return (
+      <a href={project.url} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${project.name} website`} className={cls}>
+        {inner}
+      </a>
+    );
+  }
+  return (
+    <button onClick={() => scrollToId("contact")} aria-label={`View project: ${project.name}`} className={cls}>
+      {inner}
+    </button>
+  );
+}
+
 function ProjectCard({ project, i }) {
   return (
     <Reveal delay={(i % 3) * 80}>
       <article className="group">
         <div className="relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-200 transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl" style={{ aspectRatio: "16 / 10" }}>
           <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04]">
-            <SiteThumb project={project} />
+            {project.screenshot ? (
+              <img
+                src={project.screenshot}
+                alt={`${project.name} website`}
+                width={960}
+                height={600}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-top"
+              />
+            ) : (
+              <SiteThumb project={project} />
+            )}
           </div>
-          <button
-            onClick={() => scrollToId("contact")}
-            aria-label={`View project: ${project.name}`}
-            className="absolute bottom-3 left-3 inline-flex h-9 items-center rounded-full bg-slate-900 px-[9px] text-white shadow-lg transition-colors duration-300 hover:bg-blue-600 group-hover:bg-blue-600"
-          >
-            <ArrowUpRight className="h-[18px] w-[18px]" />
-            <span className="max-w-0 overflow-hidden whitespace-nowrap text-xs font-semibold opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:mr-1 group-hover:max-w-[100px] group-hover:opacity-100">
-              View project
-            </span>
-          </button>
+          <ViewProject project={project} />
         </div>
 
         <div className="mt-3 flex items-start justify-between gap-3">
