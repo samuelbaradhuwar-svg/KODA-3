@@ -4,7 +4,6 @@ import {
   ArrowUpRight,
   BarChart3,
   CalendarCheck,
-  Car,
   ChevronDown,
   Clock3,
   Flower2,
@@ -36,7 +35,7 @@ import KODA_ICON_BLACK from "./assets/koda-icon-black.webp";
 import KODA_ICON_WHITE from "./assets/koda-icon-white.webp";
 import PHOTO_BARBER from "./assets/photo-barber.webp";
 import SHOT_BLOOMING from "./assets/photo-blooming-bilingual.webp";
-import PHOTO_CAR from "./assets/photo-car.webp";
+import SHOT_TRYNETIX from "./assets/photo-trynetix.webp";
 
 /* lucide-react no longer ships brand icons, so these are local copies of the old ones. */
 function makeIcon(children) {
@@ -116,17 +115,11 @@ const PORTFOLIO = [
     url: "https://www.thebloomingbilingual.com/",
   },
   {
-    name: "Auto Zone",
-    category: "Car Dealership",
-    brand: "AUTO ZONE",
-    nav: ["Home", "Stock", "Finance", "Contact"],
-    headline: ["Quality vehicles.", "Trusted service."],
-    sub: "Used cars, great value and local support.",
-    cta: "View Stock",
-    icon: Car,
-    tag: "Website + SEO",
-    image: PHOTO_CAR,
-    colors: { bg: "#0B0E13", fg: "#FFFFFF", muted: "rgba(255,255,255,0.66)", line: "rgba(255,255,255,0.09)", btnBg: "#FFFFFF", btnFg: "#0B0E13", artA: "#6B7280", artB: "#0B0E13", iconColor: "#FFFFFF" },
+    name: "Trynetix",
+    category: "B2B Lead Generation",
+    tag: "Website Design",
+    screenshot: SHOT_TRYNETIX,
+    url: "https://trynetix.com/about",
   },
 ];
 
@@ -175,7 +168,7 @@ const FAQS = [
 const TRUSTED = [
   { name: "The Cut Room", sub: "Barbershop", icon: Scissors },
   { name: "Blooming Bilingual", sub: "English Tutoring", icon: Globe },
-  { name: "Auto Zone", sub: "Used Vehicles", icon: Car },
+  { name: "Trynetix", sub: "B2B Lead Generation", icon: TrendingUp },
   { name: "Bloom", sub: "Florist & Gifts", icon: Flower2 },
   { name: "Local Fuel", sub: "Convenience", icon: Fuel },
 ];
