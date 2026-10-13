@@ -2000,11 +2000,11 @@ function Contact() {
                 <form onSubmit={handleSubmit} className="grid gap-3 sm:grid-cols-2">
                   <label className="block">
                     <span className="field-label">Full name</span>
-                    <input required name="name" value={form.name} onChange={handleChange} placeholder="Jane Dlamini" className="field" />
+                    <input required name="name" value={form.name} onChange={handleChange} placeholder="John Doe" className="field" />
                   </label>
                   <label className="block">
                     <span className="field-label">Email</span>
-                    <input required type="email" name="email" value={form.email} onChange={handleChange} placeholder="jane@business.co.za" className="field" />
+                    <input required type="email" name="email" value={form.email} onChange={handleChange} placeholder="john@business.co.za" className="field" />
                   </label>
                   <label className="block">
                     <span className="field-label">Phone</span>
