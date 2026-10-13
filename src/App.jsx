@@ -271,10 +271,14 @@ function scrollToId(id) {
 /* ===== components/ui/Reveal.jsx ===== */
 function useReveal() {
   const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+  // Content is visible by default (server render, or if scripts fail to load). Once running in the browser,
+  // only elements that start below the fold are hidden, then revealed as they scroll into view.
+  const [visible, setVisible] = useState(true);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
+    setVisible(false);
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
