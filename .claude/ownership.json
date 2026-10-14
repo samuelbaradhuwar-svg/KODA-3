@@ -1,0 +1,50 @@
+{
+  "_comment": "File ownership for subagents, enforced by .claude/hooks/ownership-guard.mjs on Edit/Write/MultiEdit/NotebookEdit. The lead (main) agent is not restricted. Globs are relative to the repo root. 'allow' limits an agent to those paths; agents without an entry may edit anything not denied. 'globalDeny' applies to every subagent. Files are also locked to the first agent instance that edits them until the lock expires or `node .claude/hooks/ownership-guard.mjs --reset` is run.",
+  "lockTtlMinutes": 180,
+  "globalDeny": [
+    "package.json",
+    "package-lock.json",
+    "CLAUDE.md",
+    "vercel.json",
+    ".env*",
+    ".claude/agents/**",
+    ".claude/skills/**",
+    ".claude/hooks/**",
+    ".claude/settings*.json",
+    ".claude/ownership.json",
+    ".git/**"
+  ],
+  "agents": {
+    "design-specialist": {
+      "allow": ["docs/design/**", ".taste-skill/**", ".claude/work/**"]
+    },
+    "frontend-developer": {
+      "allow": ["src/**", ".claude/work/**"]
+    },
+    "visual-image-specialist": {
+      "allow": [
+        "src/assets/**",
+        "public/**/*.{png,jpg,jpeg,webp,avif,svg,gif,ico}",
+        "docs/assets/**",
+        ".claude/work/**"
+      ]
+    },
+    "seo-specialist": {
+      "allow": [
+        "index.html",
+        "public/robots.txt",
+        "public/sitemap.xml",
+        "public/site.webmanifest",
+        "docs/seo/**",
+        "SEO-PLAN.md",
+        ".claude/work/**"
+      ]
+    },
+    "qa-playwright-tester": {
+      "allow": ["tests/**", "playwright.config.js", ".claude/work/**"]
+    },
+    "code-quality-security-reviewer": {
+      "allow": [".claude/work/**"]
+    }
+  }
+}
