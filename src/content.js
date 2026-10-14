@@ -9,7 +9,7 @@ export const NAV_LINKS = [
   { label: "Contact", id: "contact" },
 ];
 
-export const TICKER = ["Websites", "Google Business profiles", "Local SEO", "Booking systems", "Online stores", "Business email", "Ongoing care"];
+export const TICKER = ["Websites", "Google Business profiles", "Google Workspace", "Local SEO", "Booking systems", "Online stores", "Ongoing care"];
 
 export const PILLARS = [
   {
@@ -22,7 +22,26 @@ export const PILLARS = [
   },
   {
     title: "Digital presence",
-    desc: "Consistent branding, social links, local SEO and ongoing support to help you grow long term.",
+    desc: "Your website, Google profile, business email and social links all telling the same story, so customers find you, trust you and keep coming back.",
+  },
+];
+
+export const PRESENCE = [
+  {
+    title: "Email that looks like a business",
+    desc: "name@yourbusiness.co.za builds trust in every message. A free Gmail or Hotmail address does not.",
+  },
+  {
+    title: "Everything on your own domain",
+    desc: "Google Workspace gives you Gmail, Calendar, Meet video calls and Drive, all under your business name.",
+  },
+  {
+    title: "Found when customers search",
+    desc: "A website and a Google Business profile put you on Google Search and Maps when people look for what you do.",
+  },
+  {
+    title: "One story everywhere",
+    desc: "The same name, details and look across your site, profile, email and social pages makes you easy to trust and easy to remember.",
   },
 ];
 
@@ -59,7 +78,7 @@ export const SERVICES = [
   { title: "Google Business Profile", desc: "A fully optimised profile so your business shows up on Google Search and Maps when local customers look for you." },
   { title: "SEO Optimisation", desc: "On page and technical SEO that helps your website rank higher and get found by people ready to buy." },
   { title: "Website Maintenance", desc: "Ongoing updates, backups and security monitoring so your site stays fast, safe and always online." },
-  { title: "Business Email Setup", desc: "Professional @yourbusiness email addresses that build instant credibility with every message you send." },
+  { title: "Google Workspace and Email", desc: "Professional @yourbusiness email on Google Workspace, with Gmail, Calendar, Meet and Drive on your own domain, so every message builds credibility." },
 ];
 
 export const PROCESS = [

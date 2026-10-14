@@ -3,6 +3,7 @@ import Header from "./components/Header.jsx";
 import Hero from "./components/Hero.jsx";
 import { Ticker, Proof } from "./components/Ticker.jsx";
 import Pillars from "./components/Pillars.jsx";
+import Presence from "./components/Presence.jsx";
 import Work from "./components/Work.jsx";
 import Services from "./components/Services.jsx";
 import Process from "./components/Process.jsx";
@@ -26,6 +27,7 @@ function Home() {
       <Ticker />
       <Proof />
       <Pillars />
+      <Presence />
       <Work />
       <Services />
       <Process />
