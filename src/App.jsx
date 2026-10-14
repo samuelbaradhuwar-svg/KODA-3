@@ -21,7 +21,7 @@ export { PAGES };
 
 function Home() {
   return (
-    <main>
+    <main id="main">
       <Hero />
       <Ticker />
       <Proof />
@@ -47,6 +47,12 @@ export default function App({ path = "/" }) {
 
   return (
     <div className="overflow-x-clip">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:text-paper"
+      >
+        Skip to content
+      </a>
       <Header />
       {path === "/website-design-durban" ? <WebsiteDesignDurban /> : <Home />}
       <Footer />

@@ -2,7 +2,10 @@ import React from "react";
 import { TESTIMONIALS } from "../content.js";
 import { Eyebrow, Reveal } from "./ui.jsx";
 
-const initials = (name) => name.replace("Dr. ", "").split(" ").map((n) => n[0]).slice(0, 2).join("");
+const initials = (name) => {
+  const parts = name.replace("Dr. ", "").split(" ").filter(Boolean);
+  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+};
 
 export default function Testimonials() {
   const [lead, ...rest] = TESTIMONIALS;

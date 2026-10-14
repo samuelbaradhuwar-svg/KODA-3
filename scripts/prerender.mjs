@@ -12,11 +12,19 @@ const { render, pages } = await import(pathToFileURL(path.join(ssrDir, entry)).h
 const template = fs.readFileSync(path.resolve("dist/index.html"), "utf8");
 if (!template.includes('<div id="root"></div>')) throw new Error("Root placeholder not found in dist/index.html");
 
+// Preload the three fonts used above the fold so the text does not reflow when they arrive.
+const assets = fs.readdirSync(path.resolve("dist/assets"));
+const fontFiles = [/^geist-latin-wght-normal-.*\.woff2$/, /^instrument-serif-latin-400-normal-.*\.woff2$/, /^instrument-serif-latin-400-italic-.*\.woff2$/]
+  .map((re) => assets.find((f) => re.test(f)))
+  .filter(Boolean);
+const preloads = fontFiles.map((f) => `<link rel="preload" href="/assets/${f}" as="font" type="font/woff2" crossorigin>`).join("\n    ");
+
 const esc = (t) => t.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
 for (const [route, meta] of Object.entries(pages)) {
   const url = route === "/" ? `${SITE}/` : `${SITE}${route}`;
   let html = template
+    .replace("</head>", `    ${preloads}\n  </head>`)
     .replace('<div id="root"></div>', `<div id="root">${render(route)}</div>`)
     .replace(/<noscript>[\s\S]*?<\/noscript>\s*/, "")
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(meta.title)}</title>`)

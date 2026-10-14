@@ -24,8 +24,8 @@ export default function Hero() {
           </Reveal>
           <Reveal delay={240} className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
             <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
-            <button onClick={() => scrollToId("portfolio")} className="group inline-flex items-center gap-2 text-sm font-medium text-ink">
-              <span className="border-b border-ink/40 pb-0.5 transition-colors group-hover:border-accent group-hover:text-accent">See our work</span>
+            <button onClick={() => scrollToId("portfolio")} className="group inline-flex min-h-11 items-center gap-2 text-sm font-medium text-ink">
+              <span className="border-b border-ink/40 pb-0.5 transition-colors group-hover:border-accentDeep group-hover:text-accentDeep">See our work</span>
               <ArrowDown size={15} weight="bold" className="transition-transform duration-300 group-hover:translate-y-0.5" />
             </button>
           </Reveal>
@@ -34,7 +34,7 @@ export default function Hero() {
         <Reveal delay={200} className="relative lg:col-span-6">
           <div className="relative mx-auto h-[19rem] max-w-[34rem] sm:h-[25rem] lg:h-[31rem] lg:max-w-none">
             <div className="absolute inset-x-0 top-0 w-[88%] animate-float sm:w-[84%]" style={{ rotate: "-1.5deg" }}>
-              <BrowserFrame project={PROJECTS[0]} priority />
+              <BrowserFrame project={PROJECTS[0]} priority high />
             </div>
             <div className="absolute bottom-0 right-0 w-[64%] animate-float-slow sm:w-[58%]" style={{ rotate: "2deg" }}>
               <BrowserFrame project={PROJECTS[1]} priority />

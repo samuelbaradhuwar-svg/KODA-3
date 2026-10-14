@@ -29,7 +29,7 @@ export function Reveal({ children, className, delay = 0, as: Tag = "div" }) {
   return (
     <Tag
       ref={ref}
-      className={className}
+      className={cn("reveal", className)}
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "none" : "translate3d(0, 24px, 0)",
@@ -90,14 +90,17 @@ export function TextLink({ children, href, onClick, external, light, className }
       href={href}
       onClick={onClick}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className={cn(
-        "group inline-flex items-center gap-1.5 border-b pb-0.5 text-sm font-medium transition-colors",
-        light ? "border-paper/40 text-paper hover:border-accent hover:text-accent" : "border-ink/40 text-ink hover:border-accent hover:text-accent",
-        className
-      )}
+      className={cn("group inline-flex min-h-11 items-center text-sm font-medium", light ? "text-paper" : "text-ink", className)}
     >
-      {children}
-      <ArrowUpRight size={15} weight="bold" className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      <span
+        className={cn(
+          "inline-flex items-center gap-1.5 border-b pb-0.5 transition-colors",
+          light ? "border-paper/40 group-hover:border-accent group-hover:text-accent" : "border-ink/40 group-hover:border-accentDeep group-hover:text-accentDeep"
+        )}
+      >
+        {children}
+        <ArrowUpRight size={15} weight="bold" className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </span>
     </a>
   );
 }
@@ -112,7 +115,7 @@ export function Logo({ light = false, className }) {
 }
 
 // A real site screenshot inside a quiet browser window.
-export function BrowserFrame({ project, className, priority = false }) {
+export function BrowserFrame({ project, className, priority = false, high = false }) {
   return (
     <div className={cn("overflow-hidden rounded-xl bg-white shadow-[0_40px_70px_-30px_rgba(60,40,10,0.45)] ring-1 ring-ink/10", className)}>
       <div className="flex items-center gap-1.5 border-b border-ink/10 bg-paper px-3 py-2">
@@ -127,7 +130,7 @@ export function BrowserFrame({ project, className, priority = false }) {
         width={project.width}
         height={project.height}
         loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : undefined}
+        fetchPriority={high ? "high" : undefined}
         decoding="async"
         className="block h-auto w-full"
       />

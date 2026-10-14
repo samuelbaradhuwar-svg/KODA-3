@@ -11,7 +11,7 @@ const INCLUDED = ["Website Design", "Website Redesign", "Booking Systems", "Ecom
 
 export default function WebsiteDesignDurban() {
   return (
-    <main>
+    <main id="main">
       <section className="pb-16 pt-32 lg:pb-24 lg:pt-40">
         <div className="wrap grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-9">
@@ -30,8 +30,8 @@ export default function WebsiteDesignDurban() {
             </Reveal>
             <Reveal delay={240} className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
               <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
-              <a href="/#pricing" className="border-b border-ink/40 pb-0.5 text-sm font-medium transition-colors hover:border-accent hover:text-accent">
-                See our plans
+              <a href="/#pricing" className="inline-flex min-h-11 items-center border-b border-transparent text-sm font-medium transition-colors hover:text-accentDeep">
+                <span className="border-b border-ink/40 pb-0.5">See our plans</span>
               </a>
             </Reveal>
           </div>

@@ -23,6 +23,8 @@ export default function Faq({ title = "Common questions", open0 = 0 }) {
                     <button
                       onClick={() => setOpen(isOpen ? -1 : i)}
                       aria-expanded={isOpen}
+                      aria-controls={`faq-panel-${i}`}
+                      id={`faq-button-${i}`}
                       className="flex w-full items-center justify-between gap-6 py-6 text-left text-lg font-medium transition-colors hover:text-accent"
                     >
                       {f.q}
@@ -31,7 +33,13 @@ export default function Faq({ title = "Common questions", open0 = 0 }) {
                       </span>
                     </button>
                   </h3>
-                  <div className={cn("grid transition-[grid-template-rows] duration-500 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
+                  <div
+                    id={`faq-panel-${i}`}
+                    role="region"
+                    aria-labelledby={`faq-button-${i}`}
+                    inert={!isOpen}
+                    className={cn("grid transition-[grid-template-rows] duration-500 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}
+                  >
                     <div className="overflow-hidden">
                       <p className="t-body pb-6">{f.a}</p>
                     </div>
