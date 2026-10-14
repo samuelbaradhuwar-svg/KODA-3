@@ -1,0 +1,138 @@
+import React, { useState } from "react";
+import { ArrowUpRight, Phone } from "@phosphor-icons/react";
+import { Button, Eyebrow, Reveal } from "./ui.jsx";
+import { EMAIL, PHONE, openCompose, openGmailCompose } from "../lib/utils.js";
+
+const empty = { name: "", email: "", phone: "", business: "", message: "" };
+
+function Field({ label, error, children }) {
+  return (
+    <label className="grid gap-1.5">
+      <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-paper/55">{label}</span>
+      {children}
+      {error && <span role="alert" className="text-sm text-accent">{error}</span>}
+    </label>
+  );
+}
+
+export default function Contact() {
+  const [form, setForm] = useState(empty);
+  const [errors, setErrors] = useState({});
+  const [sent, setSent] = useState(false);
+
+  const change = (e) => {
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+    setErrors((er) => ({ ...er, [e.target.name]: undefined }));
+  };
+
+  const submit = (e) => {
+    e.preventDefault();
+    const er = {};
+    if (!form.name.trim()) er.name = "Please tell us your name.";
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) er.email = "Please enter a valid email address.";
+    setErrors(er);
+    if (Object.keys(er).length) return;
+    // There is no server behind this form yet, so it prepares an email to send to us.
+    const body = [
+      `Name: ${form.name}`,
+      `Email: ${form.email}`,
+      form.phone && `Phone: ${form.phone}`,
+      form.business && `Business: ${form.business}`,
+      "",
+      form.message,
+    ].filter((l) => l !== "" && l !== false).join("\n");
+    openCompose({ subject: `Website enquiry from ${form.name}`, body });
+    setSent(true);
+  };
+
+  return (
+    <section id="contact" className="sec bg-ink text-paper">
+      <div className="wrap grid gap-14 lg:grid-cols-12 lg:gap-10">
+        <Reveal className="lg:col-span-5">
+          <Eyebrow light>Get in touch</Eyebrow>
+          <h2 className="h-section mt-5">
+            Tell us about <em className="text-accent">your business.</em>
+          </h2>
+          <p className="mt-6 max-w-[40ch] text-[15px] leading-[1.7] text-paper/65">
+            Fill in the form or reach us directly. We reply within one working day.
+          </p>
+
+          <ul className="mt-9 grid gap-0 border-t border-paper/15">
+            {PHONE.digits && (
+              <li className="border-b border-paper/15">
+                <a href={`tel:+${PHONE.digits}`} className="group flex items-center justify-between py-5">
+                  <span>
+                    <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-paper/55">Call us</span>
+                    <span className="mt-1 block font-serif text-3xl">{PHONE.display}</span>
+                  </span>
+                  <Phone size={20} className="text-paper/60 transition-colors group-hover:text-accent" />
+                </a>
+              </li>
+            )}
+            <li className="border-b border-paper/15">
+              <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="group flex items-center justify-between gap-4 py-5">
+                <span>
+                  <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-paper/55">Email us</span>
+                  <span className="mt-1 block break-all font-serif text-2xl sm:text-3xl">{EMAIL}</span>
+                </span>
+                <ArrowUpRight size={22} className="shrink-0 text-paper/60 transition-[transform,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
+              </a>
+            </li>
+            <li className="border-b border-paper/15 py-5">
+              <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-paper/55">Hours</span>
+              <span className="mt-1 block text-lg">Monday to Friday, 09:00 to 17:00</span>
+            </li>
+          </ul>
+
+          <div className="mt-8 h-44 overflow-hidden rounded-2xl ring-1 ring-paper/10">
+            <iframe
+              title="KODA service area, Durban"
+              src="https://www.google.com/maps?q=Durban,+South+Africa&output=embed"
+              className="h-full w-full"
+              style={{ border: 0, filter: "grayscale(1) invert(0.92) contrast(1.05)" }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </Reveal>
+
+        <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
+          {sent ? (
+            <div className="grid min-h-[22rem] content-center border-t border-paper/15 pt-10">
+              <h3 className="font-serif text-4xl leading-tight">Your email is ready, {form.name.split(" ")[0] || "there"}.</h3>
+              <p className="mt-4 max-w-[44ch] text-[15px] leading-[1.7] text-paper/65">
+                We opened a message addressed to {EMAIL} with your details. Press send in that window and we'll reply within one working day. If nothing opened, email us directly at {EMAIL}.
+              </p>
+              <button onClick={() => { setSent(false); setForm(empty); }} className="mt-8 w-fit border-b border-paper/40 pb-0.5 text-sm transition-colors hover:border-accent hover:text-accent">
+                Start again
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={submit} noValidate className="grid gap-7 sm:grid-cols-2">
+              <Field label="Full name" error={errors.name}>
+                <input name="name" value={form.name} onChange={change} placeholder="Your name" autoComplete="name" className="field" />
+              </Field>
+              <Field label="Email" error={errors.email}>
+                <input name="email" type="email" value={form.email} onChange={change} placeholder="you@business.co.za" autoComplete="email" className="field" />
+              </Field>
+              <Field label="Phone (optional)">
+                <input name="phone" value={form.phone} onChange={change} placeholder="082 000 0000" autoComplete="tel" className="field" />
+              </Field>
+              <Field label="Business name (optional)">
+                <input name="business" value={form.business} onChange={change} placeholder="Your business" className="field" />
+              </Field>
+              <div className="sm:col-span-2">
+                <Field label="What do you need help with?">
+                  <textarea name="message" value={form.message} onChange={change} rows={4} placeholder="Tell us about your business and what you're looking for." className="field resize-none" />
+                </Field>
+              </div>
+              <div className="sm:col-span-2">
+                <Button type="submit" variant="light">Book a free consultation</Button>
+              </div>
+            </form>
+          )}
+        </Reveal>
+      </div>
+    </section>
+  );
+}

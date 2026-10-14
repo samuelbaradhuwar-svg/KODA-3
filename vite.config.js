@@ -9,7 +9,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules/react") || id.includes("node_modules/scheduler")) return "react";
-          if (id.includes("lucide-react")) return "icons";
+          if (id.includes("phosphor-icons")) return "icons";
         },
       },
     },
