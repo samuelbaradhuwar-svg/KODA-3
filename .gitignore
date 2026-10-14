@@ -1,3 +1,12 @@
 node_modules
 dist
 dist-ssr
+# Agent workspace and test output
+.claude/work/
+.claude/cache/
+.claude/settings.local.json
+.taste-skill/
+test-results/
+playwright-report/
+tests/scratch/
+.playwright-cli/
