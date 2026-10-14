@@ -37,6 +37,9 @@ owned folders.
 - Before converting, check which tools exist (`python3 -c "import PIL"`, `cwebp`, `magick`). Do not
   install packages; if nothing suitable exists, request it.
 - Strip metadata (EXIF, GPS) from photos.
+- After replacing a hero or above-the-fold image, check LCP with the `debug-optimize-lcp` skill
+  (Chrome DevTools) on `npm run preview` if the DevTools tools are available; the LCP image must not be
+  lazy-loaded and should carry `fetchpriority="high"`.
 - Write alt text that says what the image shows and why it is there; decorative images get `alt=""`.
 
 ## Deliverable

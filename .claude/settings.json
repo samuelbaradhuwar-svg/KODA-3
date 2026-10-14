@@ -8,6 +8,7 @@
     "allow": [
       "Bash(npm run build)",
       "Bash(npm run dev)",
+      "Bash(npm run preview)",
       "Bash(npm run preview *)",
       "Bash(npm run test:e2e *)",
       "Bash(npm run test:e2e)",
@@ -27,7 +28,8 @@
       "Bash(git diff)",
       "Bash(git log *)",
       "Bash(git show *)",
-      "Bash(npm ls *)"
+      "Bash(npm ls *)",
+      "mcp__chrome-devtools"
     ],
     "ask": [
       "Bash(git push *)",
@@ -70,5 +72,8 @@
         ]
       }
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "chrome-devtools"
+  ]
 }

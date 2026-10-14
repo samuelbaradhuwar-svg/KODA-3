@@ -105,6 +105,10 @@ Rules every session follows:
 - `image-to-code`: turn screenshots or mockups into faithful code.
 - `web-design-guidelines`: Vercel's interface rules for accessibility, forms, motion, performance, copy.
 - `playwright-cli`: token-efficient browser automation for exploratory QA.
+- `chrome-devtools`, `a11y-debugging`, `debug-optimize-lcp`, `chrome-devtools-troubleshooting`: Chrome
+  DevTools through the `chrome-devtools` MCP server (`.mcp.json`) for Lighthouse audits, performance and
+  LCP traces, console and network debugging and the CSS cascade. QA, frontend and SEO agents can use it.
+  The Playwright suite stays the pass/fail gate; DevTools is for finding out why.
 
 ## Client projects
 
@@ -121,6 +125,9 @@ npm install -D @playwright/test        # adds the test runner (updates package.j
 npx playwright install chromium        # browser for the tests
 npm install -g @playwright/cli@latest  # optional: playwright-cli for exploratory QA
 ```
+
+Chrome DevTools MCP needs Google Chrome (stable) installed. Claude Code starts it from `.mcp.json` on
+first use (`npx` downloads it once); check it with `/mcp` inside Claude Code.
 
 Node 22+ and an installed Chrome, Edge or Chromium are needed for the taste-skill scripts.
 

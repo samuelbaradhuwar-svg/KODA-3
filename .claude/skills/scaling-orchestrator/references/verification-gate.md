@@ -11,6 +11,7 @@ Run from the repo root. Record each command and its exit code. A check you did n
 | E2E suite | `npm run test:e2e` | Exit 0; every test passed (not skipped) |
 | All of the above in one go | `npm run verify` | Prints a summary table; exit 0 only if every step passed |
 | Source taste lint (advisory on the KODA site) | `node .claude/skills/design-taste-frontend/scripts/lint.mjs src` | Read the findings; act on ones that are real defects |
+| DevTools audit (tier 2-3, launches) | `npm run preview`, then the `a11y-debugging` and `debug-optimize-lcp` skills via the Chrome DevTools MCP | Lighthouse accessibility score and failing audits; LCP under 2.5 s with its subpart breakdown. Report numbers as local lab results |
 | Visual inspector (client sites) | `node .claude/skills/design-taste-frontend/scripts/inspect.mjs http://localhost:4173` | Screenshots at 1440 / 768 / 390 in `.taste-skill/` |
 
 `npm run test:e2e` builds nothing itself; it starts `vite preview` on port 4173 against `dist/`, so
@@ -40,6 +41,7 @@ add a test for it in `regression.spec.js`.
 - [ ] Screenshots at 390 / 768 / 1440 looked at
 - [ ] No console errors (from the suite)
 - [ ] Accessibility and SEO checks pass (from the suite); reviewer has no open blockers
+- [ ] Tier 2-3 and launches: DevTools Lighthouse accessibility audit and LCP trace run, numbers stated
 - [ ] Existing features still work (regression spec)
 - [ ] Brand locks in CLAUDE.md respected
 - [ ] Anything not run is listed with the reason
