@@ -1,5 +1,6 @@
 import React from "react";
 import { PRESENCE } from "../content.js";
+import PresenceArt from "./PresenceArt.jsx";
 import { Button, Eyebrow, Reveal } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
 
@@ -35,27 +36,26 @@ export default function Presence() {
 
         <Reveal delay={120} className="lg:col-span-5">
           <div className="sticky top-28 rounded-[2rem] bg-paper2 p-7 sm:p-10">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">Which one would you trust?</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">One business name, everything connected</p>
+            <div className="mt-6 pb-4">
+              <PresenceArt />
+            </div>
 
-            <div className="mt-8 grid gap-6">
-              <div>
-                <p className="text-sm text-muted">The inbox that looks like a hobby</p>
-                <div className="mt-2.5 rounded-2xl border border-ink/15 px-5 py-4 text-muted">
-                  <p className="break-all font-mono text-sm">yourname123@gmail.com</p>
-                  <p className="mt-1 text-sm">Quote for your project</p>
+            <div className="mt-6 border-t border-ink/15 pt-6">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">Which one would you trust?</p>
+              <div className="mt-5 grid gap-3">
+                <div className="rounded-2xl border border-ink/15 px-4 py-3.5 text-muted">
+                  <p className="break-all font-mono text-[13px]">yourname123@gmail.com</p>
+                  <p className="mt-1 text-xs">Looks like a hobby</p>
                 </div>
-              </div>
-
-              <div>
-                <p className="text-sm text-ink">The inbox that looks like a business</p>
-                <div className="mt-2.5 rounded-2xl bg-ink px-5 py-4 text-paper shadow-[0_24px_40px_-24px_rgba(22,21,15,0.6)]">
-                  <p className="break-all font-mono text-sm">hello@yourbusiness.co.za</p>
-                  <p className="mt-1 text-sm text-paper/70">Quote for your project</p>
+                <div className="rounded-2xl bg-ink px-4 py-3.5 text-paper shadow-[0_20px_34px_-22px_rgba(22,21,15,0.6)]">
+                  <p className="break-all font-mono text-[13px]">hello@yourbusiness.co.za</p>
+                  <p className="mt-1 text-xs text-paper/70">Looks like a business</p>
                 </div>
               </div>
             </div>
 
-            <p className="mt-8 border-t border-ink/15 pt-6 text-sm leading-relaxed text-muted">
+            <p className="mt-6 text-sm leading-relaxed text-muted">
               We set up your Google Workspace and business email, your Google Business profile and your website, so the first impression is the right one.
             </p>
           </div>

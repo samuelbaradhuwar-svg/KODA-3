@@ -56,7 +56,8 @@
   .animate-marquee,
   .animate-float,
   .animate-float-slow,
-  .animate-ping2 {
+  .animate-ping2,
+  .animate-dash {
     animation: none !important;
   }
   .reveal {
