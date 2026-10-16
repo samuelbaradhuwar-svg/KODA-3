@@ -1,6 +1,4 @@
 @import "@fontsource-variable/geist";
-@import "@fontsource/instrument-serif/latin-400.css";
-@import "@fontsource/instrument-serif/latin-400-italic.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,25 +12,34 @@
     @apply bg-paper font-sans text-ink antialiased;
   }
   ::selection {
-    background: #D9532B;
-    color: #F2EEE6;
+    background: #0A0A0B;
+    color: #F6F5F1;
+  }
+  em {
+    font-style: normal;
   }
   section[id] {
     scroll-margin-top: 4.5rem;
   }
   :focus-visible {
-    outline: 2px solid #D9532B;
+    outline: 2px solid #0A0A0B;
     outline-offset: 3px;
     border-radius: 4px;
   }
 }
 
 @layer components {
+  /* Display type: heavy sans, very tight, with the first words greyed back and the key words in full ink
+     (the same pattern as the hero statements). */
+  .font-display {
+    font-weight: 700;
+    letter-spacing: -0.045em;
+  }
   .h-display {
-    @apply font-serif text-[clamp(2.9rem,6.4vw,5.6rem)] font-normal leading-[0.96] tracking-[-0.02em];
+    @apply text-[clamp(3rem,7.6vw,7rem)] font-extrabold leading-[0.95] tracking-[-0.055em];
   }
   .h-section {
-    @apply font-serif text-[clamp(2.2rem,4.2vw,3.7rem)] font-normal leading-[1.02] tracking-[-0.015em];
+    @apply text-[clamp(2.4rem,5.4vw,4.8rem)] font-extrabold leading-[0.97] tracking-[-0.05em];
   }
   .t-body {
     @apply max-w-[60ch] text-[15px] leading-[1.7] text-muted;
@@ -41,10 +48,10 @@
     @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-10;
   }
   .sec {
-    padding-block: clamp(4rem, 9vw, 8rem);
+    padding-block: clamp(5rem, 11vw, 10rem);
   }
   .field {
-    @apply w-full border-0 border-b border-paper/25 bg-transparent px-0 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-accent;
+    @apply w-full border-0 border-b border-paper/25 bg-transparent px-0 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-paper;
     border-radius: 0;
   }
 }
@@ -79,6 +86,18 @@
     overflow: hidden;
     padding: 0.08em 0.12em 0.28em 0.08em;
     margin: -0.08em -0.12em -0.28em -0.08em;
+  }
+  /* Headline words (Headline in ui.jsx): same clipping box as .word, but inline so spaces between words survive. */
+  .rise {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding: 0.08em 0.12em 0.28em 0.08em;
+    margin: -0.08em -0.12em -0.28em -0.08em;
+  }
+  .rise-in {
+    display: inline-block;
+    transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   .word > span {
     display: inline-block;
@@ -126,6 +145,10 @@
   .animate-ping2,
   .animate-dash {
     animation: none !important;
+  }
+  .rise-in {
+    transform: none !important;
+    transition: none !important;
   }
   .reveal {
     opacity: 1 !important;

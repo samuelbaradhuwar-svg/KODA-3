@@ -42,11 +42,70 @@ export function Reveal({ children, className, delay = 0, as: Tag = "div" }) {
 }
 
 export function Eyebrow({ children, light = false, className }) {
+  return <p className={cn("text-[12px] font-semibold uppercase tracking-[0.18em]", light ? "text-paper/60" : "text-muted", className)}>{children}</p>;
+}
+
+// Section headlines. Each word rises out of a clipping box as the heading scrolls into view. When the text
+// contains an <em>, the words outside it are greyed back and the <em> words stay in full ink, the same pattern
+// as the hero statements. Visible by default (server render, or if scripts fail); only headings that start
+// below the fold are hidden and then revealed.
+const textOf = (node) =>
+  React.Children.toArray(node)
+    .map((c) => (typeof c === "string" || typeof c === "number" ? String(c) : React.isValidElement(c) ? textOf(c.props.children) : ""))
+    .join("");
+
+export function Headline({ as: Tag = "h2", className, light = false, children }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(true);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.9) return;
+    setShown(false);
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.unobserve(el);
+        }
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const parts = React.Children.toArray(children);
+  const hasEm = parts.some((c) => React.isValidElement(c) && c.type === "em");
+  const soft = light ? "text-paper/40" : "text-ink/40";
+  let n = 0;
+  const words = [];
+  const add = (text, strong) => {
+    text.split(/\s+/).filter(Boolean).forEach((w) => {
+      const i = n++;
+      words.push(
+        <React.Fragment key={i}>
+          {i > 0 && " "}
+          <span className="rise" aria-hidden="true">
+            <span
+              className={cn("rise-in", hasEm && !strong && soft)}
+              style={{ transform: shown ? "none" : "translate3d(0,115%,0)", transitionDelay: `${i * 55}ms` }}
+            >
+              {w}
+            </span>
+          </span>
+        </React.Fragment>
+      );
+    });
+  };
+  parts.forEach((c) => {
+    if (typeof c === "string") add(c, false);
+    else if (React.isValidElement(c)) add(textOf(c.props.children), c.type === "em");
+  });
   return (
-    <p className={cn("flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.2em]", light ? "text-paper/60" : "text-muted", className)}>
-      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-      {children}
-    </p>
+    <Tag ref={ref} className={className} aria-label={textOf(children)}>
+      {words}
+    </Tag>
   );
 }
 
@@ -56,8 +115,8 @@ const btnBase =
 export function Button({ children, onClick, href, onClickCapture, variant = "dark", className, type }) {
   const styles =
     variant === "light"
-      ? "bg-paper text-ink hover:bg-accent hover:text-paper"
-      : "bg-ink text-paper hover:bg-accent";
+      ? "bg-paper text-ink hover:bg-paper2"
+      : "bg-ink text-paper hover:bg-ink2";
   const arrow = (
     <span
       className={cn(
@@ -95,7 +154,7 @@ export function TextLink({ children, href, onClick, external, light, className }
       <span
         className={cn(
           "inline-flex items-center gap-1.5 border-b pb-0.5 transition-colors",
-          light ? "border-paper/40 group-hover:border-accent group-hover:text-accent" : "border-ink/40 group-hover:border-accentDeep group-hover:text-accentDeep"
+          light ? "border-paper/40 group-hover:border-paper" : "border-ink/40 group-hover:border-ink"
         )}
       >
         {children}
@@ -117,7 +176,7 @@ export function Logo({ light = false, className }) {
 // A real site screenshot inside a quiet browser window.
 export function BrowserFrame({ project, className, priority = false, high = false }) {
   return (
-    <div className={cn("overflow-hidden rounded-xl bg-white shadow-[0_40px_70px_-30px_rgba(60,40,10,0.45)] ring-1 ring-ink/10", className)}>
+    <div className={cn("overflow-hidden rounded-xl bg-white shadow-[0_40px_70px_-30px_rgba(10,10,11,0.45)] ring-1 ring-ink/10", className)}>
       <div className="flex items-center gap-1.5 border-b border-ink/10 bg-paper px-3 py-2">
         <span className="h-2 w-2 rounded-full bg-ink/15" />
         <span className="h-2 w-2 rounded-full bg-ink/15" />

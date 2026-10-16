@@ -1,6 +1,6 @@
 import React from "react";
 import { SERVICES } from "../content.js";
-import { Button, Eyebrow, Reveal } from "../components/ui.jsx";
+import { Button, Eyebrow, Headline, Reveal } from "../components/ui.jsx";
 import { ServiceList } from "../components/Services.jsx";
 import Process from "../components/Process.jsx";
 import Faq from "../components/Faq.jsx";
@@ -19,9 +19,9 @@ export default function WebsiteDesignDurban() {
               <Eyebrow>Website design in Durban</Eyebrow>
             </Reveal>
             <Reveal delay={80}>
-              <h1 className="h-display mt-6">
-                Website design for <em className="text-accent">Durban</em> businesses.
-              </h1>
+              <Headline as="h1" className="h-display mt-6">
+                Website design for <em>Durban</em> businesses.
+              </Headline>
             </Reveal>
             <Reveal delay={160}>
               <p className="t-body mt-7 max-w-[56ch] text-base">
@@ -30,7 +30,7 @@ export default function WebsiteDesignDurban() {
             </Reveal>
             <Reveal delay={240} className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
               <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
-              <a href="/#pricing" className="inline-flex min-h-11 items-center border-b border-transparent text-sm font-medium transition-colors hover:text-accentDeep">
+              <a href="/#pricing" className="inline-flex min-h-11 items-center border-b border-transparent text-sm font-medium transition-colors hover:text-ink/60">
                 <span className="border-b border-ink/40 pb-0.5">See our plans</span>
               </a>
             </Reveal>
@@ -41,7 +41,7 @@ export default function WebsiteDesignDurban() {
       <section className="sec bg-paper2">
         <div className="wrap grid gap-8 lg:grid-cols-12">
           <Reveal className="lg:col-span-5">
-            <h2 className="h-section">Who our websites are for</h2>
+            <Headline className="h-section">Who our websites are for</Headline>
           </Reveal>
           <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
             <p className="t-body text-base">
@@ -54,7 +54,7 @@ export default function WebsiteDesignDurban() {
       <section className="sec">
         <div className="wrap">
           <Reveal>
-            <h2 className="h-section mb-14 max-w-[18ch]">What we can build and set up for you</h2>
+            <Headline className="h-section mb-14 max-w-[18ch]">What we can build and set up for you</Headline>
           </Reveal>
           <ServiceList items={SERVICES.filter((s) => INCLUDED.includes(s.title))} />
         </div>

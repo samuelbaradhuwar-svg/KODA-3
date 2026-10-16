@@ -96,8 +96,8 @@ export default function Header() {
               onClick={(e) => onNav(e, l.id)}
               aria-current={active === l.id ? "location" : undefined}
               className={cn(
-                "flex items-center justify-between border-b border-ink/10 py-4 font-serif text-[2rem] leading-none transition-colors last:border-b-0",
-                active === l.id ? "text-accentDeep" : "text-ink/80 hover:text-ink"
+                "flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.9rem] leading-none transition-colors last:border-b-0",
+                active === l.id ? "text-ink" : "text-ink/55 hover:text-ink"
               )}
             >
               {l.label}
@@ -111,7 +111,7 @@ export default function Header() {
           <a
             href="/#contact"
             onClick={(e) => onNav(e, "contact")}
-            className="grid h-12 place-items-center rounded-full bg-ink text-sm font-medium text-paper transition-[background,transform] duration-300 hover:bg-accentDeep active:scale-[0.98]"
+            className="grid h-12 place-items-center rounded-full bg-ink text-sm font-medium text-paper transition-[background,transform] duration-300 hover:bg-ink2 active:scale-[0.98]"
           >
             Book a call
           </a>

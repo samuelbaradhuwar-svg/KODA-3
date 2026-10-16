@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Phone } from "@phosphor-icons/react";
-import { Button, Eyebrow, Reveal } from "./ui.jsx";
+import { Button, Eyebrow, Headline, Reveal } from "./ui.jsx";
 import { EMAIL, PHONE, openCompose, openGmailCompose } from "../lib/utils.js";
 
 const empty = { name: "", email: "", phone: "", business: "", message: "" };
@@ -8,9 +8,9 @@ const empty = { name: "", email: "", phone: "", business: "", message: "" };
 function Field({ label, error, id, children }) {
   return (
     <div className="grid gap-1.5">
-      <label htmlFor={id} className="font-mono text-[11px] uppercase tracking-[0.16em] text-paper/60">{label}</label>
+      <label htmlFor={id} className="text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">{label}</label>
       {children}
-      {error && <span id={`${id}-error`} role="alert" className="text-sm text-accent">{error}</span>}
+      {error && <span id={`${id}-error`} role="alert" className="text-sm text-red-300">{error}</span>}
     </div>
   );
 }
@@ -60,9 +60,9 @@ export default function Contact() {
       <div className="wrap grid gap-14 lg:grid-cols-12 lg:gap-10">
         <Reveal className="lg:col-span-5">
           <Eyebrow light>Get in touch</Eyebrow>
-          <h2 className="h-section mt-5">
-            Tell us about <em className="text-accent">your business.</em>
-          </h2>
+          <Headline light className="h-section mt-5">
+            Tell us about <em>your business.</em>
+          </Headline>
           <p className="mt-6 max-w-[40ch] text-[15px] leading-[1.7] text-paper/65">
             Fill in the form or reach us directly. We reply within one working day.
           </p>
@@ -72,24 +72,24 @@ export default function Contact() {
               <li className="border-b border-paper/15">
                 <a href={`tel:+${PHONE.digits}`} className="group flex items-center justify-between py-5">
                   <span>
-                    <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-paper/60">Call us</span>
-                    <span className="mt-1 block font-serif text-3xl">{PHONE.display}</span>
+                    <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Call us</span>
+                    <span className="mt-1 block font-display text-3xl">{PHONE.display}</span>
                   </span>
-                  <Phone size={20} className="text-paper/60 transition-colors group-hover:text-accent" />
+                  <Phone size={20} className="text-paper/60 transition-colors group-hover:text-paper" />
                 </a>
               </li>
             )}
             <li className="border-b border-paper/15">
               <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="group flex items-center justify-between gap-4 py-5">
                 <span>
-                  <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-paper/60">Email us</span>
-                  <span className="mt-1 block break-all font-serif text-2xl sm:text-3xl">{EMAIL}</span>
+                  <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Email us</span>
+                  <span className="mt-1 block break-all font-display text-2xl sm:text-3xl">{EMAIL}</span>
                 </span>
-                <ArrowUpRight size={22} className="shrink-0 text-paper/60 transition-[transform,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
+                <ArrowUpRight size={22} className="shrink-0 text-paper/60 transition-[transform,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-paper" />
               </a>
             </li>
             <li className="border-b border-paper/15 py-5">
-              <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-paper/60">Hours</span>
+              <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Hours</span>
               <span className="mt-1 block text-lg">Monday to Friday, 09:00 to 17:00</span>
             </li>
           </ul>
@@ -109,11 +109,11 @@ export default function Contact() {
         <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
           {sent ? (
             <div role="status" className="grid min-h-[22rem] content-center border-t border-paper/15 pt-10">
-              <h3 ref={sentRef} tabIndex={-1} className="font-serif text-4xl leading-tight outline-none">Your email is ready, {form.name.split(" ")[0] || "there"}.</h3>
+              <h3 ref={sentRef} tabIndex={-1} className="font-display text-4xl leading-tight outline-none">Your email is ready, {form.name.split(" ")[0] || "there"}.</h3>
               <p className="mt-4 max-w-[44ch] text-[15px] leading-[1.7] text-paper/65">
                 We opened a message addressed to {EMAIL} with your details. Press send in that window and we'll reply within one working day. If nothing opened, email us directly at {EMAIL}.
               </p>
-              <button onClick={() => { setSent(false); setForm(empty); }} className="mt-8 w-fit border-b border-paper/40 pb-0.5 text-sm transition-colors hover:border-accent hover:text-accent">
+              <button onClick={() => { setSent(false); setForm(empty); }} className="mt-8 w-fit border-b border-paper/40 pb-0.5 text-sm transition-colors hover:border-paper hover:text-paper">
                 Start again
               </button>
             </div>

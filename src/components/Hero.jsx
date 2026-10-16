@@ -7,8 +7,8 @@ import { LETTER_PATHS, MARK_PATH } from "../lib/logo-paths.js";
 import { scrollToId } from "../lib/utils.js";
 
 // Brand colours (same values as tailwind.config.js: paper / ink).
-const PAPER = "#F2EEE6";
-const INK = "#16150F";
+const PAPER = "#F6F5F1";
+const INK = "#0A0A0B";
 
 const SERVICES = [
   { n: "01", title: "Website design", body: "A modern, mobile friendly site that builds credibility." },
@@ -340,7 +340,7 @@ export default function Hero() {
             style={{ position: "absolute", inset: 0 }}
             fragmentShader={kodaContourFragmentShader}
             baseColor={INK}
-            metalColor="#a39d8f"
+            metalColor="#9aa1b8"
             highlightColor={PAPER}
             distortion={1}
             scale={1.15}
@@ -429,7 +429,7 @@ export default function Hero() {
         <div ref={ctaRef} className="invisible absolute inset-x-0 bottom-[6svh] flex flex-wrap items-center justify-center gap-x-8 gap-y-4 px-5 opacity-0">
           <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
           <button onClick={() => scrollToId("portfolio")} className="inline-flex min-h-11 items-center text-sm font-medium text-ink">
-            <span className="border-b border-ink/40 pb-0.5 transition-colors hover:border-accentDeep hover:text-accentDeep">See our work</span>
+            <span className="border-b border-ink/40 pb-0.5 transition-colors hover:border-ink hover:text-ink/60">See our work</span>
           </button>
         </div>
       </section>
