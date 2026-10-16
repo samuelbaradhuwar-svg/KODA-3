@@ -1,21 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { List, X } from "@phosphor-icons/react";
 import { NAV_LINKS } from "../content.js";
 import { Logo } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
 
+// Logo on the left, burger on the right. Both are drawn in the light colour with mix-blend-mode: difference,
+// so they flip to dark over light areas (the paper background, the pale parts of the hero art) and stay light
+// over dark ones, with nothing behind them. The links live in a glass panel that opens from the burger.
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("");
   const toggleRef = useRef(null);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Highlight the link for the section crossing the middle of the screen, and none while the hero is showing.
   useEffect(() => {
@@ -30,30 +24,18 @@ export default function Header() {
     return () => io.disconnect();
   }, []);
 
-  // While the mobile menu is open: lock page scroll, make the page behind it inert, close on Escape,
-  // and close it if the window grows to the desktop layout.
+  // Escape closes the menu and hands focus back to the burger.
   useEffect(() => {
     if (!open) return;
-    const behind = [document.querySelector("main"), document.querySelector("footer")].filter(Boolean);
-    behind.forEach((el) => el.setAttribute("inert", ""));
-    document.body.style.overflow = "hidden";
-    const onKey = (e) => e.key === "Escape" && close(true);
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const onMq = () => mq.matches && setOpen(false);
-    window.addEventListener("keydown", onKey);
-    mq.addEventListener("change", onMq);
-    return () => {
-      behind.forEach((el) => el.removeAttribute("inert"));
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-      mq.removeEventListener("change", onMq);
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+      }
     };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [open]);
-
-  const close = (returnFocus) => {
-    setOpen(false);
-    if (returnFocus) toggleRef.current?.focus();
-  };
 
   const onNav = (e, id) => {
     // On a page that has the section, scroll smoothly. Otherwise follow the /#id link to the home page.
@@ -64,19 +46,49 @@ export default function Header() {
     }
   };
 
-  return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-40 transition-[background,border-color,backdrop-filter] duration-300",
-        scrolled || open ? "border-b border-ink/10 bg-paper/95 backdrop-blur-md" : "border-b border-transparent"
-      )}
-    >
-      <div className="wrap flex h-16 items-center justify-between lg:h-[4.5rem]">
-        <a href="/" aria-label="KODA home" className="relative z-50 inline-flex min-h-11 items-center">
-          <Logo />
-        </a>
+  const onLogo = (e) => {
+    setOpen(false);
+    if (window.location.pathname.replace(/\/+$/, "") === "") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
-        <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
+  return (
+    <>
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-3 text-paper mix-blend-difference sm:px-8 sm:py-4 lg:px-10">
+        <a href="/" aria-label="KODA home" onClick={onLogo} className="pointer-events-auto inline-flex min-h-11 items-center">
+          <Logo light />
+        </a>
+        <button
+          ref={toggleRef}
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="site-menu"
+          onClick={() => setOpen((v) => !v)}
+          className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full border border-paper/70 transition-transform active:scale-95"
+        >
+          <span className="relative block h-[10px] w-[18px]">
+            <span className={cn("absolute left-0 top-0 h-[1.5px] w-full bg-current transition-transform duration-300", open && "translate-y-[4.25px] rotate-45")} />
+            <span className={cn("absolute bottom-0 left-0 h-[1.5px] w-full bg-current transition-transform duration-300", open && "-translate-y-[4.25px] -rotate-45")} />
+          </span>
+        </button>
+      </header>
+
+      {/* click-away layer + the menu */}
+      <div className={cn("fixed inset-0 z-40", !open && "pointer-events-none")} onClick={() => setOpen(false)} aria-hidden="true" />
+      <div
+        id="site-menu"
+        role="dialog"
+        aria-label="Site menu"
+        inert={!open}
+        className={cn(
+          "glass fixed left-3 right-3 top-[68px] z-50 origin-top-right text-ink transition-[opacity,transform,visibility] duration-300 ease-out sm:left-auto sm:right-8 sm:top-[76px] sm:w-[360px] lg:right-10",
+          open ? "visible translate-y-0 scale-100 opacity-100" : "invisible -translate-y-2 scale-[0.96] opacity-0"
+        )}
+      >
+        <nav aria-label="Primary" className="flex flex-col px-5 pb-2 pt-3 sm:px-6">
           {NAV_LINKS.map((l) => (
             <a
               key={l.id}
@@ -84,65 +96,27 @@ export default function Header() {
               onClick={(e) => onNav(e, l.id)}
               aria-current={active === l.id ? "location" : undefined}
               className={cn(
-                "relative text-sm transition-colors after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-accent after:transition-transform after:duration-300 hover:text-ink hover:after:scale-x-100",
-                active === l.id ? "text-ink after:scale-x-100" : "text-muted"
+                "flex items-center justify-between border-b border-ink/10 py-4 font-serif text-[2rem] leading-none transition-colors last:border-b-0",
+                active === l.id ? "text-accentDeep" : "text-ink/80 hover:text-ink"
               )}
             >
               {l.label}
+              <span aria-hidden="true" className={cn("font-sans text-[15px] transition-transform", active === l.id ? "translate-x-0 opacity-100" : "-translate-x-1 opacity-40")}>
+                →
+              </span>
             </a>
           ))}
+        </nav>
+        <div className="px-5 pb-5 pt-2 sm:px-6">
           <a
             href="/#contact"
             onClick={(e) => onNav(e, "contact")}
-            className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper transition-[background,transform] duration-300 hover:bg-accentDeep active:scale-[0.98]"
+            className="grid h-12 place-items-center rounded-full bg-ink text-sm font-medium text-paper transition-[background,transform] duration-300 hover:bg-accentDeep active:scale-[0.98]"
           >
             Book a call
           </a>
-        </nav>
-
-        <button
-          ref={toggleRef}
-          className="relative z-50 grid h-11 w-11 place-items-center rounded-full border border-ink/15 lg:hidden"
-          onClick={() => (open ? close(true) : setOpen(true))}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          {open ? <X size={18} /> : <List size={18} />}
-        </button>
+        </div>
       </div>
-
-      <div
-        id="mobile-menu"
-        className={cn(
-          "fixed inset-0 z-40 bg-paper pt-24 transition-[opacity,visibility] duration-300 lg:hidden",
-          open ? "visible opacity-100" : "invisible opacity-0"
-        )}
-      >
-        <nav aria-label="Mobile" className="wrap flex flex-col">
-          {NAV_LINKS.map((l, i) => (
-            <a
-              key={l.id}
-              href={`/#${l.id}`}
-              onClick={(e) => onNav(e, l.id)}
-              style={{ transitionDelay: open ? `${80 + i * 50}ms` : "0ms" }}
-              className={cn(
-                "border-b border-ink/10 py-5 text-left font-serif text-4xl transition-[opacity,transform] duration-500",
-                open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-              )}
-            >
-              {l.label}
-            </a>
-          ))}
-          <a
-            href="/#contact"
-            onClick={(e) => onNav(e, "contact")}
-            className="mt-8 rounded-full bg-ink px-6 py-4 text-center text-sm font-medium text-paper active:scale-[0.98]"
-          >
-            Book a free consultation
-          </a>
-        </nav>
-      </div>
-    </header>
+    </>
   );
 }
