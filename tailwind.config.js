@@ -4,17 +4,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        paper: "#F2EEE6",
-        paper2: "#E9E3D6",
-        ink: "#16150F",
-        ink2: "#211F18",
-        muted: "#5F5A4D",
-        accent: "#D9532B",
-        accentDeep: "#B8431F",
+        // Black and off-white. The orange accent is retired: emphasis now comes from weight, size and contrast.
+        paper: "#F6F5F1",
+        paper2: "#ECEBE6",
+        ink: "#0A0A0B",
+        ink2: "#17171A",
+        muted: "#5C5B57",
+        accent: "#0A0A0B",
+        accentDeep: "#2A2A2E",
       },
       fontFamily: {
         sans: ['"Geist Variable"', "ui-sans-serif", "system-ui", "sans-serif"],
-        serif: ['"Instrument Serif"', "Georgia", "serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       keyframes: {

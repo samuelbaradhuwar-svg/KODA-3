@@ -28,7 +28,7 @@ export default function PresenceArt() {
             y1="48"
             x2={n.x}
             y2={n.y}
-            stroke="#16150F"
+            stroke="#0A0A0B"
             strokeOpacity="0.35"
             strokeWidth="1.25"
             strokeDasharray="4 8"
@@ -40,8 +40,8 @@ export default function PresenceArt() {
       </svg>
 
       <div aria-hidden="true" className="absolute left-1/2 top-1/2 h-[4.5rem] w-[4.5rem] -translate-x-1/2 -translate-y-1/2 sm:h-20 sm:w-20">
-        <span className="absolute -inset-3 rounded-[2rem] border border-accent/45 animate-ping2" />
-        <div className="relative grid h-full w-full place-items-center rounded-3xl bg-ink shadow-[0_24px_40px_-18px_rgba(22,21,15,0.7)]">
+        <span className="absolute -inset-3 rounded-[2rem] border border-ink/30 animate-ping2" />
+        <div className="relative grid h-full w-full place-items-center rounded-3xl bg-ink shadow-[0_24px_40px_-18px_rgba(10,10,11,0.7)]">
           <img src={LOGO_LIGHT} alt="" width={240} height={250} className="h-9 w-auto sm:h-10" />
         </div>
       </div>
@@ -55,7 +55,7 @@ export default function PresenceArt() {
             className="absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
             style={{ left: `${n.x}%`, top: `${n.y}%` }}
           >
-            <span className="grid h-12 w-12 place-items-center rounded-full bg-paper text-ink shadow-[0_14px_26px_-14px_rgba(60,40,10,0.55)] ring-1 ring-ink/15 sm:h-14 sm:w-14">
+            <span className="grid h-12 w-12 place-items-center rounded-full bg-paper text-ink shadow-[0_14px_26px_-14px_rgba(10,10,11,0.55)] ring-1 ring-ink/15 sm:h-14 sm:w-14">
               <Icon size={24} weight="regular" />
             </span>
             <span className="mt-1.5 rounded bg-paper2 px-1.5 py-0.5 text-[11px] leading-tight text-ink sm:text-xs">{n.label}</span>

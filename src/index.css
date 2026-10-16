@@ -1,6 +1,4 @@
 @import "@fontsource-variable/geist";
-@import "@fontsource/instrument-serif/latin-400.css";
-@import "@fontsource/instrument-serif/latin-400-italic.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,25 +12,34 @@
     @apply bg-paper font-sans text-ink antialiased;
   }
   ::selection {
-    background: #D9532B;
-    color: #F2EEE6;
+    background: #0A0A0B;
+    color: #F6F5F1;
+  }
+  em {
+    font-style: normal;
   }
   section[id] {
     scroll-margin-top: 4.5rem;
   }
   :focus-visible {
-    outline: 2px solid #D9532B;
+    outline: 2px solid #0A0A0B;
     outline-offset: 3px;
     border-radius: 4px;
   }
 }
 
 @layer components {
+  /* Display type: heavy sans, very tight, with the first words greyed back and the key words in full ink
+     (the same pattern as the hero statements). */
+  .font-display {
+    font-weight: 700;
+    letter-spacing: -0.045em;
+  }
   .h-display {
-    @apply font-serif text-[clamp(2.9rem,6.4vw,5.6rem)] font-normal leading-[0.96] tracking-[-0.02em];
+    @apply text-[clamp(3rem,7.6vw,7rem)] font-extrabold leading-[0.95] tracking-[-0.055em];
   }
   .h-section {
-    @apply font-serif text-[clamp(2.2rem,4.2vw,3.7rem)] font-normal leading-[1.02] tracking-[-0.015em];
+    @apply text-[clamp(2.4rem,5.4vw,4.8rem)] font-extrabold leading-[0.97] tracking-[-0.05em];
   }
   .t-body {
     @apply max-w-[60ch] text-[15px] leading-[1.7] text-muted;
@@ -41,11 +48,90 @@
     @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-10;
   }
   .sec {
-    padding-block: clamp(4rem, 9vw, 8rem);
+    padding-block: clamp(5rem, 11vw, 10rem);
   }
   .field {
-    @apply w-full border-0 border-b border-paper/25 bg-transparent px-0 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-accent;
+    @apply w-full border-0 border-b border-paper/25 bg-transparent px-0 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-paper;
     border-radius: 0;
+  }
+}
+
+/* ---- Hero (pinned scroll story) and the menu panel ---------------------------------------------- */
+@layer components {
+  /* Sizes in small-viewport units: stable on phones while the browser's address bar slides in and out.
+     The 100vh / 1350vh lines are the fallback for browsers without svh. */
+  .stage {
+    height: 100vh;
+    height: 100svh;
+  }
+  .track {
+    height: 1350vh;
+    height: 1350svh;
+  }
+
+  /* The two headline statements: each word sits in a clipping box so it can rise into place. The box has
+     generous padding (cancelled by negative margins) so glyph overhangs, tight letter-spacing and
+     descenders are never cut off. */
+  .statement {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 0.22em;
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+  }
+  .word {
+    display: inline-block;
+    overflow: hidden;
+    padding: 0.08em 0.12em 0.28em 0.08em;
+    margin: -0.08em -0.12em -0.28em -0.08em;
+  }
+  /* Headline words (Headline in ui.jsx): same clipping box as .word, but inline so spaces between words survive. */
+  .rise {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding: 0.08em 0.12em 0.28em 0.08em;
+    margin: -0.08em -0.12em -0.28em -0.08em;
+  }
+  .rise-in {
+    display: inline-block;
+    transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .word > span {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  /* Menu panel: light, see-through frosted glass.
+     A whisper of white tint over a strongly blurred, brightened copy of what is behind it, with a bright
+     reflection along the top edge, a hairline outline, a soft inner glow, a glossy streak and a soft shadow. */
+  .glass {
+    border-radius: 28px;
+    isolation: isolate;
+    background: linear-gradient(135deg, rgb(255 255 255 / 0.34), rgb(206 218 244 / 0.26) 52%, rgb(255 255 255 / 0.26));
+    -webkit-backdrop-filter: blur(24px) saturate(190%) contrast(0.62) brightness(1.32);
+    backdrop-filter: blur(24px) saturate(190%) contrast(0.62) brightness(1.32);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.95),
+      inset 0 -1px 0 rgb(255 255 255 / 0.45),
+      inset 0 0 18px rgb(255 255 255 / 0.2),
+      0 0 0 0.5px rgb(0 0 0 / 0.1),
+      0 14px 34px -12px rgb(0 0 0 / 0.32),
+      0 1px 4px rgb(0 0 0 / 0.14);
+  }
+  .glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background:
+      radial-gradient(160px 50px at 50% 0%, rgb(255 255 255 / 0.35), transparent 75%),
+      linear-gradient(112deg, transparent 16%, rgb(255 255 255 / 0.3) 28%, transparent 40%);
   }
 }
 
@@ -59,6 +145,10 @@
   .animate-ping2,
   .animate-dash {
     animation: none !important;
+  }
+  .rise-in {
+    transform: none !important;
+    transition: none !important;
   }
   .reveal {
     opacity: 1 !important;

@@ -2,6 +2,7 @@ import React from "react";
 import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
 import { NAV_LINKS, SOCIALS } from "../content.js";
 import { Logo } from "./ui.jsx";
+import { LETTER_PATHS } from "../lib/logo-paths.js";
 import { EMAIL, openGmailCompose, scrollToId } from "../lib/utils.js";
 
 const ICONS = { Instagram: InstagramLogo, Facebook: FacebookLogo, LinkedIn: LinkedinLogo };
@@ -27,21 +28,21 @@ export default function Footer() {
                     scrollToId(l.id);
                   }
                 }}
-                className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent"
+                className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-paper"
               >
                 {l.label}
               </a>
             ))}
-            <a href="/website-design-durban" className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Website design Durban</a>
+            <a href="/website-design-durban" className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-paper">Website design Durban</a>
           </nav>
           <div className="lg:col-span-2">
-            <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="inline-flex min-h-11 items-center break-all text-sm text-paper/70 transition-colors hover:text-accent">{EMAIL}</a>
+            <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="inline-flex min-h-11 items-center break-all text-sm text-paper/70 transition-colors hover:text-paper">{EMAIL}</a>
             {socials.length > 0 && (
               <div className="mt-5 flex gap-2.5">
                 {socials.map((s) => {
                   const Icon = ICONS[s.label];
                   return (
-                    <a key={s.label} href={s.url} aria-label={s.label} target="_blank" rel="noopener noreferrer" className="grid h-9 w-9 place-items-center rounded-full border border-paper/20 text-paper/70 transition-colors hover:border-accent hover:text-accent">
+                    <a key={s.label} href={s.url} aria-label={s.label} target="_blank" rel="noopener noreferrer" className="grid h-9 w-9 place-items-center rounded-full border border-paper/20 text-paper/70 transition-colors hover:border-paper hover:text-paper">
                       <Icon size={17} />
                     </a>
                   );
@@ -50,7 +51,13 @@ export default function Footer() {
             )}
           </div>
         </div>
-        <p className="mt-12 border-t border-paper/10 pt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-paper/60">
+        {/* the wordmark, drawn from the same traced letters as the hero lockup */}
+        <svg viewBox="-483 380 961 160" aria-hidden="true" className="mt-16 w-full text-paper/[0.07]">
+          {LETTER_PATHS.map((d, i) => (
+            <path key={i} d={d} fill="currentColor" fillRule="evenodd" />
+          ))}
+        </svg>
+        <p className="mt-10 border-t border-paper/10 pt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-paper/60">
           &copy; {new Date().getFullYear()} KODA. All rights reserved.
         </p>
       </div>
