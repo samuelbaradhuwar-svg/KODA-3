@@ -235,6 +235,39 @@
   }
 }
 
+/* Menu arrows: small black beads with an acid green arrow that glows like a light behind the glass. */
+@layer components {
+  .menu-arrow {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    background: #101010;
+    color: #BDF64F;
+    box-shadow: 0 0 0 1px rgb(189 246 79 / 0.3), 0 0 9px rgb(189 246 79 / 0.4), 0 0 20px rgb(189 246 79 / 0.18);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: arrow-glow 2.8s ease-in-out infinite alternate;
+  }
+  .menu-arrow svg {
+    filter: drop-shadow(0 0 3px #BDF64F);
+  }
+  nav a:nth-child(2) .menu-arrow { animation-delay: -0.5s; }
+  nav a:nth-child(3) .menu-arrow { animation-delay: -1s; }
+  nav a:nth-child(4) .menu-arrow { animation-delay: -1.5s; }
+  nav a:nth-child(5) .menu-arrow { animation-delay: -2s; }
+  .group:hover .menu-arrow,
+  .menu-arrow.is-active {
+    transform: translateX(2px);
+    box-shadow: 0 0 0 1px rgb(189 246 79 / 0.55), 0 0 16px rgb(189 246 79 / 0.85), 0 0 34px rgb(189 246 79 / 0.45);
+  }
+}
+@keyframes arrow-glow {
+  from { box-shadow: 0 0 0 1px rgb(189 246 79 / 0.28), 0 0 8px rgb(189 246 79 / 0.35), 0 0 18px rgb(189 246 79 / 0.14); }
+  to { box-shadow: 0 0 0 1px rgb(189 246 79 / 0.5), 0 0 15px rgb(189 246 79 / 0.75), 0 0 32px rgb(189 246 79 / 0.38); }
+}
+
 /* The hero card: the same glass, with a soft highlight that slowly drifts across it like light on liquid. */
 @layer components {
   .glass-live {
@@ -274,7 +307,8 @@
   .animate-float,
   .animate-float-slow,
   .animate-ping2,
-  .animate-dash {
+  .animate-dash,
+  .menu-arrow {
     animation: none !important;
   }
   .rise-in {

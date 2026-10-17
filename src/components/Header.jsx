@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { ArrowRight } from "@phosphor-icons/react";
 import { NAV_LINKS } from "../content.js";
 import { Logo } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
@@ -111,7 +112,11 @@ export default function Header() {
       </header>
 
       {/* click-away layer + the menu */}
-      <div className={cn("fixed inset-0 z-40", !open && "pointer-events-none")} onClick={() => setOpen(false)} aria-hidden="true" />
+      <div
+        className={cn("fixed inset-0 z-40 bg-ink/25 backdrop-blur-[6px] transition-opacity duration-300", open ? "opacity-100" : "pointer-events-none opacity-0")}
+        onClick={() => setOpen(false)}
+        aria-hidden="true"
+      />
       <div
         id="site-menu"
         role="dialog"
@@ -130,13 +135,13 @@ export default function Header() {
               onClick={(e) => onNav(e, l.id)}
               aria-current={active === l.id ? "location" : undefined}
               className={cn(
-                "flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.9rem] leading-none transition-colors last:border-b-0 [@media(max-height:520px)]:py-2.5 [@media(max-height:520px)]:text-[1.4rem]",
-                active === l.id ? "text-ink" : "text-ink/55 hover:text-ink"
+                "group flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.9rem] leading-none transition-colors last:border-b-0 [@media(max-height:520px)]:py-2.5 [@media(max-height:520px)]:text-[1.4rem]",
+                active === l.id ? "text-ink" : "text-ink/75 hover:text-ink"
               )}
             >
               {l.label}
-              <span aria-hidden="true" className={cn("font-sans text-[15px] transition-transform", active === l.id ? "translate-x-0 opacity-100" : "-translate-x-1 opacity-40")}>
-                →
+              <span aria-hidden="true" className={cn("menu-arrow", active === l.id && "is-active")}>
+                <ArrowRight size={16} weight="bold" />
               </span>
             </a>
           ))}
