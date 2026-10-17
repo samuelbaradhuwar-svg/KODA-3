@@ -4,7 +4,25 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --g: 1.25rem;
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+  }
+  @media (min-width: 640px) {
+    :root {
+      --g: 2rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    :root {
+      --g: 2.5rem;
+    }
+  }
   html {
+    background-color: #F6F5F1;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -44,11 +62,72 @@
   .t-body {
     @apply max-w-[60ch] text-[15px] leading-[1.7] text-muted;
   }
+  /* Side gutters that also clear a phone's notch or rounded corners when it is held sideways. */
   .wrap {
-    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-10;
+    @apply mx-auto w-full max-w-[1280px];
+    padding-left: max(var(--g), var(--sal));
+    padding-right: max(var(--g), var(--sar));
+  }
+  .safe-x {
+    padding-left: max(var(--g), var(--sal));
+    padding-right: max(var(--g), var(--sar));
   }
   .sec {
     padding-block: clamp(5rem, 11vw, 10rem);
+  }
+  /* Short screens (a phone held sideways): the width-based spacing above would be far too tall. */
+  @media (max-height: 520px) {
+    .sec {
+      padding-block: clamp(2.5rem, 12svh, 4rem);
+    }
+  }
+  /* The intro card and its neighbours, positioned inside the safe area. */
+  .hero-card {
+    left: max(1rem, var(--sal));
+    right: max(1rem, var(--sar));
+  }
+  @media (min-width: 640px) {
+    .hero-card {
+      left: max(var(--g), var(--sal));
+      right: auto;
+    }
+  }
+  .skip-btn {
+    right: max(var(--g), var(--sar));
+    bottom: max(1.5rem, calc(var(--sab) + 0.75rem));
+  }
+  .cta-row {
+    bottom: max(6svh, calc(var(--sab) + 1rem));
+    padding-left: max(1.25rem, var(--sal));
+    padding-right: max(1.25rem, var(--sar));
+  }
+  .fab {
+    right: max(1.25rem, var(--sar));
+    bottom: max(1.25rem, calc(var(--sab) + 0.75rem));
+  }
+  @media (min-width: 640px) {
+    .fab {
+      right: max(2rem, var(--sar));
+      bottom: max(2rem, calc(var(--sab) + 1rem));
+    }
+  }
+  .menu-panel {
+    left: max(0.75rem, var(--sal));
+    right: max(0.75rem, var(--sar));
+    top: calc(var(--sat) + 68px);
+    max-height: calc(100svh - var(--sat) - var(--sab) - 84px);
+  }
+  @media (min-width: 640px) {
+    .menu-panel {
+      left: auto;
+      right: max(2rem, var(--sar));
+      top: calc(var(--sat) + 76px);
+    }
+  }
+  @media (min-width: 1024px) {
+    .menu-panel {
+      right: max(2.5rem, var(--sar));
+    }
   }
   .field {
     @apply w-full border-0 border-b border-paper/25 bg-transparent px-0 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-paper;

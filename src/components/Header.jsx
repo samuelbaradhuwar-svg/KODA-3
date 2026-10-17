@@ -81,7 +81,7 @@ export default function Header() {
     <>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-3 transition-colors duration-300 sm:px-8 sm:py-4 lg:px-10",
+          "safe-x fixed inset-x-0 top-0 z-50 flex items-center justify-between pb-3 pt-[calc(var(--sat)+0.75rem)] transition-colors duration-300 sm:pb-4 sm:pt-[calc(var(--sat)+1rem)]",
           "text-ink",
           solid ? "border-b border-ink/10 bg-paper/90 backdrop-blur-md" : "pointer-events-none border-b border-transparent"
         )}
@@ -118,7 +118,7 @@ export default function Header() {
         aria-label="Site menu"
         inert={!open}
         className={cn(
-          "glass fixed left-3 right-3 top-[68px] z-50 max-h-[calc(100svh-84px)] origin-top-right overflow-y-auto overscroll-contain text-ink transition-[opacity,transform,visibility] duration-300 ease-out sm:left-auto sm:right-8 sm:top-[76px] sm:w-[360px] lg:right-10",
+          "glass menu-panel fixed z-50 origin-top-right overflow-y-auto overscroll-contain text-ink transition-[opacity,transform,visibility] duration-300 ease-out sm:w-[360px]",
           open ? "visible translate-y-0 scale-100 opacity-100" : "invisible -translate-y-2 scale-[0.96] opacity-0"
         )}
       >

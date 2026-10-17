@@ -370,7 +370,7 @@ function MotionHero() {
             so they stay readable over the moving pool. It fades away as soon as the story starts. */}
         <div
           ref={hintRef}
-          className="glass glass-live absolute inset-x-4 bottom-20 z-10 max-w-[34rem] p-6 sm:bottom-9 sm:left-10 sm:right-auto sm:p-8 md:max-w-[min(40rem,calc(100vw-12.5rem))] md:p-10 [@media(max-height:520px)]:bottom-6 [@media(max-height:520px)]:max-w-[30rem] [@media(max-height:520px)]:p-5"
+          className="glass glass-live hero-card absolute bottom-20 z-10 max-w-[34rem] p-6 sm:bottom-9 sm:p-8 md:max-w-[min(40rem,calc(100vw-12.5rem))] md:p-10 [@media(max-height:520px)]:bottom-6 [@media(max-height:520px)]:max-w-[30rem] [@media(max-height:520px)]:p-5"
         >
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/70 [@media(max-height:520px)]:hidden">{EYEBROW}</p>
           <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,3.1rem)] font-extrabold leading-[1.02] tracking-[-0.045em] md:text-[clamp(2.3rem,4.6vw,3.6rem)] [@media(max-height:520px)]:mt-0 [@media(max-height:520px)]:text-[1.6rem]">{HEADLINE}</h1>
@@ -385,7 +385,7 @@ function MotionHero() {
           ref={skipRef}
           type="button"
           onClick={skipIntro}
-          className="absolute bottom-6 right-5 z-10 inline-flex min-h-11 items-center rounded-full bg-paper/80 px-4 text-[13px] font-medium text-ink/80 ring-1 ring-ink/10 backdrop-blur-md transition-colors hover:text-ink sm:right-10 [@media(max-height:520px)]:bottom-3"
+          className="skip-btn absolute z-10 inline-flex min-h-11 items-center rounded-full bg-paper/80 px-4 text-[13px] font-medium text-ink/80 ring-1 ring-ink/10 backdrop-blur-md transition-colors hover:text-ink"
         >
           Skip intro
         </button>
@@ -432,7 +432,7 @@ function MotionHero() {
         </div>
 
         {/* closing calls to action, over the final logo lockup */}
-        <div ref={ctaRef} className="invisible absolute inset-x-0 bottom-[6svh] flex flex-wrap items-center justify-center gap-x-8 gap-y-4 px-5 opacity-0">
+        <div ref={ctaRef} className="cta-row invisible absolute inset-x-0 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 opacity-0">
           <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
           <button onClick={() => scrollToId("portfolio")} className="inline-flex min-h-11 items-center text-sm font-medium text-ink">
             <span className="border-b border-ink/40 pb-0.5 transition-colors hover:border-ink hover:text-ink/60">See our work</span>
@@ -447,7 +447,7 @@ function MotionHero() {
 // laid out as an ordinary first screen.
 function StaticHero() {
   return (
-    <div id="home" className="bg-paper px-5 pb-16 pt-32 sm:px-10 sm:pt-40 lg:pb-24">
+    <div id="home" className="safe-x bg-paper pb-16 pt-32 sm:pt-40 lg:pb-24">
       <div className="mx-auto max-w-[1280px]">
         <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{EYEBROW}</p>
         <h1 className="mt-5 max-w-[16ch] text-[clamp(2.8rem,8vw,7rem)] font-extrabold leading-[0.96] tracking-[-0.055em]">{HEADLINE}</h1>
