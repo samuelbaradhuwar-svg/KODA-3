@@ -13,6 +13,7 @@ import Faq from "./components/Faq.jsx";
 import Contact from "./components/Contact.jsx";
 import Footer from "./components/Footer.jsx";
 import WhatsApp from "./components/WhatsApp.jsx";
+import BackToTop from "./components/BackToTop.jsx";
 import WebsiteDesignDurban from "./pages/WebsiteDesignDurban.jsx";
 import { PAGES } from "./content.js";
 import { scrollToId } from "./lib/utils.js";
@@ -57,6 +58,7 @@ export default function App({ path = "/" }) {
       {path === "/website-design-durban" ? <WebsiteDesignDurban /> : <Home />}
       <Footer />
       <WhatsApp />
+      <BackToTop />
     </div>
   );
 }

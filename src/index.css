@@ -122,6 +122,13 @@
       bottom: max(2rem, calc(var(--sab) + 1rem));
     }
   }
+  .totop {
+    right: max(1.25rem, var(--sar));
+    bottom: max(1.25rem, calc(var(--sab) + 0.75rem));
+  }
+  .totop-lifted {
+    bottom: max(5.25rem, calc(var(--sab) + 4.75rem));
+  }
   .menu-panel {
     left: max(0.75rem, var(--sal));
     right: max(0.75rem, var(--sar));
