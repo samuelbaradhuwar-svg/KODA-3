@@ -1,8 +1,64 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { PROCESS } from "../content.js";
 import { Eyebrow, Headline, Reveal } from "./ui.jsx";
 
+// Alternating surfaces, all from the site palette.
+const SURFACES = [
+  "bg-paper2 text-ink",
+  "bg-ink text-paper",
+  "bg-paper2 text-ink",
+  "bg-ink text-paper",
+];
+
+// Stacking cards: every card sticks to the top of the screen as you scroll, the next one slides up over it, and the
+// card underneath shrinks and dims a little, so the steps read as a stack being dealt one at a time.
+// Without JavaScript (or with reduced motion) the cards still stack through plain CSS sticky positioning.
 export default function Process() {
+  const wrapRefs = useRef([]);
+  const cardRefs = useRef([]);
+  const veilRefs = useRef([]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const cards = cardRefs.current.filter(Boolean);
+    const wraps = wrapRefs.current.filter(Boolean);
+    let raf = 0;
+    let visible = false;
+
+    const update = () => {
+      raf = 0;
+      for (let i = 0; i < cards.length - 1; i++) {
+        // how far the next card has climbed over this one: 0 = just touching its bottom edge, 1 = fully covering it
+        const stickTop = cards[i].getBoundingClientRect().top;
+        const nextTop = wraps[i + 1].getBoundingClientRect().top;
+        const h = cards[i].offsetHeight;
+        const p = Math.min(1, Math.max(0, (stickTop + h - nextTop) / h));
+        cards[i].style.transform = `scale(${(1 - 0.05 * p).toFixed(4)})`;
+        if (veilRefs.current[i]) veilRefs.current[i].style.opacity = (0.35 * p).toFixed(3);
+      }
+    };
+    const onScroll = () => {
+      if (visible && !raf) raf = requestAnimationFrame(update);
+    };
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible) onScroll();
+      },
+      { rootMargin: "20% 0px" }
+    );
+    io.observe(wraps[0].parentElement);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   return (
     <section className="sec">
       <div className="wrap">
@@ -15,13 +71,37 @@ export default function Process() {
             <p className="t-body">Every step has one job: put your business in front of more customers.</p>
           </Reveal>
         </div>
-        <ol className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+
+        <ol className="mt-12 sm:mt-16">
           {PROCESS.map((s, i) => (
-            <Reveal as="li" key={s.n} delay={i * 90} className="border-t border-ink pt-5">
-              <span className="grid h-16 w-16 place-items-center rounded-[1.1rem] border-2 border-ink font-display text-2xl">{s.n}</span>
-              <h3 className="mt-6 text-lg font-medium">{s.title}</h3>
-              <p className="t-body mt-2">{s.desc}</p>
-            </Reveal>
+            <li key={s.n} ref={(el) => { wrapRefs.current[i] = el; }} className="process-slot" style={{ "--i": i }}>
+              <article
+                ref={(el) => { cardRefs.current[i] = el; }}
+                className={`process-card relative overflow-hidden rounded-[28px] ${SURFACES[i % SURFACES.length]}`}
+              >
+                <div className="grid h-full content-between gap-8 p-6 sm:p-10 lg:grid-cols-12 lg:gap-10 lg:p-14">
+                  <div className="flex items-start justify-between lg:col-span-12">
+                    <span className="text-[12px] font-semibold uppercase tracking-[0.18em] opacity-60">
+                      Step {s.n} / 0{PROCESS.length}
+                    </span>
+                    <span className="flex gap-1.5" aria-hidden="true">
+                      {PROCESS.map((_, d) => (
+                        <span key={d} className={`h-1.5 rounded-full transition-all ${d === i ? "w-6 bg-current" : "w-1.5 bg-current opacity-30"}`} />
+                      ))}
+                    </span>
+                  </div>
+                  <span aria-hidden="true" className="xwide text-[clamp(5.5rem,22vw,15rem)] leading-[0.8] tracking-[-0.04em] lg:col-span-5">
+                    {s.n}
+                  </span>
+                  <div className="self-end lg:col-span-6 lg:col-start-7">
+                    <h3 className="xwide text-[clamp(2rem,5vw,4rem)] leading-[1] tracking-[-0.03em]">{s.title}</h3>
+                    <p className={`mt-5 max-w-[34ch] text-[clamp(16px,1.5vw,20px)] leading-[1.55] ${i % 2 ? "text-paper/70" : "text-ink/70"}`}>{s.desc}</p>
+                  </div>
+                </div>
+                {/* darkens this card as the next one covers it */}
+                <span ref={(el) => { veilRefs.current[i] = el; }} aria-hidden="true" className="pointer-events-none absolute inset-0 bg-black opacity-0" />
+              </article>
+            </li>
           ))}
         </ol>
       </div>
