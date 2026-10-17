@@ -190,6 +190,14 @@
     display: inline-block;
     transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
   }
+  /* Lime highlighter behind the key words of each statement (the span that rises is the one that carries it). */
+  .word > span.marker {
+    background: #BDF64F;
+    color: #101010;
+    border-radius: 0.14em;
+    padding: 0 0.12em;
+    margin: 0 -0.04em;
+  }
   .word > span {
     display: inline-block;
     will-change: transform;

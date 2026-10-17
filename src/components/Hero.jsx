@@ -9,6 +9,7 @@ import { scrollToId } from "../lib/utils.js";
 // Brand colours (same values as tailwind.config.js: paper / ink).
 const PAPER = "#F6F6F4";
 const INK = "#101010";
+const LIME = "#BDF64F";
 
 const SERVICES = [
   { n: "01", title: "Website design", body: "A modern, mobile friendly site that builds credibility." },
@@ -25,8 +26,8 @@ const STATEMENT_ONE = [
   { w: "We", muted: true },
   { w: "build", muted: true },
   { w: "your", muted: true },
-  { w: "digital", muted: false },
-  { w: "presence.", muted: false },
+  { w: "digital", muted: false, hl: true },
+  { w: "presence.", muted: false, hl: true },
 ];
 const STATEMENT_TWO = [
   { w: "Koda", muted: true },
@@ -34,8 +35,8 @@ const STATEMENT_TWO = [
   { w: "a", muted: false },
   { w: "studio", muted: false },
   { w: "for", muted: false },
-  { w: "being", muted: false },
-  { w: "seen.", muted: false },
+  { w: "being", muted: false, hl: true },
+  { w: "seen.", muted: false, hl: true },
 ];
 
 // Logo geometry: the mark is ~610 units tall; the wordmark sits 385..535 below centre (lockup ~840 tall).
@@ -342,7 +343,7 @@ function MotionHero() {
             fragmentShader={kodaContourFragmentShader}
             baseColor={INK}
             metalColor="#9aa1b8"
-            highlightColor={PAPER}
+            highlightColor={LIME}
             distortion={1}
             scale={1.15}
             pixelRatio={2}
@@ -402,7 +403,7 @@ function MotionHero() {
           <h2 className="statement max-w-[18ch] text-[clamp(44px,8.2vw,132px)]" aria-label="We build your digital presence.">
             {STATEMENT_ONE.map((it, i) => (
               <span key={it.w} className="word" aria-hidden="true">
-                <span ref={(el) => { oneWords.current[i] = el; }} className={it.muted ? "text-ink/55" : ""}>
+                <span ref={(el) => { oneWords.current[i] = el; }} className={it.muted ? "text-ink/55" : it.hl ? "marker" : ""}>
                   {it.w}
                 </span>
               </span>
@@ -419,7 +420,7 @@ function MotionHero() {
           <h2 className="statement max-w-[16ch] text-[clamp(40px,7vw,112px)]" aria-label="Koda is a studio for being seen.">
             {STATEMENT_TWO.map((it, i) => (
               <span key={it.w} className="word" aria-hidden="true">
-                <span ref={(el) => { twoWords.current[i] = el; }} className={it.muted ? "text-ink/55" : ""}>
+                <span ref={(el) => { twoWords.current[i] = el; }} className={it.muted ? "text-ink/55" : it.hl ? "marker" : ""}>
                   {it.w}
                 </span>
               </span>
@@ -439,7 +440,7 @@ function MotionHero() {
 
         {/* closing calls to action, over the final logo lockup */}
         <div ref={ctaRef} className="cta-row invisible absolute inset-x-0 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 opacity-0">
-          <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
+          <Button variant="lime" className="ring-1 ring-ink/15 hover:bg-ink hover:text-accent" onClick={() => scrollToId("contact")}>Book a free consultation</Button>
           <button onClick={() => scrollToId("portfolio")} className="inline-flex min-h-11 items-center text-sm font-medium text-ink">
             <span className="border-b border-ink/40 pb-0.5 transition-colors hover:border-ink hover:text-ink/60">See our work</span>
           </button>
@@ -456,7 +457,9 @@ function StaticHero() {
     <div id="home" className="safe-x bg-paper pb-16 pt-32 sm:pt-40 lg:pb-24">
       <div className="mx-auto max-w-[1280px]">
         <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{EYEBROW}</p>
-        <h1 className="mt-5 max-w-[16ch] text-[clamp(2.8rem,8vw,7rem)] font-extrabold leading-[0.96] tracking-[-0.055em]">{HEADLINE}</h1>
+        <h1 className="mt-5 max-w-[16ch] text-[clamp(2.8rem,8vw,7rem)] font-extrabold leading-[0.96] tracking-[-0.055em]">
+          Your business deserves to be <span className="rounded-[0.14em] bg-accent px-[0.12em]">found.</span>
+        </h1>
         <p className="mt-6 max-w-[46ch] text-base leading-[1.7] text-muted">{LEAD}</p>
         <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
           <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
