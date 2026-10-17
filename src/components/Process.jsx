@@ -79,7 +79,7 @@ export default function Process() {
                 ref={(el) => { cardRefs.current[i] = el; }}
                 className={`process-card relative overflow-hidden rounded-[28px] ${SURFACES[i % SURFACES.length]}`}
               >
-                <div className="grid h-full content-between gap-8 p-6 sm:p-10 lg:grid-cols-12 lg:gap-10 lg:p-14">
+                <div className="process-body grid h-full content-between gap-8 p-6 sm:p-10 lg:grid-cols-12 lg:gap-10 lg:p-14">
                   <div className="flex items-start justify-between lg:col-span-12">
                     <span className="text-[12px] font-semibold uppercase tracking-[0.18em] opacity-60">
                       Step {s.n} / 0{PROCESS.length}
@@ -90,12 +90,12 @@ export default function Process() {
                       ))}
                     </span>
                   </div>
-                  <span aria-hidden="true" className="xwide text-[clamp(5.5rem,22vw,15rem)] leading-[0.8] tracking-[-0.04em] lg:col-span-5">
+                  <span aria-hidden="true" className="process-num xwide text-[clamp(5.5rem,22vw,15rem)] leading-[0.8] tracking-[-0.04em] lg:col-span-5">
                     {s.n}
                   </span>
                   <div className="self-end lg:col-span-6 lg:col-start-7">
-                    <h3 className="xwide text-[clamp(2rem,5vw,4rem)] leading-[1] tracking-[-0.03em]">{s.title}</h3>
-                    <p className={`mt-5 max-w-[34ch] text-[clamp(16px,1.5vw,20px)] leading-[1.55] ${i % 2 ? "text-paper/70" : "text-ink/70"}`}>{s.desc}</p>
+                    <h3 className="process-title xwide text-[clamp(2rem,5vw,4rem)] leading-[1] tracking-[-0.03em]">{s.title}</h3>
+                    <p className={`process-desc mt-5 max-w-[34ch] text-[clamp(16px,1.5vw,20px)] leading-[1.55] ${i % 2 ? "text-paper/70" : "text-ink/70"}`}>{s.desc}</p>
                   </div>
                 </div>
                 {/* darkens this card as the next one covers it */}

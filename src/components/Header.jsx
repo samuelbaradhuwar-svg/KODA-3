@@ -123,7 +123,7 @@ export default function Header() {
           open ? "visible translate-y-0 scale-100 opacity-100" : "invisible -translate-y-2 scale-[0.96] opacity-0"
         )}
       >
-        <nav aria-label="Primary" className="flex flex-col px-5 pb-2 pt-3 sm:px-6">
+        <nav aria-label="Primary" className="flex flex-col px-5 pb-2 pt-3 sm:px-6 [@media(max-height:520px)]:pt-1.5 [@media(max-height:520px)]:pb-0">
           {NAV_LINKS.map((l) => (
             <a
               key={l.id}
@@ -142,11 +142,11 @@ export default function Header() {
             </a>
           ))}
         </nav>
-        <div className="px-5 pb-5 pt-2 sm:px-6">
+        <div className="px-5 pb-5 pt-2 sm:px-6 [@media(max-height:520px)]:pb-3 [@media(max-height:520px)]:pt-1">
           <a
             href="/#contact"
             onClick={(e) => onNav(e, "contact")}
-            className="grid h-12 place-items-center rounded-full bg-ink text-sm font-medium text-paper transition-[background,transform] duration-300 hover:bg-ink2 active:scale-[0.98]"
+            className="grid h-12 place-items-center rounded-full bg-ink text-sm font-medium text-paper transition-[background,transform] duration-300 hover:bg-ink2 active:scale-[0.98] [@media(max-height:520px)]:h-11"
           >
             Book a call
           </a>
