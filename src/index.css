@@ -364,3 +364,11 @@
 @media (max-width: 340px) {
   .hero-h1 { font-size: 1.4rem; }
 }
+
+/* Wordmark: extended heavy caps to match the KODA logo lettering */
+.logo-word {
+  font-family: "Archivo Variable", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  font-stretch: 125%;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}

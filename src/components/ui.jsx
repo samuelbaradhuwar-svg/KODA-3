@@ -175,7 +175,7 @@ export function Logo({ light = false, className }) {
   return (
     <span className={cn("inline-flex select-none items-center gap-2.5", className)}>
       <img src={light ? LOGO_LIGHT : LOGO_DARK} alt="" width={240} height={250} className="h-8 w-auto" draggable={false} />
-      <span className={cn("text-[1.15rem] font-semibold uppercase tracking-[-0.01em]", light ? "text-paper" : "text-ink")}>KODA</span>
+      <span className={cn("logo-word text-[1.08rem] uppercase leading-none", light ? "text-paper" : "text-ink")}>KODA</span>
     </span>
   );
 }
