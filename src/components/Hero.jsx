@@ -254,6 +254,8 @@ function MotionHero() {
     let raf = 0;
     let last = 0;
     let inView = true;
+    // Touch screens move in big flicks, so the story is allowed to advance more slowly there.
+    const maxRate = window.matchMedia("(hover: none)").matches ? 0.12 : 0.25;
 
     const readTarget = () => {
       const top = trackRef.current ? trackRef.current.getBoundingClientRect().top : 0;
@@ -266,7 +268,11 @@ function MotionHero() {
     const frame = (now) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      current += (target - current) * (1 - Math.exp(-dt * 11));
+      // Ease towards the scroll position, but never faster than `maxRate` (a share of the whole story per second),
+      // so a hard flick of the thumb cannot skip past beats. Once the very end of the page track is reached the
+      // limit is lifted so the story always finishes before the hero scrolls away.
+      const cap = maxRate * (target > 0.999 ? 4 : 1) * dt;
+      current += Math.max(-cap, Math.min(cap, (target - current) * (1 - Math.exp(-dt * 11))));
       if (Math.abs(target - current) < 0.00002) current = target;
       render(current);
       raf = current === target ? 0 : requestAnimationFrame(frame);

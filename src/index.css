@@ -147,6 +147,14 @@
     height: 650vh;
     height: 650svh;
   }
+  /* Touch screens: a swipe covers a lot of ground, so the story gets much more track. The pixel floor keeps a phone
+     held sideways (very short) from racing through it. */
+  @media (hover: none) {
+    .track {
+      height: 1100vh;
+      height: clamp(9000px, 1100svh, 10500px);
+    }
+  }
 
   /* The two headline statements: each word sits in a clipping box so it can rise into place. The box has
      generous padding (cancelled by negative margins) so glyph overhangs, tight letter-spacing and
