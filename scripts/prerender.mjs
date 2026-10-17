@@ -14,7 +14,7 @@ if (!template.includes('<div id="root"></div>')) throw new Error("Root placehold
 
 // Preload the three fonts used above the fold so the text does not reflow when they arrive.
 const assets = fs.readdirSync(path.resolve("dist/assets"));
-const fontFiles = [/^geist-latin-wght-normal-.*\.woff2$/, /^instrument-serif-latin-400-normal-.*\.woff2$/, /^instrument-serif-latin-400-italic-.*\.woff2$/]
+const fontFiles = [/^geist-latin-wght-normal-.*\.woff2$/, /^archivo-latin-standard-normal-.*\.woff2$/, /^instrument-serif-latin-400-normal-.*\.woff2$/, /^instrument-serif-latin-400-italic-.*\.woff2$/]
   .map((re) => assets.find((f) => re.test(f)))
   .filter(Boolean);
 const preloads = fontFiles.map((f) => `<link rel="preload" href="/assets/${f}" as="font" type="font/woff2" crossorigin>`).join("\n    ");

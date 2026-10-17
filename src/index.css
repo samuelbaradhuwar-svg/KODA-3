@@ -1,4 +1,5 @@
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/archivo/standard.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -323,4 +324,43 @@
     transform: none !important;
     transition: none !important;
   }
+}
+
+/* Hero headline: extended heavy caps with a slanted lime slab on "found." */
+.hero-h1 {
+  font-family: "Archivo Variable", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: 1.7rem;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+.hero-h1 .hl-lead { display: block; }
+.hero-h1 .hl-sub {
+  display: block;
+  margin: 0.55em 0 0.5em;
+  font-size: 0.52em;
+  font-stretch: 100%;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.hero-h1 .hl-found {
+  display: inline-block;
+  padding: 0.08em 0.32em 0.02em;
+  font-size: 1.28em;
+  color: #101010;
+  background: #BDF64F;
+  transform: skewX(-10deg);
+  box-shadow: 0.19em 0.19em 0 #101010;
+}
+@media (min-width: 768px) {
+  .hero-h1 { font-size: clamp(2.1rem, 3.3vw, 2.7rem); }
+}
+@media (max-height: 520px) {
+  .hero-h1 { font-size: 1.25rem; }
+  .hero-h1 .hl-sub { margin: 0.3em 0; }
+}
+@media (max-width: 340px) {
+  .hero-h1 { font-size: 1.4rem; }
 }

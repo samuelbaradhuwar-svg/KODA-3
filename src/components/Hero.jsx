@@ -380,7 +380,9 @@ function MotionHero() {
           className="glass glass-live hero-card absolute bottom-20 z-10 max-w-[34rem] p-6 sm:bottom-9 sm:p-8 md:max-w-[min(40rem,calc(100vw-12.5rem))] md:p-10 [@media(max-height:520px)]:bottom-6 [@media(max-height:520px)]:max-w-[30rem] [@media(max-height:520px)]:p-5"
         >
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/70 [@media(max-height:520px)]:hidden">{EYEBROW}</p>
-          <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,3.1rem)] font-extrabold leading-[1.02] tracking-[-0.045em] md:text-[clamp(2.3rem,4.6vw,3.6rem)] [@media(max-height:520px)]:mt-0 [@media(max-height:520px)]:text-[1.6rem]">{HEADLINE}</h1>
+          <h1 className="hero-h1 mt-3 [@media(max-height:520px)]:mt-0">
+            <span className="hl-lead">Your business</span> <span className="hl-sub">deserves to be</span> <span className="hl-found">found.</span>
+          </h1>
           <p className="mt-3 text-[15px] leading-[1.6] text-ink/75 md:text-base [@media(max-height:520px)]:hidden">{LEAD}</p>
           <div className="mt-6 [@media(max-height:520px)]:mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
