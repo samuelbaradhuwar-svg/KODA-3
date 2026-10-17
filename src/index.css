@@ -59,14 +59,14 @@
 /* ---- Hero (pinned scroll story) and the menu panel ---------------------------------------------- */
 @layer components {
   /* Sizes in small-viewport units: stable on phones while the browser's address bar slides in and out.
-     The 100vh / 1350vh lines are the fallback for browsers without svh. */
+     The 100vh / 650vh lines are the fallback for browsers without svh. */
   .stage {
     height: 100vh;
     height: 100svh;
   }
   .track {
-    height: 1350vh;
-    height: 1350svh;
+    height: 650vh;
+    height: 650svh;
   }
 
   /* The two headline statements: each word sits in a clipping box so it can rise into place. The box has

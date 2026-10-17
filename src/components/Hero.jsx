@@ -16,6 +16,11 @@ const SERVICES = [
   { n: "03", title: "Digital presence", body: "One consistent story across your site, profile and email." },
 ];
 
+const EYEBROW = "Web design studio, Durban";
+const HEADLINE = "Your business deserves to be found.";
+const LEAD =
+  "KODA is a Durban web design studio. We build modern websites, set up and optimise your Google Business profile, and help local businesses turn online visibility into real customers.";
+
 const STATEMENT_ONE = [
   { w: "We", muted: true },
   { w: "build", muted: true },
@@ -37,13 +42,13 @@ const STATEMENT_TWO = [
 const U = 610;
 
 // Timeline units. Each beat is a block of units; the whole thing maps onto the hero's scroll distance.
-const T = 2.0; // the pool zooms and dissolves into the page
-const WORD_STAGGER = 0.11;
+const T = 1.4; // the pool zooms and dissolves into the page
+const WORD_STAGGER = 0.09;
 
 /** Fade/slide parameter u: 1 = waiting below, 0 = shown, -1 = gone above. */
 const fade = (u) => Math.max(0, 1 - Math.abs(u));
 
-export default function Hero() {
+function MotionHero() {
   const trackRef = React.useRef(null);
   const stageRef = React.useRef(null);
   const hintRef = React.useRef(null);
@@ -102,47 +107,47 @@ export default function Hero() {
 
       // 1. the page zooms gently as the pool dissolves into the website
       tl.to("poolK", 1.35, 0, T)
-        .to("hint", 0, 0, 0.4)
-        .to("cover", 1, 0.9, 1.1, ease.inOut(2));
+        .to("hint", 0, 0, 0.35)
+        .to("cover", 1, 0.6, 0.9, ease.inOut(2));
 
       // 2. "We build your digital presence." gets its own held beat
-      tl.to("tagA", 0, T - 0.2, 0.6);
+      tl.to("tagA", 0, T - 0.2, 0.5);
       wordsIn("a", nOne, T);
-      tl.to("subA", 0, T + 1.0, 0.8)
-        .to("tagA", -1, T + 3.6, 0.5, ease.in(3))
-        .to("subA", -1, T + 3.6, 0.5, ease.in(3));
-      wordsOut("a", nOne, T + 3.6);
+      tl.to("subA", 0, T + 0.8, 0.7)
+        .to("tagA", -1, T + 2.5, 0.45, ease.in(3))
+        .to("subA", -1, T + 2.5, 0.45, ease.in(3));
+      wordsOut("a", nOne, T + 2.5);
 
       // 3. "Koda is a studio for being seen." with the logo above it (only once beat 2 has fully left)
-      tl.to("ink", 1, T + 4.6, 0.8, ease.out(2)).to("tagB", 0, T + 4.8, 0.6);
-      wordsIn("b", nTwo, T + 4.9);
-      tl.to("tagB", -1, T + 7.6, 0.5, ease.in(3));
-      wordsOut("b", nTwo, T + 7.6);
+      tl.to("ink", 1, T + 3.3, 0.7, ease.out(2)).to("tagB", 0, T + 3.5, 0.5);
+      wordsIn("b", nTwo, T + 3.6);
+      tl.to("tagB", -1, T + 5.5, 0.45, ease.in(3));
+      wordsOut("b", nTwo, T + 5.5);
 
       // 4. only after the words are gone does the mark morph into the rounded-square outline
-      tl.to("markOp", 0, T + 8.5, 1.0)
-        .to("markScale", 0.86, T + 8.5, 1.0)
-        .to("outline", 1, T + 8.6, 1.0)
-        .to("scale", base * 0.74, T + 8.6, 1.2)
-        .to("offY", 0, T + 8.6, 1.2);
+      tl.to("markOp", 0, T + 6.2, 0.8)
+        .to("markScale", 0.86, T + 6.2, 0.8)
+        .to("outline", 1, T + 6.3, 0.8)
+        .to("scale", base * 0.74, T + 6.3, 1.0)
+        .to("offY", 0, T + 6.3, 1.0);
 
       // 5. the three services, one at a time, each with room to be read
       for (let i = 0; i < 3; i++) {
-        const start = T + 10.0 + i * 2.1;
-        tl.to(`svc${i}`, 0, start, 0.6, ease.out(3)).to(`svc${i}`, -1, start + 1.6, 0.5, ease.in(3));
+        const start = T + 7.4 + i * 1.7;
+        tl.to(`svc${i}`, 0, start, 0.5, ease.out(3)).to(`svc${i}`, -1, start + 1.25, 0.45, ease.in(3));
       }
 
       // 6. the mark returns and KODA spells out beneath it; then the calls to action arrive
-      const endAt = T + 10.0 + 3 * 2.1 + 0.2;
-      tl.to("markOp", 1, endAt, 1.0)
-        .to("markScale", 1, endAt, 1.0)
-        .to("outline", 0, endAt, 1.0)
-        .to("scale", lockup, endAt, 1.2)
-        .to("offY", -112 * lockup - H * 0.04, endAt, 1.2)
-        .to("word", 1, endAt + 0.5, 1.4, ease.linear)
-        .to("skip", 0, endAt + 1.4, 0.5)
-        .to("cta", 0, endAt + 1.8, 0.7, ease.out(3))
-        .holdUntil(endAt + 1.8 + 0.7 + 1.6);
+      const endAt = T + 7.4 + 3 * 1.7 + 0.1;
+      tl.to("markOp", 1, endAt, 0.8)
+        .to("markScale", 1, endAt, 0.8)
+        .to("outline", 0, endAt, 0.8)
+        .to("scale", lockup, endAt, 1.0)
+        .to("offY", -112 * lockup - H * 0.04, endAt, 1.0)
+        .to("word", 1, endAt + 0.4, 1.2, ease.linear)
+        .to("skip", 0, endAt + 1.1, 0.4)
+        .to("cta", 0, endAt + 1.4, 0.6, ease.out(3))
+        .holdUntil(endAt + 1.4 + 0.6 + 1.2);
       return tl;
     }
 
@@ -324,16 +329,6 @@ export default function Hero() {
   return (
     <div ref={trackRef} id="home" className="track relative">
       <section ref={stageRef} aria-label="KODA introduction" className="stage sticky top-0 w-full overflow-hidden bg-paper">
-        {/* Real text for search engines and screen readers. The visible headlines below are the animated story. */}
-        <div className="sr-only">
-          <p>Web design studio, Durban</p>
-          <h1>Your business deserves to be found.</h1>
-          <p>
-            KODA is a Durban web design studio. We build modern websites, set up and optimise your Google Business profile, and help local businesses turn
-            online visibility into real customers.
-          </p>
-        </div>
-
         {/* Full-screen pool of flowing shapes that the cursor stirs */}
         <div ref={poolRef} aria-hidden="true" className="absolute inset-0 will-change-transform">
           <LiquidMetalShader
@@ -371,8 +366,19 @@ export default function Hero() {
           </g>
         </svg>
 
-        <div ref={hintRef} aria-hidden="true" className="absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full bg-paper/85 px-4 py-2 text-center text-[13px] uppercase tracking-[0.08em] text-muted backdrop-blur sm:bottom-9">
-          {touch ? "Drag to stir · scroll to begin" : "Move your mouse · scroll to begin"}
+        {/* First view: the real headline, a line about what we do and the two main actions, on frosted paper
+            so they stay readable over the moving pool. It fades away as soon as the story starts. */}
+        <div
+          ref={hintRef}
+          className="absolute inset-x-4 bottom-20 z-10 max-w-[34rem] rounded-[1.75rem] bg-paper/85 p-6 shadow-[0_30px_60px_-30px_rgba(10,10,11,0.55)] ring-1 ring-ink/10 backdrop-blur-xl sm:bottom-9 sm:left-10 sm:right-auto sm:p-8"
+        >
+          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{EYEBROW}</p>
+          <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,3.1rem)] font-extrabold leading-[1.02] tracking-[-0.045em]">{HEADLINE}</h1>
+          <p className="mt-3 text-[15px] leading-[1.6] text-muted">{LEAD}</p>
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
+            <span className="text-[13px] text-muted">{touch ? "Scroll to see how we work" : "Move your mouse, then scroll"}</span>
+          </div>
         </div>
 
         <button
@@ -390,7 +396,7 @@ export default function Hero() {
           <h2 className="statement max-w-[18ch] text-[clamp(44px,8.2vw,132px)]" aria-label="We build your digital presence.">
             {STATEMENT_ONE.map((it, i) => (
               <span key={it.w} className="word" aria-hidden="true">
-                <span ref={(el) => { oneWords.current[i] = el; }} className={it.muted ? "text-ink/40" : ""}>
+                <span ref={(el) => { oneWords.current[i] = el; }} className={it.muted ? "text-ink/55" : ""}>
                   {it.w}
                 </span>
               </span>
@@ -407,7 +413,7 @@ export default function Hero() {
           <h2 className="statement max-w-[16ch] text-[clamp(40px,7vw,112px)]" aria-label="Koda is a studio for being seen.">
             {STATEMENT_TWO.map((it, i) => (
               <span key={it.w} className="word" aria-hidden="true">
-                <span ref={(el) => { twoWords.current[i] = el; }} className={it.muted ? "text-ink/40" : ""}>
+                <span ref={(el) => { twoWords.current[i] = el; }} className={it.muted ? "text-ink/55" : ""}>
                   {it.w}
                 </span>
               </span>
@@ -435,4 +441,42 @@ export default function Hero() {
       </section>
     </div>
   );
+}
+
+// For visitors who ask their device for less motion: no pinned scroll story, no moving pool. The same message,
+// laid out as an ordinary first screen.
+function StaticHero() {
+  return (
+    <div id="home" className="bg-paper px-5 pb-16 pt-32 sm:px-10 sm:pt-40 lg:pb-24">
+      <div className="mx-auto max-w-[1280px]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{EYEBROW}</p>
+        <h1 className="mt-5 max-w-[16ch] text-[clamp(2.8rem,8vw,7rem)] font-extrabold leading-[0.96] tracking-[-0.055em]">{HEADLINE}</h1>
+        <p className="mt-6 max-w-[46ch] text-base leading-[1.7] text-muted">{LEAD}</p>
+        <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+          <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
+          <button onClick={() => scrollToId("portfolio")} className="inline-flex min-h-11 items-center text-sm font-medium text-ink">
+            <span className="border-b border-ink/40 pb-0.5 transition-colors hover:border-ink hover:text-ink/60">See our work</span>
+          </button>
+        </div>
+        <ol className="mt-16 grid gap-x-10 border-t border-ink/15 sm:grid-cols-3">
+          {SERVICES.map((sv) => (
+            <li key={sv.n} className="border-b border-ink/15 py-6 sm:border-b-0">
+              <span className="text-[13px] tracking-[0.14em] text-muted">{sv.n} / 03</span>
+              <h2 className="mb-2 mt-3 text-[1.6rem] font-bold leading-[1.05] tracking-[-0.04em]">{sv.title}</h2>
+              <p className="text-[15px] leading-snug text-muted">{sv.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+export default function Hero() {
+  // Chosen before the first paint on the client; the server always renders the animated version.
+  const [still, setStill] = React.useState(false);
+  React.useLayoutEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setStill(true);
+  }, []);
+  return still ? <StaticHero /> : <MotionHero />;
 }

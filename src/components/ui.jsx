@@ -77,7 +77,7 @@ export function Headline({ as: Tag = "h2", className, light = false, children })
 
   const parts = React.Children.toArray(children);
   const hasEm = parts.some((c) => React.isValidElement(c) && c.type === "em");
-  const soft = light ? "text-paper/40" : "text-ink/40";
+  const soft = light ? "text-paper/50" : "text-ink/55";
   let n = 0;
   const words = [];
   const add = (text, strong) => {

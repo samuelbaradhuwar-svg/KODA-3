@@ -3,13 +3,36 @@ import { NAV_LINKS } from "../content.js";
 import { Logo } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
 
-// Logo on the left, burger on the right. Both are drawn in the light colour with mix-blend-mode: difference,
-// so they flip to dark over light areas (the paper background, the pale parts of the hero art) and stay light
-// over dark ones, with nothing behind them. The links live in a glass panel that opens from the burger.
+// Logo on the left, burger on the right, always in dark ink. Over the opening hero each sits on a small frosted
+// pill, so it stays readable on the black and white pool. Once the hero has scrolled away the bar becomes a solid
+// paper strip, so the logo and burger never sit on top of page text. The links live in a glass panel that opens
+// from the burger.
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("");
+  const [solid, setSolid] = useState(false);
   const toggleRef = useRef(null);
+
+  // Solid bar once the hero is behind us (and always on pages that have no hero).
+  useEffect(() => {
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const hero = document.getElementById("home");
+      setSolid(!hero || hero.getBoundingClientRect().bottom < 80);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   // Highlight the link for the section crossing the middle of the screen, and none while the hero is showing.
   useEffect(() => {
@@ -56,9 +79,20 @@ export default function Header() {
 
   return (
     <>
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-3 text-paper mix-blend-difference sm:px-8 sm:py-4 lg:px-10">
-        <a href="/" aria-label="KODA home" onClick={onLogo} className="pointer-events-auto inline-flex min-h-11 items-center">
-          <Logo light />
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-3 transition-colors duration-300 sm:px-8 sm:py-4 lg:px-10",
+          "text-ink",
+          solid ? "border-b border-ink/10 bg-paper/90 backdrop-blur-md" : "pointer-events-none border-b border-transparent"
+        )}
+      >
+        <a
+          href="/"
+          aria-label="KODA home"
+          onClick={onLogo}
+          className={cn("pointer-events-auto inline-flex min-h-11 items-center rounded-full px-3 transition-colors duration-300", !solid && "bg-paper/80 ring-1 ring-ink/10 backdrop-blur-md")}
+        >
+          <Logo />
         </a>
         <button
           ref={toggleRef}
@@ -67,7 +101,7 @@ export default function Header() {
           aria-expanded={open}
           aria-controls="site-menu"
           onClick={() => setOpen((v) => !v)}
-          className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full border border-paper/70 transition-transform active:scale-95"
+          className={cn("pointer-events-auto grid h-11 w-11 place-items-center rounded-full border transition-transform active:scale-95", solid ? "border-ink/40" : "border-ink/30 bg-paper/80 backdrop-blur-md")}
         >
           <span className="relative block h-[10px] w-[18px]">
             <span className={cn("absolute left-0 top-0 h-[1.5px] w-full bg-current transition-transform duration-300", open && "translate-y-[4.25px] rotate-45")} />
