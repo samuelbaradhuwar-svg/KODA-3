@@ -1,6 +1,7 @@
 import React from "react";
 import { SERVICES } from "../content.js";
-import { Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
+import { Button, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
+import { scrollToId } from "../lib/utils.js";
 
 export function ServiceList({ items = SERVICES }) {
   return (
@@ -35,6 +36,19 @@ export default function Services() {
           </Reveal>
         </div>
         <ServiceList />
+
+        <Reveal className="mt-12 grid items-center gap-6 rounded-[2rem] bg-ink px-6 py-10 text-paper sm:px-12 sm:py-14 lg:grid-cols-12">
+          <div className="lg:col-span-8">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-paper/60">Starting from scratch?</p>
+            <h3 className="mt-4 text-[clamp(1.9rem,3.6vw,3.2rem)] font-extrabold leading-[1.02] tracking-[-0.045em]">Just an idea? No pressure.</h3>
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.7] text-paper/70">
+              Many businesses begin with nothing more than a name or a sketch. Tell us what you have in mind and we will help shape the logo, the brand and the website, at your pace, with no obligation.
+            </p>
+          </div>
+          <div className="lg:col-span-4 lg:justify-self-end">
+            <Button variant="light" onClick={() => scrollToId("contact")}>Share your idea</Button>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

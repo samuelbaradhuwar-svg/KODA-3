@@ -9,7 +9,7 @@ export const NAV_LINKS = [
   { label: "Contact", id: "contact" },
 ];
 
-export const TICKER = ["Websites", "Google Business profiles", "Google Workspace", "Local SEO", "Booking systems", "Online stores", "Ongoing care"];
+export const TICKER = ["Websites", "Google Business profiles", "Google Workspace", "Branding and logos", "Local SEO", "Booking systems", "Online stores", "Ongoing care"];
 
 export const PRESENCE = [
   {
@@ -57,6 +57,7 @@ export const PROJECTS = [
 
 export const SERVICES = [
   { title: "Website Design", desc: "Professional websites built around how your customers search, browse and buy, with WhatsApp and Google Maps built in." },
+  { title: "Branding and Logo Design", desc: "A logo and a clear brand look (colours, type and style) so your business looks the same everywhere, from your website to your social pages. A good place to start if all you have is an idea." },
   { title: "Website Redesign", desc: "A modern rebuild of your existing site, keeping your business the same while delivering faster load times, sharper design and better results." },
   { title: "Ecommerce Stores", desc: "Fully functional online stores with secure checkout, inventory management and shopping flows designed for mobile." },
   { title: "Booking Systems", desc: "Let customers book appointments, tables or services online, 24/7, without a single phone call." },
@@ -126,6 +127,8 @@ export const FAQS = [
   { q: "Do you provide hosting?", a: "Yes. Every website we build includes secure, managed hosting with SSL, backups and uptime monitoring, so you never have to think about the technical side." },
   { q: "Can I update my website?", a: "Absolutely. We build every site with a simple content editor so you can update text, images and offers yourself, and we're always on hand if you'd rather we do it." },
   { q: "Do you provide support?", a: "Yes. Every plan includes support after launch, and our maintenance service covers ongoing updates, security monitoring and small changes for a flat monthly fee." },
+  { q: "Can you help if I only have an idea?", a: "Yes. Plenty of businesses start with just a name or a sketch. We can design your logo and brand look first, then build your website and set up Google, at a pace that suits you. There is no pressure and no obligation." },
+  { q: "Do you design logos and brands?", a: "Yes. We design logos and a simple brand look (colours, type and style), so your website, Google profile, email and social pages all feel like one business. Ask us for a quote when you get in touch." },
   { q: "Do I need to know anything technical to get started?", a: "No. We handle the strategy, design, build and setup from start to finish. All we need from you is a short call about your business." },
 ];
 

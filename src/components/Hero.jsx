@@ -269,9 +269,9 @@ function MotionHero() {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       // Ease towards the scroll position, but never faster than `maxRate` (a share of the whole story per second),
-      // so a hard flick of the thumb cannot skip past beats. Once the very end of the page track is reached the
-      // limit is lifted so the story always finishes before the hero scrolls away.
-      const cap = maxRate * (target > 0.999 ? 4 : 1) * dt;
+      // so a hard flick of the thumb cannot skip past beats. The limit is relaxed when scrolling back up (so returning
+      // to the top does not take seconds) and at the very end of the track (so the story always finishes).
+      const cap = maxRate * (target > 0.999 || target < current ? 4 : 1) * dt;
       current += Math.max(-cap, Math.min(cap, (target - current) * (1 - Math.exp(-dt * 11))));
       if (Math.abs(target - current) < 0.00002) current = target;
       render(current);

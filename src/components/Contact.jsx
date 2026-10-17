@@ -64,7 +64,7 @@ export default function Contact() {
             Tell us about <em>your business.</em>
           </Headline>
           <p className="mt-6 max-w-[40ch] text-[15px] leading-[1.7] text-paper/65">
-            Fill in the form or reach us directly. We reply within one working day.
+            Fill in the form or reach us directly. We reply within one working day. Only an idea so far? That is perfectly fine, and there is no pressure.
           </p>
 
           <ul className="mt-9 grid gap-0 border-t border-paper/15">
@@ -133,7 +133,7 @@ export default function Contact() {
               </Field>
               <div className="sm:col-span-2">
                 <Field label="What do you need help with?" id="f-message">
-                  <textarea id="f-message" name="message" value={form.message} onChange={change} rows={4} placeholder="Tell us about your business and what you're looking for." className="field resize-none" />
+                  <textarea id="f-message" name="message" value={form.message} onChange={change} rows={4} placeholder="Tell us about your business or your idea, and what you're looking for." className="field resize-none" />
                 </Field>
               </div>
               <div className="sm:col-span-2">
