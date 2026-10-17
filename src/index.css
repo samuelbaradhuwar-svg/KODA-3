@@ -135,7 +135,36 @@
   }
 }
 
+/* The hero card: the same glass, with a soft highlight that slowly drifts across it like light on liquid. */
+@layer components {
+  .glass-live {
+    overflow: hidden;
+    /* a little more paper tint than the menu glass, so body text stays readable over the darkest part of the pool */
+    background: linear-gradient(135deg, rgb(246 245 241 / 0.62), rgb(236 235 230 / 0.5) 52%, rgb(246 245 241 / 0.56));
+  }
+  .glass-live::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    mix-blend-mode: screen;
+    background:
+      radial-gradient(38% 30% at 30% 20%, rgb(255 255 255 / 0.5), transparent 70%),
+      radial-gradient(30% 26% at 78% 78%, rgb(255 255 255 / 0.28), transparent 70%);
+    animation: glass-drift 11s ease-in-out infinite alternate;
+  }
+}
+@keyframes glass-drift {
+  from { transform: translate3d(-6%, -4%, 0) rotate(0deg); }
+  to { transform: translate3d(8%, 6%, 0) rotate(6deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .glass-live::before {
+    animation: none;
+  }
   html {
     scroll-behavior: auto;
   }

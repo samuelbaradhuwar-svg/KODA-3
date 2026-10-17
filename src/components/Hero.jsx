@@ -370,14 +370,14 @@ function MotionHero() {
             so they stay readable over the moving pool. It fades away as soon as the story starts. */}
         <div
           ref={hintRef}
-          className="absolute inset-x-4 bottom-20 z-10 max-w-[34rem] rounded-[1.75rem] bg-paper/85 p-6 shadow-[0_30px_60px_-30px_rgba(10,10,11,0.55)] ring-1 ring-ink/10 backdrop-blur-xl sm:bottom-9 sm:left-10 sm:right-auto sm:p-8"
+          className="glass glass-live absolute inset-x-4 bottom-20 z-10 max-w-[34rem] p-6 sm:bottom-9 sm:left-10 sm:right-auto sm:p-8"
         >
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{EYEBROW}</p>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/70">{EYEBROW}</p>
           <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,3.1rem)] font-extrabold leading-[1.02] tracking-[-0.045em]">{HEADLINE}</h1>
-          <p className="mt-3 text-[15px] leading-[1.6] text-muted">{LEAD}</p>
+          <p className="mt-3 text-[15px] leading-[1.6] text-ink/75">{LEAD}</p>
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
-            <span className="text-[13px] text-muted">{touch ? "Scroll to see how we work" : "Move your mouse, then scroll"}</span>
+            <span className="text-[13px] text-ink/70">{touch ? "Scroll to see how we work" : "Move your mouse, then scroll"}</span>
           </div>
         </div>
 
