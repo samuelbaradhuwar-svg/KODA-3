@@ -209,6 +209,8 @@
   .glass {
     border-radius: 28px;
     isolation: isolate;
+    /* Its own compositing layer: stops some phone GPUs drawing the blur as a square behind the rounded corners. */
+    transform: translateZ(0);
     background: linear-gradient(135deg, rgb(255 255 255 / 0.34), rgb(206 218 244 / 0.26) 52%, rgb(255 255 255 / 0.26));
     -webkit-backdrop-filter: blur(24px) saturate(190%) contrast(0.62) brightness(1.32);
     backdrop-filter: blur(24px) saturate(190%) contrast(0.62) brightness(1.32);
@@ -227,7 +229,6 @@
     z-index: -1;
     border-radius: inherit;
     pointer-events: none;
-    mix-blend-mode: screen;
     background:
       radial-gradient(160px 50px at 50% 0%, rgb(255 255 255 / 0.35), transparent 75%),
       linear-gradient(112deg, transparent 16%, rgb(255 255 255 / 0.3) 28%, transparent 40%);
@@ -237,27 +238,29 @@
 /* The hero card: the same glass, with a soft highlight that slowly drifts across it like light on liquid. */
 @layer components {
   .glass-live {
-    overflow: hidden;
     /* a little more paper tint than the menu glass, so body text stays readable over the darkest part of the pool */
     background: linear-gradient(135deg, rgb(246 246 244 / 0.62), rgb(232 231 229 / 0.5) 52%, rgb(246 246 244 / 0.56));
   }
+  /* The drifting highlight is a background that pans inside the card (no moving, clipped or blended child layer,
+     which is what makes some browsers lose the rounded corners of a blurred backdrop). */
   .glass-live::before {
     content: "";
     position: absolute;
-    inset: -20%;
+    inset: 0;
     z-index: -1;
     pointer-events: none;
     border-radius: inherit;
-    mix-blend-mode: screen;
     background:
-      radial-gradient(38% 30% at 30% 20%, rgb(255 255 255 / 0.5), transparent 70%),
-      radial-gradient(30% 26% at 78% 78%, rgb(255 255 255 / 0.28), transparent 70%);
+      radial-gradient(24% 20% at 30% 25%, rgb(255 255 255 / 0.5), transparent 70%),
+      radial-gradient(20% 18% at 78% 78%, rgb(255 255 255 / 0.28), transparent 70%);
+    background-size: 220% 220%;
+    background-repeat: no-repeat;
     animation: glass-drift 11s ease-in-out infinite alternate;
   }
 }
 @keyframes glass-drift {
-  from { transform: translate3d(-6%, -4%, 0) rotate(0deg); }
-  to { transform: translate3d(8%, 6%, 0) rotate(6deg); }
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
