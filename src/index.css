@@ -22,7 +22,7 @@
     }
   }
   html {
-    background-color: #F6F5F1;
+    background-color: #F6F6F4;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -30,8 +30,8 @@
     @apply bg-paper font-sans text-ink antialiased;
   }
   ::selection {
-    background: #0A0A0B;
-    color: #F6F5F1;
+    background: #BDF64F;
+    color: #101010;
   }
   em {
     font-style: normal;
@@ -40,9 +40,13 @@
     scroll-margin-top: 4.5rem;
   }
   :focus-visible {
-    outline: 2px solid #0A0A0B;
+    outline: 2px solid #101010;
     outline-offset: 3px;
     border-radius: 4px;
+  }
+  /* On the black sections the focus ring is the lime accent. */
+  .bg-ink :focus-visible {
+    outline-color: #BDF64F;
   }
 }
 
@@ -227,7 +231,7 @@
   .glass-live {
     overflow: hidden;
     /* a little more paper tint than the menu glass, so body text stays readable over the darkest part of the pool */
-    background: linear-gradient(135deg, rgb(246 245 241 / 0.62), rgb(236 235 230 / 0.5) 52%, rgb(246 245 241 / 0.56));
+    background: linear-gradient(135deg, rgb(246 246 244 / 0.62), rgb(232 231 229 / 0.5) 52%, rgb(246 246 244 / 0.56));
   }
   .glass-live::before {
     content: "";

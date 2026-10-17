@@ -48,7 +48,7 @@ export default function Presence() {
                   <p className="break-all font-mono text-[13px]">yourname123@gmail.com</p>
                   <p className="mt-1 text-xs">Looks like a hobby</p>
                 </div>
-                <div className="rounded-2xl bg-ink px-4 py-3.5 text-paper shadow-[0_20px_34px_-22px_rgba(10,10,11,0.6)]">
+                <div className="rounded-2xl bg-ink px-4 py-3.5 text-paper shadow-[0_20px_34px_-22px_rgba(16,16,16,0.6)]">
                   <p className="break-all font-mono text-[13px]">hello@yourbusiness.co.za</p>
                   <p className="mt-1 text-xs text-paper/70">Looks like a business</p>
                 </div>

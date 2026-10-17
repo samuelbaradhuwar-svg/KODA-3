@@ -7,8 +7,8 @@ import { LETTER_PATHS, MARK_PATH } from "../lib/logo-paths.js";
 import { scrollToId } from "../lib/utils.js";
 
 // Brand colours (same values as tailwind.config.js: paper / ink).
-const PAPER = "#F6F5F1";
-const INK = "#0A0A0B";
+const PAPER = "#F6F6F4";
+const INK = "#101010";
 
 const SERVICES = [
   { n: "01", title: "Website design", body: "A modern, mobile friendly site that builds credibility." },

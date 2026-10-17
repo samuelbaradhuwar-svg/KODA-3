@@ -10,7 +10,7 @@ function Field({ label, error, id, children }) {
     <div className="grid gap-1.5">
       <label htmlFor={id} className="text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">{label}</label>
       {children}
-      {error && <span id={`${id}-error`} role="alert" className="text-sm text-red-300">{error}</span>}
+      {error && <span id={`${id}-error`} role="alert" className="text-sm text-[#FF9A8B]">{error}</span>}
     </div>
   );
 }
@@ -75,7 +75,7 @@ export default function Contact() {
                     <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Call us</span>
                     <span className="mt-1 block font-display text-3xl">{PHONE.display}</span>
                   </span>
-                  <Phone size={20} className="text-paper/60 transition-colors group-hover:text-paper" />
+                  <Phone size={20} className="text-paper/60 transition-colors group-hover:text-accent" />
                 </a>
               </li>
             )}
@@ -85,7 +85,7 @@ export default function Contact() {
                   <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Email us</span>
                   <span className="mt-1 block break-all font-display text-2xl sm:text-3xl">{EMAIL}</span>
                 </span>
-                <ArrowUpRight size={22} className="shrink-0 text-paper/60 transition-[transform,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-paper" />
+                <ArrowUpRight size={22} className="shrink-0 text-paper/60 transition-[transform,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
               </a>
             </li>
             <li className="border-b border-paper/15 py-5">
@@ -137,7 +137,7 @@ export default function Contact() {
                 </Field>
               </div>
               <div className="sm:col-span-2">
-                <Button type="submit" variant="light">Book a free consultation</Button>
+                <Button type="submit" variant="lime">Book a free consultation</Button>
               </div>
             </form>
           )}

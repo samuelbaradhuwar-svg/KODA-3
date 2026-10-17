@@ -4,14 +4,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Black and off-white. The orange accent is retired: emphasis now comes from weight, size and contrast.
-        paper: "#F6F5F1",
-        paper2: "#ECEBE6",
-        ink: "#0A0A0B",
-        ink2: "#17171A",
-        muted: "#5C5B57",
-        accent: "#0A0A0B",
-        accentDeep: "#2A2A2E",
+        // Neutral black and white with one lime accent (the streetwear reference). Lime is used as a fill, a highlight on
+        // dark backgrounds and for small marks, never as body text on light backgrounds.
+        paper: "#F6F6F4",
+        paper2: "#E8E7E5",
+        ink: "#101010",
+        ink2: "#1B1B1B",
+        muted: "#595958",
+        accent: "#BDF64F",
+        accentDeep: "#9BD02D",
       },
       fontFamily: {
         sans: ['"Geist Variable"', "ui-sans-serif", "system-ui", "sans-serif"],

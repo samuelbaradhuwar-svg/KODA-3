@@ -5,15 +5,15 @@ export function Ticker() {
   const row = (hidden) => (
     <ul className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
       {TICKER.map((t) => (
-        <li key={t} className="flex items-center whitespace-nowrap font-display text-[clamp(1.6rem,3vw,2.5rem)] text-ink">
+        <li key={t} className="flex items-center whitespace-nowrap font-display text-[clamp(1.6rem,3vw,2.5rem)] text-paper">
           <span className="px-6">{t}</span>
-          <span className="h-2 w-2 rounded-[3px] bg-ink" />
+          <span className="h-2 w-2 rounded-[3px] bg-accent" />
         </li>
       ))}
     </ul>
   );
   return (
-    <div className="overflow-hidden border-y border-ink/10 py-5" aria-hidden="true">
+    <div className="overflow-hidden bg-ink py-5" aria-hidden="true">
       <div className="flex w-max animate-marquee will-change-transform hover:[animation-play-state:paused]">
         {row(false)}
         {row(true)}

@@ -28,21 +28,21 @@ export default function Footer() {
                     scrollToId(l.id);
                   }
                 }}
-                className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-paper"
+                className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent"
               >
                 {l.label}
               </a>
             ))}
-            <a href="/website-design-durban" className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-paper">Website design Durban</a>
+            <a href="/website-design-durban" className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Website design Durban</a>
           </nav>
           <div className="lg:col-span-2">
-            <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="inline-flex min-h-11 items-center break-all text-sm text-paper/70 transition-colors hover:text-paper">{EMAIL}</a>
+            <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="inline-flex min-h-11 items-center break-all text-sm text-paper/70 transition-colors hover:text-accent">{EMAIL}</a>
             {socials.length > 0 && (
               <div className="mt-5 flex gap-2.5">
                 {socials.map((s) => {
                   const Icon = ICONS[s.label];
                   return (
-                    <a key={s.label} href={s.url} aria-label={s.label} target="_blank" rel="noopener noreferrer" className="grid h-9 w-9 place-items-center rounded-full border border-paper/20 text-paper/70 transition-colors hover:border-paper hover:text-paper">
+                    <a key={s.label} href={s.url} aria-label={s.label} target="_blank" rel="noopener noreferrer" className="grid h-9 w-9 place-items-center rounded-full border border-paper/20 text-paper/70 transition-colors hover:border-paper hover:text-accent">
                       <Icon size={17} />
                     </a>
                   );

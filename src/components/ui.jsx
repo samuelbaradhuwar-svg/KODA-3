@@ -42,7 +42,12 @@ export function Reveal({ children, className, delay = 0, as: Tag = "div" }) {
 }
 
 export function Eyebrow({ children, light = false, className }) {
-  return <p className={cn("text-[12px] font-semibold uppercase tracking-[0.18em]", light ? "text-paper/60" : "text-muted", className)}>{children}</p>;
+  return (
+    <p className={cn("flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.18em]", light ? "text-paper/60" : "text-muted", className)}>
+      <span aria-hidden="true" className={cn("h-2 w-2 shrink-0 rounded-[3px] bg-accent", !light && "ring-1 ring-ink/50")} />
+      {children}
+    </p>
+  );
 }
 
 // Section headlines. Each word rises out of a clipping box as the heading scrolls into view. When the text
@@ -88,7 +93,7 @@ export function Headline({ as: Tag = "h2", className, light = false, children })
           {i > 0 && " "}
           <span className="rise" aria-hidden="true">
             <span
-              className={cn("rise-in", hasEm && !strong && soft)}
+              className={cn("rise-in", hasEm && !strong && soft, hasEm && strong && light && "text-accent")}
               style={{ transform: shown ? "none" : "translate3d(0,115%,0)", transitionDelay: `${i * 55}ms` }}
             >
               {w}
@@ -113,17 +118,19 @@ const btnBase =
   "group inline-flex items-center justify-center gap-3 whitespace-nowrap rounded-full py-3 pl-6 pr-3 text-sm font-medium transition-[background,color,transform] duration-300 active:scale-[0.98]";
 
 export function Button({ children, onClick, href, onClickCapture, variant = "dark", className, type }) {
-  const styles =
-    variant === "light"
-      ? "bg-paper text-ink hover:bg-paper2"
-      : "bg-ink text-paper hover:bg-ink2";
+  // dark: black pill for light backgrounds. lime: the accent pill for black backgrounds. light: paper pill.
+  const styles = {
+    dark: "bg-ink text-paper hover:bg-accent hover:text-ink",
+    lime: "bg-accent text-ink hover:bg-paper",
+    light: "bg-paper text-ink hover:bg-accent",
+  }[variant];
+  const arrowStyles = {
+    dark: "bg-paper text-ink group-hover:bg-ink group-hover:text-accent",
+    lime: "bg-ink text-accent",
+    light: "bg-ink text-paper group-hover:text-accent",
+  }[variant];
   const arrow = (
-    <span
-      className={cn(
-        "grid h-8 w-8 place-items-center rounded-full transition-transform duration-300 group-hover:translate-x-0.5",
-        variant === "light" ? "bg-ink text-paper" : "bg-paper text-ink"
-      )}
-    >
+    <span className={cn("grid h-8 w-8 place-items-center rounded-full transition-[transform,background,color] duration-300 group-hover:translate-x-0.5", arrowStyles)}>
       <ArrowRight size={16} weight="bold" />
     </span>
   );
@@ -176,7 +183,7 @@ export function Logo({ light = false, className }) {
 // A real site screenshot inside a quiet browser window.
 export function BrowserFrame({ project, className, priority = false, high = false }) {
   return (
-    <div className={cn("overflow-hidden rounded-xl bg-white shadow-[0_40px_70px_-30px_rgba(10,10,11,0.45)] ring-1 ring-ink/10", className)}>
+    <div className={cn("overflow-hidden rounded-xl bg-white shadow-[0_40px_70px_-30px_rgba(16,16,16,0.45)] ring-1 ring-ink/10", className)}>
       <div className="flex items-center gap-1.5 border-b border-ink/10 bg-paper px-3 py-2">
         <span className="h-2 w-2 rounded-full bg-ink/15" />
         <span className="h-2 w-2 rounded-full bg-ink/15" />

@@ -47,7 +47,7 @@ export default function Work() {
               </Headline>
             </div>
             <div className="lg:col-span-4 lg:justify-self-end">
-              <Button variant="light" onClick={() => scrollToId("contact")}>Book a free consultation</Button>
+              <Button variant="lime" onClick={() => scrollToId("contact")}>Book a free consultation</Button>
             </div>
           </Reveal>
         </div>

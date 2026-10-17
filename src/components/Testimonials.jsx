@@ -39,7 +39,7 @@ export default function Testimonials() {
 function Attribution({ t, large }) {
   return (
     <figcaption className={`flex items-center gap-3.5 ${large ? "mt-8" : "mt-5"}`}>
-      <span className="grid h-11 w-11 place-items-center rounded-full bg-ink text-xs font-semibold tracking-[0.06em] text-paper">{initials(t.name)}</span>
+      <span className="grid h-11 w-11 place-items-center rounded-full bg-accent text-xs font-semibold tracking-[0.06em] text-ink">{initials(t.name)}</span>
       <span>
         <span className="block text-sm font-medium">{t.name}</span>
         <span className="block text-sm text-muted">

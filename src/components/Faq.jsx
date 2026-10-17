@@ -28,7 +28,7 @@ export default function Faq({ title = "Common questions", open0 = 0 }) {
                       className="flex w-full items-center justify-between gap-6 py-6 text-left text-lg font-medium transition-colors hover:text-ink/60"
                     >
                       {f.q}
-                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-ink/20">
+                      <span className={cn("grid h-8 w-8 shrink-0 place-items-center rounded-full border transition-colors", isOpen ? "border-ink bg-accent" : "border-ink/20")}>
                         {isOpen ? <Minus size={14} weight="bold" /> : <Plus size={14} weight="bold" />}
                       </span>
                     </button>

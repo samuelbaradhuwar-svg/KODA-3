@@ -30,7 +30,7 @@ export default function Pricing() {
                 <div className="lg:col-span-4">
                   <div className="flex items-center gap-3">
                     <h3 className="font-display text-4xl leading-none">{p.name}</h3>
-                    {hot && <span className="rounded-full bg-paper px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">Most popular</span>}
+                    {hot && <span className="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">Most popular</span>}
                   </div>
                   <p className={cn("mt-4 max-w-[34ch] text-[15px] leading-[1.7]", hot ? "text-paper/65" : "text-muted")}>{p.desc}</p>
                 </div>
@@ -44,14 +44,14 @@ export default function Pricing() {
                 <ul className="grid gap-2.5 lg:col-span-3">
                   {p.features.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm">
-                      <Check size={16} weight="bold" className={cn("mt-0.5 shrink-0", hot ? "text-paper" : "text-ink")} />
+                      <Check size={16} weight="bold" className={cn("mt-0.5 shrink-0", hot ? "text-accent" : "text-ink")} />
                       <span className={hot ? "text-paper/85" : "text-ink/80"}>{f}</span>
                     </li>
                   ))}
                 </ul>
 
                 <div className="lg:col-span-2 lg:justify-self-end">
-                  <Button variant={hot ? "light" : "dark"} onClick={() => scrollToId("contact")}>Get started</Button>
+                  <Button variant={hot ? "lime" : "dark"} onClick={() => scrollToId("contact")}>Get started</Button>
                 </div>
               </Reveal>
             );
