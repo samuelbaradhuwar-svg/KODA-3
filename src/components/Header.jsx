@@ -141,7 +141,7 @@ export default function Header() {
             >
               {l.label}
               <span aria-hidden="true" className={cn("menu-arrow", active === l.id && "is-active")}>
-                <ArrowRight size={16} weight="bold" />
+                <ArrowRight size={22} weight="bold" />
               </span>
             </a>
           ))}
