@@ -112,11 +112,7 @@ export default function Header() {
       </header>
 
       {/* click-away layer + the menu */}
-      <div
-        className={cn("fixed inset-0 z-40 bg-ink/25 backdrop-blur-[6px] transition-opacity duration-300", open ? "opacity-100" : "pointer-events-none opacity-0")}
-        onClick={() => setOpen(false)}
-        aria-hidden="true"
-      />
+      <div className={cn("fixed inset-0 z-40", !open && "pointer-events-none")} onClick={() => setOpen(false)} aria-hidden="true" />
       <div
         id="site-menu"
         role="dialog"
@@ -136,7 +132,7 @@ export default function Header() {
               aria-current={active === l.id ? "location" : undefined}
               className={cn(
                 "group flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.9rem] leading-none transition-colors last:border-b-0 [@media(max-height:520px)]:py-2.5 [@media(max-height:520px)]:text-[1.4rem]",
-                active === l.id ? "text-ink" : "text-ink/75 hover:text-ink"
+                active === l.id ? "text-ink" : "text-ink/55 hover:text-ink"
               )}
             >
               {l.label}
