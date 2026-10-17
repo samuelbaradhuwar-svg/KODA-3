@@ -370,12 +370,12 @@ function MotionHero() {
             so they stay readable over the moving pool. It fades away as soon as the story starts. */}
         <div
           ref={hintRef}
-          className="glass glass-live absolute inset-x-4 bottom-20 z-10 max-w-[34rem] p-6 sm:bottom-9 sm:left-10 sm:right-auto sm:p-8"
+          className="glass glass-live absolute inset-x-4 bottom-20 z-10 max-w-[34rem] p-6 sm:bottom-9 sm:left-10 sm:right-auto sm:p-8 md:max-w-[min(40rem,calc(100vw-12.5rem))] md:p-10 [@media(max-height:520px)]:bottom-6 [@media(max-height:520px)]:max-w-[30rem] [@media(max-height:520px)]:p-5"
         >
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/70">{EYEBROW}</p>
-          <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,3.1rem)] font-extrabold leading-[1.02] tracking-[-0.045em]">{HEADLINE}</h1>
-          <p className="mt-3 text-[15px] leading-[1.6] text-ink/75">{LEAD}</p>
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/70 [@media(max-height:520px)]:hidden">{EYEBROW}</p>
+          <h1 className="mt-3 text-[clamp(1.9rem,3.6vw,3.1rem)] font-extrabold leading-[1.02] tracking-[-0.045em] md:text-[clamp(2.3rem,4.6vw,3.6rem)] [@media(max-height:520px)]:mt-0 [@media(max-height:520px)]:text-[1.6rem]">{HEADLINE}</h1>
+          <p className="mt-3 text-[15px] leading-[1.6] text-ink/75 md:text-base [@media(max-height:520px)]:hidden">{LEAD}</p>
+          <div className="mt-6 [@media(max-height:520px)]:mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
             <span className="text-[13px] text-ink/70">{touch ? "Scroll to see how we work" : "Move your mouse, then scroll"}</span>
           </div>
@@ -385,7 +385,7 @@ function MotionHero() {
           ref={skipRef}
           type="button"
           onClick={skipIntro}
-          className="absolute bottom-6 right-5 z-10 min-h-11 rounded-full px-4 text-[13px] font-medium text-ink/70 underline decoration-ink/30 underline-offset-4 transition-colors hover:text-ink sm:right-10"
+          className="absolute bottom-6 right-5 z-10 inline-flex min-h-11 items-center rounded-full bg-paper/80 px-4 text-[13px] font-medium text-ink/80 ring-1 ring-ink/10 backdrop-blur-md transition-colors hover:text-ink sm:right-10 [@media(max-height:520px)]:bottom-3"
         >
           Skip intro
         </button>
@@ -421,12 +421,12 @@ function MotionHero() {
           </h2>
         </div>
 
-        <div className="pointer-events-none absolute left-1/2 top-1/2 w-[min(340px,70vw)] -translate-x-1/2 -translate-y-1/2 text-center">
+        <div className="pointer-events-none absolute left-1/2 top-1/2 w-[min(420px,60vmin)] -translate-x-1/2 -translate-y-1/2 text-center">
           {SERVICES.map((s, i) => (
             <div key={s.n} ref={(el) => { serviceRefs.current[i] = el; }} className="invisible absolute inset-x-0 top-1/2 -translate-y-1/2 opacity-0">
               <span className="text-[13px] tracking-[0.14em] text-muted">{s.n} / 03</span>
-              <h3 className="mb-3 mt-3 text-[clamp(30px,3.2vw,44px)] font-bold leading-[1.02] tracking-[-0.04em]">{s.title}</h3>
-              <p className="text-[clamp(15px,1.25vw,17px)] leading-snug text-muted">{s.body}</p>
+              <h3 className="mb-3 mt-3 text-[clamp(26px,5.4vmin,52px)] font-bold leading-[1.02] tracking-[-0.04em]">{s.title}</h3>
+              <p className="text-[clamp(14px,2.1vmin,19px)] leading-snug text-muted">{s.body}</p>
             </div>
           ))}
         </div>

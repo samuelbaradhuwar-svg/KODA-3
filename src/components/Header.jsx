@@ -118,7 +118,7 @@ export default function Header() {
         aria-label="Site menu"
         inert={!open}
         className={cn(
-          "glass fixed left-3 right-3 top-[68px] z-50 origin-top-right text-ink transition-[opacity,transform,visibility] duration-300 ease-out sm:left-auto sm:right-8 sm:top-[76px] sm:w-[360px] lg:right-10",
+          "glass fixed left-3 right-3 top-[68px] z-50 max-h-[calc(100svh-84px)] origin-top-right overflow-y-auto overscroll-contain text-ink transition-[opacity,transform,visibility] duration-300 ease-out sm:left-auto sm:right-8 sm:top-[76px] sm:w-[360px] lg:right-10",
           open ? "visible translate-y-0 scale-100 opacity-100" : "invisible -translate-y-2 scale-[0.96] opacity-0"
         )}
       >
@@ -130,7 +130,7 @@ export default function Header() {
               onClick={(e) => onNav(e, l.id)}
               aria-current={active === l.id ? "location" : undefined}
               className={cn(
-                "flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.9rem] leading-none transition-colors last:border-b-0",
+                "flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.9rem] leading-none transition-colors last:border-b-0 [@media(max-height:520px)]:py-2.5 [@media(max-height:520px)]:text-[1.4rem]",
                 active === l.id ? "text-ink" : "text-ink/55 hover:text-ink"
               )}
             >
