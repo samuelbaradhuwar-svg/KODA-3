@@ -10,7 +10,7 @@ export function ServiceList({ items = SERVICES }) {
         <Reveal as="li" key={s.title} delay={(i % 2) * 80} className="group grid grid-cols-[2.75rem_1fr] gap-3 border-t border-ink/15 py-7">
           <span className="pt-2 text-xs font-semibold tracking-[0.14em] text-muted">{String(i + 1).padStart(2, "0")}</span>
           <div>
-            <h3 className="font-display text-[1.8rem] leading-tight transition-colors duration-300 group-hover:text-ink/55">{s.title}</h3>
+            <h3 className="font-display text-[1.2rem] leading-tight transition-colors duration-300 group-hover:text-ink/55">{s.title}</h3>
             <p className="t-body mt-2.5">{s.desc}</p>
           </div>
         </Reveal>
@@ -40,7 +40,7 @@ export default function Services() {
         <Reveal className="mt-12 grid items-center gap-6 rounded-[2rem] bg-accent px-6 py-10 text-ink sm:px-12 sm:py-14 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink/70">Starting from scratch?</p>
-            <h3 className="mt-4 text-[clamp(1.9rem,3.6vw,3.2rem)] font-extrabold leading-[1.02] tracking-[-0.045em]">Just an idea? No pressure.</h3>
+            <h3 className="xwide mt-4 text-[clamp(1.4rem,2.7vw,2.4rem)] leading-[1.06] tracking-[-0.02em]">Just an idea? No pressure.</h3>
             <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.7] text-ink/75">
               Many businesses begin with nothing more than a name or a sketch. Tell us what you have in mind and we will help shape the logo, the brand and the website, at your pace, with no obligation.
             </p>

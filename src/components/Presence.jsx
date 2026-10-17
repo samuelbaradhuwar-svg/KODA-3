@@ -23,7 +23,7 @@ export default function Presence() {
             {PRESENCE.map((p, i) => (
               <Reveal as="li" key={p.title} delay={i * 80} className="border-t border-ink/15 py-6">
                 <span className="text-xs font-semibold tracking-[0.14em] text-muted">0{i + 1} / 0{PRESENCE.length}</span>
-                <h3 className="mt-3 font-display text-[1.7rem] leading-[1.05]">{p.title}</h3>
+                <h3 className="mt-3 font-display text-[1.25rem] leading-[1.1]">{p.title}</h3>
                 <p className="t-body mt-2.5">{p.desc}</p>
               </Reveal>
             ))}

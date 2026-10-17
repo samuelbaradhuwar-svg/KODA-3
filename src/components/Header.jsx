@@ -131,7 +131,7 @@ export default function Header() {
               onClick={(e) => onNav(e, l.id)}
               aria-current={active === l.id ? "location" : undefined}
               className={cn(
-                "group flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.9rem] leading-none transition-colors last:border-b-0 [@media(max-height:520px)]:py-2.5 [@media(max-height:520px)]:text-[1.4rem]",
+                "group flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.45rem] leading-none transition-colors last:border-b-0 [@media(max-height:520px)]:py-2.5 [@media(max-height:520px)]:text-[1.15rem]",
                 active === l.id ? "text-ink" : "text-ink/55 hover:text-ink"
               )}
             >

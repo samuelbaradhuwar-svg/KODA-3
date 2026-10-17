@@ -31,7 +31,7 @@ export default function About() {
           <ul className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4">
             {OUTCOMES.map((o, i) => (
               <Reveal as="li" key={o.title} delay={i * 80} className="border-t border-paper/15 py-7 pr-6 lg:border-l lg:px-6 lg:first:border-l-0 lg:first:pl-0">
-                <h3 className="font-display text-[2rem] leading-[1]">{o.title}</h3>
+                <h3 className="font-display text-[1.4rem] leading-[1.1]">{o.title}</h3>
                 <p className="mt-4 text-[15px] leading-[1.7] text-paper/60">{o.desc}</p>
               </Reveal>
             ))}

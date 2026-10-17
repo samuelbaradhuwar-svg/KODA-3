@@ -402,7 +402,7 @@ function MotionHero() {
         {/* 1: what we do */}
         <div ref={oneRef} className="pointer-events-none invisible absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
           <span ref={oneTag} className="mb-6 text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">What we do</span>
-          <h2 className="statement max-w-[18ch] text-[clamp(44px,8.2vw,132px)]" aria-label="We build your digital presence.">
+          <h2 className="statement max-w-[18ch] text-[clamp(30px,5.4vw,88px)]" aria-label="We build your digital presence.">
             {STATEMENT_ONE.map((it, i) => (
               <span key={it.w} className="word" aria-hidden="true">
                 <span ref={(el) => { oneWords.current[i] = el; }} className={it.muted ? "text-ink/55" : it.hl ? "marker" : ""}>
@@ -419,7 +419,7 @@ function MotionHero() {
         {/* 2: who we are (the logo sits above, drawn by the SVG layer) */}
         <div ref={twoRef} className="pointer-events-none invisible absolute inset-x-0 top-[56%] flex flex-col items-center px-6 text-center">
           <span ref={twoTag} className="mb-5 text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">Who we are</span>
-          <h2 className="statement max-w-[16ch] text-[clamp(40px,7vw,112px)]" aria-label="Koda is a studio for being seen.">
+          <h2 className="statement max-w-[16ch] text-[clamp(28px,4.8vw,76px)]" aria-label="Koda is a studio for being seen.">
             {STATEMENT_TWO.map((it, i) => (
               <span key={it.w} className="word" aria-hidden="true">
                 <span ref={(el) => { twoWords.current[i] = el; }} className={it.muted ? "text-ink/55" : it.hl ? "marker" : ""}>
@@ -434,7 +434,7 @@ function MotionHero() {
           {SERVICES.map((s, i) => (
             <div key={s.n} ref={(el) => { serviceRefs.current[i] = el; }} className="invisible absolute inset-x-0 top-1/2 -translate-y-1/2 opacity-0">
               <span className="text-[13px] tracking-[0.14em] text-muted">{s.n} / 03</span>
-              <h3 className="mb-3 mt-3 text-[clamp(26px,5.4vmin,52px)] font-bold leading-[1.02] tracking-[-0.04em]">{s.title}</h3>
+              <h3 className="xwide mb-3 mt-3 text-[clamp(20px,3.9vmin,36px)] leading-[1.08] tracking-[-0.02em]">{s.title}</h3>
               <p className="text-[clamp(14px,2.1vmin,19px)] leading-snug text-muted">{s.body}</p>
             </div>
           ))}
@@ -459,7 +459,7 @@ function StaticHero() {
     <div id="home" className="safe-x bg-paper pb-16 pt-32 sm:pt-40 lg:pb-24">
       <div className="mx-auto max-w-[1280px]">
         <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{EYEBROW}</p>
-        <h1 className="mt-5 max-w-[16ch] text-[clamp(2.8rem,8vw,7rem)] font-extrabold leading-[0.96] tracking-[-0.055em]">
+        <h1 className="xwide mt-5 max-w-[18ch] text-[clamp(2rem,5.4vw,5rem)] leading-[1.02] tracking-[-0.03em]">
           Your business deserves to be <span className="rounded-[0.14em] bg-accent px-[0.12em]">found.</span>
         </h1>
         <p className="mt-6 max-w-[46ch] text-base leading-[1.7] text-muted">{LEAD}</p>
@@ -473,7 +473,7 @@ function StaticHero() {
           {SERVICES.map((sv) => (
             <li key={sv.n} className="border-b border-ink/15 py-6 sm:border-b-0">
               <span className="text-[13px] tracking-[0.14em] text-muted">{sv.n} / 03</span>
-              <h2 className="mb-2 mt-3 text-[1.6rem] font-bold leading-[1.05] tracking-[-0.04em]">{sv.title}</h2>
+              <h2 className="xwide mb-2 mt-3 text-[1.25rem] leading-[1.1] tracking-[-0.02em]">{sv.title}</h2>
               <p className="text-[15px] leading-snug text-muted">{sv.body}</p>
             </li>
           ))}

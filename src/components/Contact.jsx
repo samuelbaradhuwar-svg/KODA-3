@@ -73,7 +73,7 @@ export default function Contact() {
                 <a href={`tel:+${PHONE.digits}`} className="group flex items-center justify-between py-5">
                   <span>
                     <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Call us</span>
-                    <span className="mt-1 block font-display text-3xl">{PHONE.display}</span>
+                    <span className="mt-1 block font-display text-2xl">{PHONE.display}</span>
                   </span>
                   <Phone size={20} className="text-paper/60 transition-colors group-hover:text-accent" />
                 </a>
@@ -83,7 +83,7 @@ export default function Contact() {
               <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="group flex items-center justify-between gap-4 py-5">
                 <span>
                   <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Email us</span>
-                  <span className="mt-1 block break-all font-display text-2xl sm:text-3xl">{EMAIL}</span>
+                  <span className="mt-1 block break-words font-display text-[1.05rem] normal-case tracking-normal sm:text-2xl">{EMAIL}</span>
                 </span>
                 <ArrowUpRight size={22} className="shrink-0 text-paper/60 transition-[transform,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
               </a>
@@ -109,7 +109,7 @@ export default function Contact() {
         <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
           {sent ? (
             <div role="status" className="grid min-h-[22rem] content-center border-t border-paper/15 pt-10">
-              <h3 ref={sentRef} tabIndex={-1} className="font-display text-4xl leading-tight outline-none">Your email is ready, {form.name.split(" ")[0] || "there"}.</h3>
+              <h3 ref={sentRef} tabIndex={-1} className="font-display text-2xl leading-tight outline-none">Your email is ready, {form.name.split(" ")[0] || "there"}.</h3>
               <p className="mt-4 max-w-[44ch] text-[15px] leading-[1.7] text-paper/65">
                 We opened a message addressed to {EMAIL} with your details. Press send in that window and we'll reply within one working day. If nothing opened, email us directly at {EMAIL}.
               </p>

@@ -29,7 +29,7 @@ export default function Pricing() {
               >
                 <div className="lg:col-span-4">
                   <div className="flex items-center gap-3">
-                    <h3 className="font-display text-4xl leading-none">{p.name}</h3>
+                    <h3 className="font-display text-2xl leading-none">{p.name}</h3>
                     {hot && <span className="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">Most popular</span>}
                   </div>
                   <p className={cn("mt-4 max-w-[34ch] text-[15px] leading-[1.7]", hot ? "text-paper/65" : "text-muted")}>{p.desc}</p>
