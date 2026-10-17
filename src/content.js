@@ -11,21 +11,6 @@ export const NAV_LINKS = [
 
 export const TICKER = ["Websites", "Google Business profiles", "Google Workspace", "Local SEO", "Booking systems", "Online stores", "Ongoing care"];
 
-export const PILLARS = [
-  {
-    title: "Website",
-    desc: "A modern, mobile friendly website that showcases your business and builds credibility.",
-  },
-  {
-    title: "Google Business",
-    desc: "Get found on Google Maps, show up in local searches and make it easy for customers to contact you.",
-  },
-  {
-    title: "Digital presence",
-    desc: "Your website, Google profile, business email and social links all telling the same story, so customers find you, trust you and keep coming back.",
-  },
-];
-
 export const PRESENCE = [
   {
     title: "Email that looks like a business",

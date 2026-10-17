@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import Header from "./components/Header.jsx";
 import Hero from "./components/Hero.jsx";
 import { Ticker, Proof } from "./components/Ticker.jsx";
-import Pillars from "./components/Pillars.jsx";
 import Presence from "./components/Presence.jsx";
 import Work from "./components/Work.jsx";
 import Services from "./components/Services.jsx";
@@ -26,7 +25,6 @@ function Home() {
       <Hero />
       <Ticker />
       <Proof />
-      <Pillars />
       <Presence />
       <Work />
       <Services />
