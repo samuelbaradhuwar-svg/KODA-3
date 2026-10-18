@@ -96,7 +96,7 @@ function MotionHero() {
     // ---- the whole sequence, in timeline units -----------------------------------------------
     function build() {
       const base = Math.min(W, H) / U;
-      const lockup = Math.min((H * 0.56) / 840, (W * 0.8) / 980);
+      const lockup = Math.min((H * (H < 520 ? 0.46 : 0.56)) / 840, (W * 0.8) / 980);
       const init = { ...initial, scale: base * 0.24, offY: -H * 0.22 };
       const tl = new Timeline(init);
       const wordsIn = (prefix, n, at) => {

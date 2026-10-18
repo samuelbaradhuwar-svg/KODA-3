@@ -96,6 +96,7 @@
   .hero-card {
     left: max(1rem, var(--sal));
     right: max(1rem, var(--sar));
+    margin-bottom: var(--bar);
   }
   @media (min-width: 640px) {
     .hero-card {
@@ -106,9 +107,11 @@
   .skip-btn {
     right: max(var(--g), var(--sar));
     bottom: max(1.5rem, calc(var(--sab) + 0.75rem));
+    margin-bottom: var(--bar);
   }
   .cta-row {
     bottom: max(6svh, calc(var(--sab) + 1rem));
+    margin-bottom: var(--bar);
     padding-left: max(1.25rem, var(--sal));
     padding-right: max(1.25rem, var(--sar));
   }
@@ -160,6 +163,20 @@
   .stage {
     height: 100vh;
     height: 100svh;
+  }
+  /* Phones: the pinned stage is as tall as the largest viewport (bars hidden), so no paper strip shows under it when
+     the browser bars slide away. --bar is how much of it the bars cover while they are showing; anything anchored to
+     the bottom of the stage is lifted by that amount so it is never hidden behind them. */
+  :root {
+    --bar: 0px;
+  }
+  @supports (height: 100lvh) {
+    :root {
+      --bar: calc(100lvh - 100svh);
+    }
+    .stage {
+      height: 100lvh;
+    }
   }
   .track {
     height: 650vh;
