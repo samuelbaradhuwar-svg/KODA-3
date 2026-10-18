@@ -34,6 +34,7 @@ function Results({ report, onReset }) {
     <div role="status" aria-live="polite">
       <h3 className="xwide text-[clamp(1.3rem,3vw,1.9rem)] leading-[1.05] tracking-[-0.03em]">Your free website check</h3>
       <p className="mt-2 break-all text-sm text-paper/60">{report.finalUrl}</p>
+      {report.ai && <p className="mt-5 text-[16px] leading-[1.65] text-paper/85">{report.ai.summary}</p>}
       {report.scores ? (
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Score label="Speed on a phone" value={report.scores.speed} />
@@ -45,14 +46,17 @@ function Results({ report, onReset }) {
         <p className="mt-6 text-sm text-paper/60">Google's speed check was not available this time. The checks below still apply.</p>
       )}
 
-      {report.topFixes.length > 0 && (
+      {(report.ai?.priorities?.length > 0 || report.topFixes.length > 0) && (
         <div className="mt-8">
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-accent">Start with these</p>
           <ol className="mt-3 grid gap-3">
-            {report.topFixes.map((f) => (
+            {(report.ai?.priorities?.length
+              ? report.ai.priorities.map((p) => ({ title: p.title, body: `${p.why} ${p.how}` }))
+              : report.topFixes.map((f) => ({ title: f.title, body: f.fix }))
+            ).map((f) => (
               <li key={f.title} className="rounded-2xl bg-paper/[0.06] p-4 ring-1 ring-paper/10">
                 <p className="font-medium">{f.title}</p>
-                <p className="mt-1 text-[15px] leading-[1.6] text-paper/70">{f.fix}</p>
+                <p className="mt-1 text-[15px] leading-[1.6] text-paper/70">{f.body}</p>
               </li>
             ))}
           </ol>
