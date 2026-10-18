@@ -15,8 +15,12 @@ export default function CardDeck({ items, renderCard, label, step = 0.62 }) {
   const barRef = React.useRef(null);
   const n = items.length;
 
+  // People who ask their device for less motion still get the deck, but a calm one: no big jump or tilt,
+  // the top card just slides a little and slips behind. The motion is driven by their own scrolling.
+  const calmRef = React.useRef(false);
   React.useEffect(() => {
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) setMode("deck");
+    calmRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setMode("deck");
   }, []);
 
   React.useEffect(() => {
@@ -39,8 +43,8 @@ export default function CardDeck({ items, renderCard, label, step = 0.62 }) {
         if (i === k) {
           // the top card jumps up and over, then drops behind the whole deck
           const lift = Math.sin(Math.PI * Math.min(1, f));
-          y = -h * 0.62 * lift;
-          rot = (k % 2 ? -1 : 1) * 5 * lift;
+          y = -h * (calmRef.current ? 0.1 : 0.62) * lift;
+          rot = calmRef.current ? 0 : (k % 2 ? -1 : 1) * 5 * lift;
           if (f < 0.5) {
             d = 0;
             z = 2000;
