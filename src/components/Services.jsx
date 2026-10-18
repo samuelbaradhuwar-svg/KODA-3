@@ -3,6 +3,8 @@ import { SERVICES } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
 import CardDeck from "./CardDeck.jsx";
+import CardCopy from "./CardCopy.jsx";
+import { Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, EnvelopeSimple } from "@phosphor-icons/react";
 
 export function ServiceList({ items = SERVICES }) {
   return (
@@ -22,25 +24,13 @@ export function ServiceList({ items = SERVICES }) {
 
 const SURFACES = ["bg-paper text-ink", "bg-ink text-paper", "bg-accent text-ink"];
 
-function ServiceCard({ s, i, total, className = "" }) {
-  const dark = i % SURFACES.length === 1;
+const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, EnvelopeSimple];
+const TONES = ["paper", "ink", "accent"];
+
+function ServiceCard({ s, i }) {
   return (
-    <article className={`relative h-full overflow-hidden rounded-[28px] ${SURFACES[i % SURFACES.length]} ${className}`}>
-      <div className="grid h-full content-between gap-6 p-6 sm:p-10 lg:grid-cols-12 lg:gap-10 lg:p-12 [@media(max-height:520px)]:grid-cols-12 [@media(max-height:520px)]:gap-x-6 [@media(max-height:520px)]:gap-y-2 [@media(max-height:520px)]:p-5">
-        <div className="flex items-start justify-between lg:col-span-12 [@media(max-height:520px)]:col-span-12">
-          <span className="text-[12px] font-semibold uppercase tracking-[0.18em] opacity-60">
-            {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-          </span>
-          <span className="text-[12px] font-semibold uppercase tracking-[0.18em] opacity-60">KODA</span>
-        </div>
-        <span aria-hidden="true" className="xwide text-[clamp(3.5rem,13vw,8rem)] leading-[0.85] tracking-[-0.04em] lg:col-span-4 [@media(max-height:520px)]:col-span-4 [@media(max-height:520px)]:self-end [@media(max-height:520px)]:text-[3.5rem]">
-          {String(i + 1).padStart(2, "0")}
-        </span>
-        <div className="self-end lg:col-span-7 lg:col-start-6 [@media(max-height:520px)]:col-span-7 [@media(max-height:520px)]:col-start-6">
-          <h3 className="xwide text-[clamp(1.35rem,3.4vw,2.6rem)] leading-[1.04] tracking-[-0.03em] [@media(max-height:520px)]:text-[1.25rem]">{s.title}</h3>
-          <p className={`mt-4 max-w-[34ch] text-[clamp(15px,1.4vw,18px)] leading-[1.55] sm:max-w-[48ch] ${dark ? "text-paper/70" : "text-ink/75"}`}>{s.desc}</p>
-        </div>
-      </div>
+    <article className={`relative h-full overflow-hidden rounded-[28px] ${SURFACES[i % SURFACES.length]}`}>
+      <CardCopy icon={SERVICE_ICONS[i % SERVICE_ICONS.length]} title={s.title} desc={s.desc} tone={TONES[i % TONES.length]} />
     </article>
   );
 }
@@ -61,7 +51,7 @@ export default function Services() {
             </div>
           </Reveal>
         </div>
-        <CardDeck items={SERVICES} label="Our services" renderCard={(s, i, n) => <ServiceCard s={s} i={i} total={n} />} />
+        <CardDeck items={SERVICES} label="Our services" renderCard={(s, i, n) => <ServiceCard s={s} i={i} />} />
 
         <Reveal className="mt-16 sm:mt-24 grid items-center gap-6 rounded-[2rem] bg-accent px-6 py-10 text-ink sm:px-12 sm:py-14 lg:grid-cols-12">
           <div className="lg:col-span-8">

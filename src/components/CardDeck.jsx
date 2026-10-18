@@ -302,7 +302,6 @@ export default function CardDeck({ items, renderCard, label, step = 0.62 }) {
           ))}
         </ol>
         <div className="deck-meter" aria-hidden="true">
-          <span ref={counterRef} className="text-[12px] font-semibold tracking-[0.18em] text-ink/70">01 / {String(n).padStart(2, "0")}</span>
           <span className="deck-bar"><span ref={barRef} className="deck-bar-fill" /></span>
           <span className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/50">Keep scrolling</span>
         </div>

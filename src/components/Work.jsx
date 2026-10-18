@@ -28,7 +28,7 @@ export default function Work() {
                 </a>
               </Reveal>
               <Reveal delay={120} className={cn("lg:col-span-5", i % 2 === 1 && "lg:order-1")}>
-                <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">0{i + 1} / {p.category}</p>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{p.category}</p>
                 <h3 className="mt-4 font-display text-[clamp(1.5rem,2.6vw,2.2rem)] leading-[1.05]">{p.name}</h3>
                 <p className="t-body mt-4">{p.blurb}</p>
                 <p className="mt-5 inline-block rounded-full border border-ink/15 px-3.5 py-1.5 text-xs text-muted">{p.tag}</p>
