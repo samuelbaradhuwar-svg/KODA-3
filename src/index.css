@@ -157,6 +157,15 @@
     @apply w-full border-0 border-b border-paper/25 bg-transparent px-0 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-paper;
     border-radius: 0;
   }
+  /* Browser autofill paints fields pale blue; keep them in the dark form style instead. */
+  .field:-webkit-autofill,
+  .field:-webkit-autofill:hover,
+  .field:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f6f6f4;
+    caret-color: #f6f6f4;
+    box-shadow: 0 0 0 1000px #101010 inset;
+    transition: background-color 9999s ease-out 0s;
+  }
 }
 
 /* ---- Hero (pinned scroll story) and the menu panel ---------------------------------------------- */

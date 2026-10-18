@@ -17,7 +17,7 @@ Google Business Profile, design and copy are **not** judged automatically. The r
 ## Settings (Vercel, Project, Settings, Environment Variables)
 | Name | Needed | What it does |
 |---|---|---|
-| `RESEND_API_KEY` | yes | Sends the emails. Create a free account at resend.com and copy an API key. |
+| `RESEND_API_KEY` | for emails | Sends the emails. Without it the check still works: the visitor sees their results on screen and no email is sent (handy for trying it out). Create a free account at resend.com and copy an API key. |
 | `AUDIT_MODE` | no | `review` (default): the report is emailed to you only; the visitor is told it is on its way. `live`: the visitor sees results on screen and gets the email, and you are copied. |
 | `AUDIT_NOTIFY_TO` | no | Where reviews and copies go. Default `samuelbaradhuwar@gmail.com` for now. Once the heykoda.co.za mailbox is set up, set this to `info@heykoda.co.za`. |
 | `AUDIT_FROM` | no | The sender. Until your domain is verified in Resend, leave it unset. Resend's test sender can only email the address the Resend account was created with, so create the Resend account with `samuelbaradhuwar@gmail.com` and review mode will work straight away. To email visitors, verify heykoda.co.za in Resend and set e.g. `KODA Audits <audit@heykoda.co.za>`. |
@@ -25,7 +25,7 @@ Google Business Profile, design and copy are **not** judged automatically. The r
 | `AUDIT_AI_MODEL` | no | Which Claude model writes the summary. Default `claude-haiku-5-5` (fast and cheap). |
 | `PAGESPEED_API_KEY` | no | Free key from Google Cloud (PageSpeed Insights API). Avoids Google's shared rate limit. |
 
-Start in `review` mode. Once you are happy with what the reports say, switch `AUDIT_MODE` to `live`.
+With an email key, start in `review` mode. Once you are happy with what the reports say, switch `AUDIT_MODE` to `live`.
 
 ## How the AI summary stays honest
 - Claude only sees the findings (scores, pass/warn/fail, short labels, counts). Text copied from the visitor's website, such as the page title, is removed first, so a page cannot give it instructions.

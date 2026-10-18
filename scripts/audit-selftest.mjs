@@ -108,6 +108,16 @@ aiMode = "junk";
 const junk = await call({ url: hbase, email: "me@example.co.za", consent: true }, "6.6.6.3");
 assert.equal(junk.body.report.ai, null);
 
+// no email key at all: the visitor still gets their results on screen
+const savedKey = process.env.RESEND_API_KEY;
+delete process.env.RESEND_API_KEY;
+process.env.AUDIT_MODE = "review";
+const noMail = await call({ url: hbase, email: "visitor@example.co.za", consent: true }, "6.6.6.9");
+assert.equal(noMail.code, 200);
+assert.equal(noMail.body.emailed, false);
+assert.ok(noMail.body.report, "results are shown on screen when email is not set up");
+process.env.RESEND_API_KEY = savedKey;
+
 // review mode: the email goes to KODA only, with a note that an AI wrote the top
 process.env.AUDIT_MODE = "review";
 aiMode = "ok";

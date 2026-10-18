@@ -59,7 +59,7 @@ function Score({ label, value }) {
   );
 }
 
-function Results({ report, onReset, sample = false }) {
+function Results({ report, onReset, sample = false, emailed = true }) {
   return (
     <div role="status" aria-live="polite">
       {sample && (
@@ -110,7 +110,7 @@ function Results({ report, onReset, sample = false }) {
           );
         })}
       </ul>
-      <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">{report.note}{sample ? "" : " We have also emailed you a copy."}</p>
+      <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">{report.note}{sample ? "" : emailed ? " We have also emailed you a copy." : " Emailed copies are not switched on yet, so none was sent."}</p>
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
         {sample ? (
           <Button variant="lime" onClick={onReset}>Check my own website</Button>
@@ -131,6 +131,7 @@ export default function Audit() {
   const [error, setError] = useState({ message: "", field: "" });
   const [report, setReport] = useState(null);
   const [sample, setSample] = useState(false);
+  const [emailed, setEmailed] = useState(true);
   const panelRef = useRef(null);
   const first = useRef(true);
 
@@ -155,6 +156,7 @@ export default function Audit() {
       }
       if (data.mode === "live" && data.report) {
         setReport(data.report);
+        setEmailed(data.emailed !== false);
         setState("live");
       } else {
         setState("review");
@@ -224,7 +226,7 @@ export default function Audit() {
         <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
           <div ref={panelRef} className="rounded-[28px] bg-ink p-6 text-paper sm:p-10">
             {state === "live" && report ? (
-              <Results report={report} onReset={reset} sample={sample} />
+              <Results report={report} onReset={reset} sample={sample} emailed={emailed} />
             ) : state === "review" ? (
               <div role="status" className="grid min-h-[18rem] content-center">
                 <h3 className="xwide text-[clamp(1.3rem,3vw,1.9rem)] leading-[1.05] tracking-[-0.03em]">Thanks, your check is on its way.</h3>

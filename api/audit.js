@@ -6,6 +6,7 @@
 //
 // AUDIT_MODE=review (default): the report is emailed to KODA only, and the visitor is told their audit is on its way.
 // AUDIT_MODE=live:             the visitor sees the results on screen and also gets them by email; KODA gets a copy.
+// No RESEND_API_KEY:            behaves like live, minus the emails, so the check can be tried before email is set up.
 //
 // If ANTHROPIC_API_KEY is set, Claude also writes a short personal summary from the findings (see aiSummary below).
 // Without the key, or if the call fails, the report simply uses the fixed wording.
@@ -388,9 +389,6 @@ export default async function handler(req, res) {
   if (body.consent !== true) return res.status(400).json({ ok: false, error: "Please tick the box so we can email you the report.", field: "consent" });
   const lead = { email: body.email.trim(), business: String(body.business || "").slice(0, 120).trim(), url };
 
-  if (MODE() === "review" && !process.env.RESEND_API_KEY)
-    return res.status(503).json({ ok: false, error: "The free check is not switched on yet. Please email info@heykoda.co.za and we will do it by hand." });
-
   let page;
   try {
     page = await safeFetch(url);
@@ -407,7 +405,8 @@ export default async function handler(req, res) {
   const html = reportHtml(lead, report);
   const draftNote = report.ai ? "The summary at the top was written by an AI from the findings below, so read it before you send it on." : "";
 
-  const live = MODE() === "live";
+  // Without an email key nothing can be sent for review, so the visitor sees their results on screen instead.
+  const live = MODE() === "live" || !process.env.RESEND_API_KEY;
   const mail = live
     ? await sendEmail({ to: lead.email, bcc: NOTIFY_TO(), replyTo: NOTIFY_TO(), subject: `Your free website check for ${new URL(report.finalUrl).hostname}`, html })
     : await sendEmail({ to: NOTIFY_TO(), replyTo: lead.email, subject: `New audit to review: ${new URL(report.finalUrl).hostname} (${lead.email})`, html: `<p><b>${esc(lead.email)}</b> asked for a free check${lead.business ? ` for <b>${esc(lead.business)}</b>` : ""}. Forward this to them once you are happy with it. ${esc(draftNote)}</p>${html}` });
