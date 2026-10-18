@@ -9,12 +9,12 @@ export default function SpotlightGrid({ children, className = "", as: Tag = "ul"
   const raf = useRef(0);
   const point = useRef({ x: 0, y: 0, on: false });
 
+  const cards = () => ref.current?.querySelectorAll(".spot-card") ?? [];
+
   const paint = () => {
     raf.current = 0;
-    const root = ref.current;
-    if (!root) return;
     const { x, y, on } = point.current;
-    for (const card of root.querySelectorAll(".spot-card")) {
+    for (const card of cards()) {
       const r = card.getBoundingClientRect();
       card.style.setProperty("--mx", `${(x - r.left).toFixed(1)}px`);
       card.style.setProperty("--my", `${(y - r.top).toFixed(1)}px`);
@@ -25,20 +25,36 @@ export default function SpotlightGrid({ children, className = "", as: Tag = "ul"
     if (!raf.current) raf.current = requestAnimationFrame(paint);
   };
 
+  // A finger lighting a card follows it while it is down; when it lifts, the card goes back to the resting glow
+  // that touch screens always have (the CSS defaults), instead of switching the glow off like a mouse leaving.
+  const settle = () => {
+    if (raf.current) {
+      cancelAnimationFrame(raf.current);
+      raf.current = 0;
+    }
+    point.current.on = false;
+    for (const card of cards()) {
+      card.style.removeProperty("--mx");
+      card.style.removeProperty("--my");
+      card.style.removeProperty("--spot");
+    }
+  };
+
+  const track = (e) => {
+    point.current = { x: e.clientX, y: e.clientY, on: true };
+    schedule();
+  };
+  const release = (e) => {
+    if (e.pointerType === "mouse" || e.pointerType === "pen") {
+      point.current.on = false;
+      schedule();
+    } else {
+      settle();
+    }
+  };
+
   return (
-    <Tag
-      ref={ref}
-      className={className}
-      onPointerMove={(e) => {
-        if (e.pointerType === "touch") return;
-        point.current = { x: e.clientX, y: e.clientY, on: true };
-        schedule();
-      }}
-      onPointerLeave={() => {
-        point.current.on = false;
-        schedule();
-      }}
-    >
+    <Tag ref={ref} className={className} onPointerDown={track} onPointerMove={track} onPointerLeave={release} onPointerUp={release} onPointerCancel={release}>
       {children}
     </Tag>
   );

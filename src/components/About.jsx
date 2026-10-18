@@ -1,11 +1,12 @@
 import React from "react";
 import { OUTCOMES, WHY_US } from "../content.js";
-import { UsersThree, MapPinArea, TrendUp, Coins } from "@phosphor-icons/react";
+import { UsersThree, MapPinArea, TrendUp, Coins, Lightning, DeviceMobile, ShieldCheck, Timer } from "@phosphor-icons/react";
 import { Eyebrow, Headline, Reveal } from "./ui.jsx";
 import SpotlightGrid from "./SpotlightGrid.jsx";
 import CardCopy from "./CardCopy.jsx";
 
 const OUTCOME_ICONS = [UsersThree, MapPinArea, TrendUp, Coins];
+const WHY_ICONS = [Lightning, DeviceMobile, ShieldCheck, Timer];
 
 export default function About() {
   return (
@@ -18,14 +19,15 @@ export default function About() {
               A website that works as hard as <em>you do.</em>
             </Headline>
           </Reveal>
-          <ul className="grid gap-x-12 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
+          <SpotlightGrid className="grid gap-4 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
             {WHY_US.map((w, i) => (
-              <Reveal as="li" key={w.title} delay={i * 70} className="border-t border-paper/15 py-6">
-                <h3 className="text-lg font-medium">{w.title}</h3>
-                <p className="mt-2 max-w-[34ch] text-[15px] leading-[1.7] text-paper/60">{w.desc}</p>
+              <Reveal as="li" key={w.title} delay={i * 70} className="list-none">
+                <article className="spot-card group h-full min-h-[15rem]">
+                  <CardCopy icon={WHY_ICONS[i % WHY_ICONS.length]} title={w.title} desc={w.desc} tone="ink" size="sm" className="transition-transform duration-500 group-hover:-translate-y-0.5" />
+                </article>
               </Reveal>
             ))}
-          </ul>
+          </SpotlightGrid>
         </div>
 
         <div className="mt-24 sm:mt-32">
@@ -39,7 +41,7 @@ export default function About() {
               return (
                 <Reveal as="li" key={o.title} delay={i * 80} className="list-none">
                   <article className="spot-card group h-full min-h-[17rem]">
-                    <CardCopy icon={Icon} title={o.title} desc={o.desc} tone="ink" className="transition-transform duration-500 group-hover:-translate-y-0.5" />
+                    <CardCopy icon={Icon} title={o.title} desc={o.desc} tone="ink" size="sm" className="transition-transform duration-500 group-hover:-translate-y-0.5" />
                   </article>
                 </Reveal>
               );
