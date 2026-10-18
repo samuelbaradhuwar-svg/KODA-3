@@ -476,3 +476,56 @@
     transform: scaleX(0);
   }
 }
+
+/* Spotlight cards (the "What this means for your business" row): a card lit by the pointer. */
+@layer components {
+  .spot-card {
+    --mx: 22%;
+    --my: 0%;
+    --spot: 1;
+    position: relative;
+    isolation: isolate;
+    border-radius: 24px;
+    background: #1b1b1b;
+    box-shadow: inset 0 0 0 1px rgb(246 246 244 / 0.09), 0 24px 40px -30px rgb(0 0 0 / 0.8);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s;
+  }
+  /* soft glow inside the card */
+  .spot-card::before,
+  .spot-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--spot);
+    transition: opacity 0.35s;
+  }
+  .spot-card::before {
+    z-index: -1;
+    background: radial-gradient(380px circle at var(--mx) var(--my), rgb(189 246 79 / 0.13), transparent 62%);
+  }
+  /* bright glow along the edge only */
+  .spot-card::after {
+    padding: 1.5px;
+    background: radial-gradient(240px circle at var(--mx) var(--my), rgb(189 246 79 / 0.95), transparent 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+  @media (hover: hover) {
+    .spot-card {
+      --spot: 0;
+    }
+    .spot-card:hover {
+      transform: translateY(-4px);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spot-card,
+  .spot-card:hover {
+    transform: none;
+    transition: none;
+  }
+}

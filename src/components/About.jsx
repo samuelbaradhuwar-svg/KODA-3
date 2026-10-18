@@ -1,6 +1,10 @@
 import React from "react";
 import { OUTCOMES, WHY_US } from "../content.js";
+import { UsersThree, MapPinArea, TrendUp, Coins } from "@phosphor-icons/react";
 import { Eyebrow, Headline, Reveal } from "./ui.jsx";
+import SpotlightGrid from "./SpotlightGrid.jsx";
+
+const OUTCOME_ICONS = [UsersThree, MapPinArea, TrendUp, Coins];
 
 export default function About() {
   return (
@@ -28,14 +32,29 @@ export default function About() {
             <Eyebrow light>The result</Eyebrow>
             <Headline light className="h-section mt-5 max-w-[16ch]">What this means for your business.</Headline>
           </Reveal>
-          <ul className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4">
-            {OUTCOMES.map((o, i) => (
-              <Reveal as="li" key={o.title} delay={i * 80} className="border-t border-paper/15 py-7 pr-6 lg:border-l lg:px-6 lg:first:border-l-0 lg:first:pl-0">
-                <h3 className="font-display text-[1.4rem] leading-[1.1]">{o.title}</h3>
-                <p className="mt-4 text-[15px] leading-[1.7] text-paper/60">{o.desc}</p>
-              </Reveal>
-            ))}
-          </ul>
+          <SpotlightGrid className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {OUTCOMES.map((o, i) => {
+              const Icon = OUTCOME_ICONS[i % OUTCOME_ICONS.length];
+              return (
+                <Reveal as="li" key={o.title} delay={i * 80} className="list-none">
+                  <article className="spot-card group flex h-full min-h-[17rem] flex-col p-7">
+                    <div className="flex items-start justify-between">
+                      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-ink transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105">
+                        <Icon size={24} weight="bold" aria-hidden="true" />
+                      </span>
+                      <span aria-hidden="true" className="xwide text-[2.4rem] leading-none tracking-[-0.04em] text-paper/15 transition-colors duration-500 group-hover:text-accent/70">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+                    <div className="pt-12">
+                      <h3 className="font-display text-[1.4rem] leading-[1.1]">{o.title}</h3>
+                      <p className="mt-4 text-[15px] leading-[1.7] text-paper/65">{o.desc}</p>
+                    </div>
+                  </article>
+                </Reveal>
+              );
+            })}
+          </SpotlightGrid>
         </div>
       </div>
     </section>
