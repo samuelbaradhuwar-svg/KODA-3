@@ -117,7 +117,7 @@ export function Headline({ as: Tag = "h2", className, light = false, children })
 const btnBase =
   "group inline-flex items-center justify-center gap-3 whitespace-nowrap rounded-full py-3 pl-6 pr-3 text-sm font-medium transition-[background,color,transform] duration-300 active:scale-[0.98]";
 
-export function Button({ children, onClick, href, onClickCapture, variant = "dark", className, type }) {
+export function Button({ children, onClick, href, onClickCapture, variant = "dark", className, type, disabled }) {
   // dark: black pill for light backgrounds. lime: the accent pill for black backgrounds. light: paper pill.
   const styles = {
     dark: "bg-ink text-paper hover:bg-accent hover:text-ink",
@@ -143,7 +143,7 @@ export function Button({ children, onClick, href, onClickCapture, variant = "dar
       </a>
     );
   return (
-    <button type={type} onClick={onClick} onClickCapture={onClickCapture} className={cls}>
+    <button type={type} onClick={onClick} onClickCapture={onClickCapture} disabled={disabled} className={cn(cls, disabled && "pointer-events-none opacity-60")}>
       {children}
       {arrow}
     </button>

@@ -10,6 +10,7 @@ import About from "./components/About.jsx";
 import Pricing from "./components/Pricing.jsx";
 import Testimonials from "./components/Testimonials.jsx";
 import Faq from "./components/Faq.jsx";
+import Audit from "./components/Audit.jsx";
 import Contact from "./components/Contact.jsx";
 import Footer from "./components/Footer.jsx";
 import WhatsApp from "./components/WhatsApp.jsx";
@@ -34,6 +35,7 @@ function Home() {
       <Pricing />
       <Testimonials />
       <Faq />
+      <Audit />
       <Contact />
     </main>
   );
