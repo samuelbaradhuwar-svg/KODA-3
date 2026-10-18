@@ -418,7 +418,12 @@
     inset: 0;
     transform-origin: 50% 0;
     will-change: transform;
-    filter: drop-shadow(0 22px 28px rgb(0 0 0 / 0.18));
+    backface-visibility: hidden;
+    contain: layout style;
+  }
+  /* A plain box-shadow on the card itself: unlike a filter, it is painted once and then simply moved with the card. */
+  .deck-card > article {
+    box-shadow: 0 26px 44px -26px rgb(0 0 0 / 0.38);
   }
   .deck-meter {
     display: flex;

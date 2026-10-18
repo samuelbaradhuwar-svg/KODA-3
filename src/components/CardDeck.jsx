@@ -26,15 +26,36 @@ export default function CardDeck({ items, renderCard, label, step = 0.62 }) {
   React.useEffect(() => {
     if (mode !== "deck") return;
     const cards = cardRefs.current.filter(Boolean);
-    let raf = 0;
-    let visible = false;
+    const track = trackRef.current;
+    const stage = stageRef.current;
+    if (!track || !stage || cards.length === 0) return;
+
+    // Everything the frame loop needs is measured here, once (and again on resize), so a frame never reads layout.
+    let trackTop = 0;
+    let range = 1;
+    let cardH = 1;
+    const measure = () => {
+      trackTop = track.getBoundingClientRect().top + window.scrollY;
+      range = Math.max(1, track.offsetHeight - stage.offsetHeight);
+      cardH = cards[0].offsetHeight;
+    };
+    const readTarget = () => {
+      const p = Math.min(1, Math.max(0, (window.scrollY - trackTop) / range));
+      // a short hold at each end so the first and last cards can be read before the deck moves
+      const q = Math.min(1, Math.max(0, (p - 0.04) / 0.92));
+      return q * (n - 1);
+    };
+
+    // Last values written, so unchanged styles are never touched again.
+    const last = cards.map(() => ({ tf: "", z: "", vis: "", ev: "", hid: "" }));
     let lastShown = -1;
+    let lastBar = "";
 
     const place = (t) => {
+      const calm = calmRef.current;
       const k = Math.min(n - 1, Math.floor(t));
       const f = k >= n - 1 ? 0 : t - k;
-      const h = cards[0].offsetHeight;
-      const peek = Math.min(14, h * 0.045);
+      const peek = Math.min(14, cardH * 0.045);
       for (let i = 0; i < n; i++) {
         let d = (((i - k) % n) + n) % n; // 0 = top of the deck
         let y = 0;
@@ -43,8 +64,8 @@ export default function CardDeck({ items, renderCard, label, step = 0.62 }) {
         if (i === k) {
           // the top card jumps up and over, then drops behind the whole deck
           const lift = Math.sin(Math.PI * Math.min(1, f));
-          y = -h * (calmRef.current ? 0.1 : 0.62) * lift;
-          rot = calmRef.current ? 0 : (k % 2 ? -1 : 1) * 5 * lift;
+          y = -cardH * (calm ? 0.1 : 0.62) * lift;
+          rot = calm ? 0 : (k % 2 ? -1 : 1) * 5 * lift;
           if (f < 0.5) {
             d = 0;
             z = 2000;
@@ -57,51 +78,79 @@ export default function CardDeck({ items, renderCard, label, step = 0.62 }) {
           z = 1000 - Math.round(d * 10);
         }
         const dv = Math.min(d, VISIBLE);
-        const sc = 1 - dv * 0.035;
-        cards[i].style.transform = `translate3d(0,${(y - dv * peek).toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${sc.toFixed(4)})`;
-        cards[i].style.zIndex = String(z);
-        cards[i].style.opacity = d > VISIBLE + 0.6 ? "0" : "1";
-        cards[i].style.pointerEvents = i === k && f < 0.5 ? "auto" : "none";
-        cards[i].setAttribute("aria-hidden", i === Math.round(t) ? "false" : "true");
+        const tf = `translate3d(0,${(y - dv * peek).toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${(1 - dv * 0.035).toFixed(4)})`;
+        const hidden = d > VISIBLE + 0.6 ? "hidden" : "visible";
+        const ev = i === k && f < 0.5 ? "auto" : "none";
+        const L = last[i];
+        const el = cards[i];
+        if (L.tf !== tf) { el.style.transform = tf; L.tf = tf; }
+        if (L.z !== z) { el.style.zIndex = z; L.z = z; }
+        if (L.vis !== hidden) { el.style.visibility = hidden; L.vis = hidden; }
+        if (L.ev !== ev) { el.style.pointerEvents = ev; L.ev = ev; }
+        const hid = i === Math.round(t) ? "false" : "true";
+        if (L.hid !== hid) { el.setAttribute("aria-hidden", hid); L.hid = hid; }
       }
       const shown = Math.round(t);
       if (shown !== lastShown && counterRef.current) {
         lastShown = shown;
         counterRef.current.textContent = `${String(shown + 1).padStart(2, "0")} / ${String(n).padStart(2, "0")}`;
       }
-      if (barRef.current) barRef.current.style.transform = `scaleX(${(n > 1 ? t / (n - 1) : 1).toFixed(4)})`;
+      if (barRef.current) {
+        const bar = `scaleX(${(n > 1 ? t / (n - 1) : 1).toFixed(3)})`;
+        if (bar !== lastBar) { barRef.current.style.transform = bar; lastBar = bar; }
+      }
     };
 
-    const update = () => {
-      raf = 0;
-      const track = trackRef.current;
-      const stage = stageRef.current;
-      if (!track || !stage) return;
-      const range = Math.max(1, track.offsetHeight - stage.offsetHeight);
-      const p = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / range));
-      // a short hold at each end so the first and last cards can be read before the deck moves
-      const q = Math.min(1, Math.max(0, (p - 0.04) / 0.92));
-      place(q * (n - 1));
+    // The deck follows the scroll position through a little inertia, so wheel notches, trackpad flicks and the
+    // uneven scroll events of a phone all turn into the same smooth glide.
+    let target = readTarget();
+    let current = target;
+    let raf = 0;
+    let prev = 0;
+    let visible = false;
+    const frame = (now) => {
+      const dt = Math.min(0.05, (now - prev) / 1000 || 0.016);
+      prev = now;
+      target = readTarget();
+      current += (target - current) * (1 - Math.exp(-dt * 12));
+      if (Math.abs(target - current) < 0.0004) current = target;
+      place(current);
+      raf = current === target ? 0 : requestAnimationFrame(frame);
     };
-    const onScroll = () => {
-      if (visible && !raf) raf = requestAnimationFrame(update);
+    const kick = () => {
+      if (visible && !raf) {
+        prev = performance.now();
+        raf = requestAnimationFrame(frame);
+      }
     };
+    measure();
+    place(current);
     const io = new IntersectionObserver(
       ([e]) => {
         visible = e.isIntersecting;
-        if (visible) onScroll();
+        if (visible) {
+          // arriving from far away (a link, the back-to-top button): start at the right card, do not replay the deck
+          measure();
+          current = target = readTarget();
+          place(current);
+          kick();
+        }
       },
-      { rootMargin: "20% 0px" }
+      { rootMargin: "30% 0px" }
     );
-    io.observe(trackRef.current);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    update();
+    io.observe(track);
+    const ro = new ResizeObserver(() => {
+      measure();
+      kick();
+    });
+    ro.observe(track);
+    ro.observe(stage);
+    window.addEventListener("scroll", kick, { passive: true });
     return () => {
       if (raf) cancelAnimationFrame(raf);
       io.disconnect();
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      ro.disconnect();
+      window.removeEventListener("scroll", kick);
     };
   }, [mode, n]);
 
