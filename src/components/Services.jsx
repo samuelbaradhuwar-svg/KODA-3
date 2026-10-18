@@ -2,6 +2,7 @@ import React from "react";
 import { SERVICES } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
+import { useStackedCards } from "../lib/useStack.js";
 
 export function ServiceList({ items = SERVICES }) {
   return (
@@ -15,6 +16,42 @@ export function ServiceList({ items = SERVICES }) {
           </div>
         </Reveal>
       ))}
+    </ol>
+  );
+}
+
+// One card per service, dealt one on top of the other as you scroll.
+const SURFACES = ["bg-paper text-ink", "bg-ink text-paper", "bg-accent text-ink"];
+
+function ServiceStack({ items = SERVICES }) {
+  const { wrapRefs, cardRefs, veilRefs } = useStackedCards();
+  return (
+    <ol>
+      {items.map((s, i) => {
+        const dark = i % SURFACES.length === 1;
+        return (
+          <li key={s.title} ref={(el) => { wrapRefs.current[i] = el; }} className="svc-slot" style={{ "--i": i }}>
+            <article ref={(el) => { cardRefs.current[i] = el; }} className={`svc-card relative overflow-hidden rounded-[28px] ${SURFACES[i % SURFACES.length]}`}>
+              <div className="grid h-full content-between gap-6 p-6 sm:p-10 lg:grid-cols-12 lg:gap-10 lg:p-12 [@media(max-height:520px)]:grid-cols-12 [@media(max-height:520px)]:gap-x-6 [@media(max-height:520px)]:gap-y-2 [@media(max-height:520px)]:p-5">
+                <div className="flex items-start justify-between lg:col-span-12 [@media(max-height:520px)]:col-span-12">
+                  <span className="text-[12px] font-semibold uppercase tracking-[0.18em] opacity-60">
+                    {String(i + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+                  </span>
+                  <span className="text-[12px] font-semibold uppercase tracking-[0.18em] opacity-60">KODA</span>
+                </div>
+                <span aria-hidden="true" className="xwide text-[clamp(3.5rem,13vw,8rem)] leading-[0.85] tracking-[-0.04em] lg:col-span-4 [@media(max-height:520px)]:col-span-4 [@media(max-height:520px)]:self-end [@media(max-height:520px)]:text-[3.5rem]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="self-end lg:col-span-7 lg:col-start-6 [@media(max-height:520px)]:col-span-7 [@media(max-height:520px)]:col-start-6">
+                  <h3 className="xwide text-[clamp(1.35rem,3.4vw,2.6rem)] leading-[1.04] tracking-[-0.03em] [@media(max-height:520px)]:text-[1.25rem]">{s.title}</h3>
+                  <p className={`mt-4 max-w-[34ch] text-[clamp(15px,1.4vw,18px)] leading-[1.55] sm:max-w-[48ch] ${dark ? "text-paper/70" : "text-ink/75"}`}>{s.desc}</p>
+                </div>
+              </div>
+              <span ref={(el) => { veilRefs.current[i] = el; }} aria-hidden="true" className="pointer-events-none absolute inset-0 bg-black opacity-0" />
+            </article>
+          </li>
+        );
+      })}
     </ol>
   );
 }
@@ -35,9 +72,9 @@ export default function Services() {
             </div>
           </Reveal>
         </div>
-        <ServiceList />
+        <ServiceStack />
 
-        <Reveal className="mt-12 grid items-center gap-6 rounded-[2rem] bg-accent px-6 py-10 text-ink sm:px-12 sm:py-14 lg:grid-cols-12">
+        <Reveal className="mt-16 sm:mt-24 grid items-center gap-6 rounded-[2rem] bg-accent px-6 py-10 text-ink sm:px-12 sm:py-14 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink/70">Starting from scratch?</p>
             <h3 className="xwide mt-4 text-[clamp(1.4rem,2.7vw,2.4rem)] leading-[1.06] tracking-[-0.02em]">Just an idea? No pressure.</h3>
