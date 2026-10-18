@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Gauge, DeviceMobile, MagnifyingGlass, MapPin, CheckCircle, WarningCircle, XCircle, Info } from "@phosphor-icons/react";
 import { Button, Eyebrow, Headline, Reveal } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
+import { smoothScrollTo } from "../lib/smooth.js";
 
 const CHECKS = [
   { icon: Gauge, text: "How fast it loads on a phone" },
@@ -130,6 +131,8 @@ export default function Audit() {
   const [error, setError] = useState({ message: "", field: "" });
   const [report, setReport] = useState(null);
   const [sample, setSample] = useState(false);
+  const panelRef = useRef(null);
+  const first = useRef(true);
 
   const change = (e) => {
     const { name, type, checked, value } = e.target;
@@ -180,6 +183,21 @@ export default function Audit() {
     if (new URLSearchParams(window.location.search).has("sample")) showSample();
   }, []);
 
+  // When the panel changes (form, results, "on its way"), bring its top into view. Results are much taller than the
+  // form, so without this a click near the bottom of one view can leave the visitor looking at something else.
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      if (state === "idle") return;
+    }
+    if (state === "loading" || state === "error" || !panelRef.current) return;
+    const id = requestAnimationFrame(() => {
+      const top = panelRef.current.getBoundingClientRect().top;
+      if (top < 80 || top > window.innerHeight * 0.6) smoothScrollTo(panelRef.current, { offset: -100 });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [state]);
+
   const busy = state === "loading";
 
   return (
@@ -204,7 +222,7 @@ export default function Audit() {
         </Reveal>
 
         <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
-          <div className="rounded-[28px] bg-ink p-6 text-paper sm:p-10">
+          <div ref={panelRef} className="rounded-[28px] bg-ink p-6 text-paper sm:p-10">
             {state === "live" && report ? (
               <Results report={report} onReset={reset} sample={sample} />
             ) : state === "review" ? (

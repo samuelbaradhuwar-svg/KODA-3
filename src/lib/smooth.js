@@ -27,5 +27,6 @@ export function smoothScrollTo(target, { offset = 0 } = {}) {
     return;
   }
   if (typeof target === "number") window.scrollTo({ top: target + offset, behavior: "smooth" });
+  else if (offset) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY + offset, behavior: "smooth" });
   else target.scrollIntoView({ behavior: "smooth", block: "start" });
 }
