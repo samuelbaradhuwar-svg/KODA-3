@@ -411,21 +411,53 @@
   }
 }
 
-/* Services: stacking cards, same idea as the process cards but shorter and more of them. */
+/* Services: a deck of cards pinned in the middle of the screen. The track is tall so scrolling moves through the deck. */
 @layer components {
-  .svc-slot {
+  .deck-track {
+    height: calc(100svh + (var(--n) - 1) * var(--step) * 100svh);
+  }
+  .deck-stage {
     position: sticky;
-    top: calc(4.75rem + var(--i) * 0.55rem);
-    margin-bottom: clamp(4rem, 16svh, 9rem);
+    top: 0;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.25rem;
+    padding-top: 5.5rem;
+    padding-bottom: 1.5rem;
   }
-  .svc-slot:last-child {
-    margin-bottom: 0;
+  .deck {
+    position: relative;
+    height: clamp(17rem, 54svh, 27rem);
+    max-height: calc(100svh - 12rem);
+    margin-top: 3.25rem;
   }
-  .svc-card {
-    height: clamp(17rem, 52svh, 26rem);
-    max-height: calc(100svh - 6.5rem - 5rem);
+  .deck-card {
+    position: absolute;
+    inset: 0;
     transform-origin: 50% 0;
     will-change: transform;
-    box-shadow: 0 -18px 40px -26px rgb(0 0 0 / 0.35);
+    filter: drop-shadow(0 22px 28px rgb(0 0 0 / 0.18));
+  }
+  .deck-meter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .deck-bar {
+    position: relative;
+    flex: 1;
+    height: 3px;
+    border-radius: 3px;
+    background: rgb(16 16 16 / 0.12);
+    overflow: hidden;
+  }
+  .deck-bar-fill {
+    position: absolute;
+    inset: 0;
+    background: #101010;
+    transform-origin: 0 50%;
+    transform: scaleX(0);
   }
 }
