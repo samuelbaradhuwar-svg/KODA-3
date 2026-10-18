@@ -96,7 +96,8 @@ function MotionHero() {
     // ---- the whole sequence, in timeline units -----------------------------------------------
     function build() {
       const base = Math.min(W, H) / U;
-      const lockup = Math.min((H * (H < 520 ? 0.46 : 0.56)) / 840, (W * 0.8) / 980);
+      const short = H < 520; // a phone held sideways: smaller logo, nudged up, so the buttons below never touch it
+      const lockup = Math.min((H * (short ? 0.46 : 0.56)) / 840, (W * 0.8) / 980);
       const init = { ...initial, scale: base * 0.24, offY: -H * 0.22 };
       const tl = new Timeline(init);
       const wordsIn = (prefix, n, at) => {
@@ -144,7 +145,7 @@ function MotionHero() {
         .to("markScale", 1, endAt, 0.8)
         .to("outline", 0, endAt, 0.8)
         .to("scale", lockup, endAt, 1.0)
-        .to("offY", -112 * lockup - H * 0.04, endAt, 1.0)
+        .to("offY", -112 * lockup - H * (short ? 0.08 : 0.04), endAt, 1.0)
         .to("word", 1, endAt + 0.4, 1.2, ease.linear)
         .to("skip", 0, endAt + 1.1, 0.4)
         .to("cta", 0, endAt + 1.4, 0.6, ease.out(3))
@@ -193,6 +194,13 @@ function MotionHero() {
         setStyle(poolRef.current, "visibility", V.cover > 0.995 ? "hidden" : "visible");
       }
       setAttr(coverRef.current, "opacity", num(V.cover));
+      // Under the pinned stage: when a phone's browser bars slide away the screen is taller than the stage, so the
+      // strip below it takes the pool's dark colour (fading to the page colour with the pool) instead of showing paper.
+      {
+        const k = Math.min(1, Math.max(0, V.cover));
+        const c = (a, b) => Math.round(a + (b - a) * k);
+        setStyle(trackRef.current, "backgroundColor", `rgb(${c(16, 246)},${c(16, 246)},${c(16, 244)})`);
+      }
       setStyle(hintRef.current, "opacity", num(V.hint));
       setStyle(hintRef.current, "visibility", V.hint < 0.01 ? "hidden" : "visible");
       setStyle(skipRef.current, "opacity", num(V.skip));
