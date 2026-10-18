@@ -11,7 +11,7 @@ const TILE = {
 // size "lg" suits the big single cards (services, process); "sm" suits cards sitting several across.
 const TITLE = {
   lg: "text-[clamp(1.3rem,3vw,2.1rem)]",
-  sm: "text-[1.35rem] lg:text-[clamp(1.1rem,1.5vw,1.4rem)] [overflow-wrap:anywhere]",
+  sm: "text-[1.35rem] lg:flex lg:min-h-[2.1em] lg:items-center lg:justify-center lg:text-[clamp(1.1rem,1.5vw,1.4rem)] [overflow-wrap:anywhere]",
 };
 const PAD = { lg: "justify-center p-7 sm:p-10", sm: "justify-start p-6 sm:p-7" };
 

@@ -12,17 +12,17 @@ export default function About() {
   return (
     <section id="about" className="sec bg-ink text-paper">
       <div className="wrap">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
-          <Reveal className="lg:col-span-5">
+        <div>
+          <Reveal>
             <Eyebrow light>Why local businesses choose us</Eyebrow>
-            <Headline light className="h-section mt-5">
+            <Headline light className="h-section mt-5 max-w-[16ch]">
               A website that works as hard as <em>you do.</em>
             </Headline>
           </Reveal>
-          <SpotlightGrid className="grid gap-4 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
+          <SpotlightGrid className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {WHY_US.map((w, i) => (
               <Reveal as="li" key={w.title} delay={i * 70} className="list-none">
-                <article className="spot-card group h-full min-h-[15rem]">
+                <article className="spot-card group h-full min-h-[17rem]">
                   <CardCopy icon={WHY_ICONS[i % WHY_ICONS.length]} title={w.title} desc={w.desc} tone="ink" size="sm" className="transition-transform duration-500 group-hover:-translate-y-0.5" />
                 </article>
               </Reveal>
