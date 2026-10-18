@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Gauge, DeviceMobile, MagnifyingGlass, MapPin, CheckCircle, WarningCircle, XCircle, Info } from "@phosphor-icons/react";
 import { Button, Eyebrow, Headline, Reveal } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
@@ -17,6 +17,35 @@ const STATUS = {
   info: { Icon: Info, cls: "text-paper/60", label: "Worth knowing" },
 };
 
+
+// An example report for a made-up business, so visitors (and you) can see what the check looks like. Nothing is sent.
+const SAMPLE_REPORT = {
+  finalUrl: "https://www.example-plumbing.co.za/",
+  scores: { speed: 41, accessibility: 88, seo: 92, practice: 75 },
+  ai: {
+    summary:
+      "The site looks professional and loads securely, but it is slow on phones, and that is the thing most likely to cost this business customers. A few small fixes would make a real difference.",
+    priorities: [
+      { title: "Speed on a phone", why: "Visitors on mobile data leave if a page takes more than a few seconds.", how: "Compress the images and remove scripts that are not needed." },
+      { title: "Search description", why: "It is the text people read on Google before they click.", how: "Add a short description saying what the business does and where." },
+      { title: "Sitemap", why: "It helps Google find every page.", how: "Add a sitemap and submit it in Google Search Console." },
+    ],
+    closing: "Reply to this email if you would like a hand with any of it.",
+  },
+  topFixes: [],
+  note: "An automatic check of the home page. Google Business Profile, design and copy are reviewed by a person, so we follow up on those.",
+  checks: [
+    { id: "speed", label: "Speed on a phone", status: "fail", detail: "Google scores it 41 out of 100; the main content appears after about 5.2 seconds." },
+    { id: "description", label: "Search description", status: "warn", detail: "No search description found." },
+    { id: "sitemap", label: "Sitemap", status: "warn", detail: "No sitemap.xml found." },
+    { id: "https", label: "Secure connection (HTTPS)", status: "pass", detail: "The site loads securely." },
+    { id: "title", label: "Page title", status: "pass", detail: "A clear title of 52 characters." },
+    { id: "viewport", label: "Set up for phones", status: "pass", detail: "Mobile viewport is set." },
+    { id: "contact", label: "Easy ways to get in touch", status: "pass", detail: "Phone, email or WhatsApp links found." },
+    { id: "social", label: "Sharing preview", status: "info", detail: "No social sharing tags." },
+  ],
+};
+
 const empty = { url: "", email: "", business: "", consent: false, company: "" };
 
 function Score({ label, value }) {
@@ -29,10 +58,13 @@ function Score({ label, value }) {
   );
 }
 
-function Results({ report, onReset }) {
+function Results({ report, onReset, sample = false }) {
   return (
     <div role="status" aria-live="polite">
-      <h3 className="xwide text-[clamp(1.3rem,3vw,1.9rem)] leading-[1.05] tracking-[-0.03em]">Your free website check</h3>
+      {sample && (
+        <p className="mb-5 inline-block rounded-full bg-accent px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink">Sample report, made-up business</p>
+      )}
+      <h3 className="xwide text-[clamp(1.3rem,3vw,1.9rem)] leading-[1.05] tracking-[-0.03em]">{sample ? "What your free check looks like" : "Your free website check"}</h3>
       <p className="mt-2 break-all text-sm text-paper/60">{report.finalUrl}</p>
       {report.ai && <p className="mt-5 text-[16px] leading-[1.65] text-paper/85">{report.ai.summary}</p>}
       {report.scores ? (
@@ -77,10 +109,16 @@ function Results({ report, onReset }) {
           );
         })}
       </ul>
-      <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">{report.note} We have also emailed you a copy.</p>
+      <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">{report.note}{sample ? "" : " We have also emailed you a copy."}</p>
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-        <Button variant="lime" onClick={() => scrollToId("contact")}>Get help fixing these</Button>
-        <button onClick={onReset} className="border-b border-paper/40 pb-0.5 text-sm transition-colors hover:border-paper">Check another site</button>
+        {sample ? (
+          <Button variant="lime" onClick={onReset}>Check my own website</Button>
+        ) : (
+          <>
+            <Button variant="lime" onClick={() => scrollToId("contact")}>Get help fixing these</Button>
+            <button onClick={onReset} className="border-b border-paper/40 pb-0.5 text-sm transition-colors hover:border-paper">Check another site</button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -91,6 +129,7 @@ export default function Audit() {
   const [state, setState] = useState("idle"); // idle | loading | review | live | error
   const [error, setError] = useState({ message: "", field: "" });
   const [report, setReport] = useState(null);
+  const [sample, setSample] = useState(false);
 
   const change = (e) => {
     const { name, type, checked, value } = e.target;
@@ -126,8 +165,20 @@ export default function Audit() {
   const reset = () => {
     setForm(empty);
     setReport(null);
+    setSample(false);
     setState("idle");
   };
+
+  const showSample = () => {
+    setReport(SAMPLE_REPORT);
+    setSample(true);
+    setState("live");
+  };
+
+  // a link ending in ?sample opens the example straight away
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has("sample")) showSample();
+  }, []);
 
   const busy = state === "loading";
 
@@ -155,7 +206,7 @@ export default function Audit() {
         <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
           <div className="rounded-[28px] bg-ink p-6 text-paper sm:p-10">
             {state === "live" && report ? (
-              <Results report={report} onReset={reset} />
+              <Results report={report} onReset={reset} sample={sample} />
             ) : state === "review" ? (
               <div role="status" className="grid min-h-[18rem] content-center">
                 <h3 className="xwide text-[clamp(1.3rem,3vw,1.9rem)] leading-[1.05] tracking-[-0.03em]">Thanks, your check is on its way.</h3>
@@ -193,7 +244,11 @@ export default function Audit() {
                 )}
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                   <Button type="submit" variant="lime" disabled={busy}>{busy ? "Checking your site…" : "Check my website, free"}</Button>
-                  {busy && <span className="text-[13px] text-paper/60">This can take up to a minute.</span>}
+                  {busy ? (
+                    <span className="text-[13px] text-paper/60">This can take up to a minute.</span>
+                  ) : (
+                    <button type="button" onClick={showSample} className="border-b border-paper/40 pb-0.5 text-sm text-paper/80 transition-colors hover:border-paper hover:text-paper">See a sample report</button>
+                  )}
                 </div>
               </form>
             )}
