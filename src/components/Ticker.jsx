@@ -14,7 +14,7 @@ export function Ticker() {
   );
   return (
     <div className="overflow-hidden bg-ink py-5" aria-hidden="true">
-      <div className="flex w-max animate-marquee will-change-transform hover:[animation-play-state:paused]">
+      <div className="flex w-max animate-marquee will-change-transform">
         {row(false)}
         {row(true)}
       </div>
