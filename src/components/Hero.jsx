@@ -271,7 +271,9 @@ function MotionHero() {
       return Math.min(1, Math.max(0, -top / maxScroll));
     };
     const measure = () => {
-      maxScroll = Math.max(1, (trackRef.current?.offsetHeight ?? 1) - H);
+      // The story finishes a little before the track ends: the stage stays pinned for one more stretch of scrolling, so the
+      // closing logo and buttons play out on screen instead of being scrolled away while the animation catches up.
+      maxScroll = Math.max(1, (trackRef.current?.offsetHeight ?? 1) - H - H * 0.8);
       target = readTarget();
     };
     const frame = (now) => {
@@ -279,8 +281,8 @@ function MotionHero() {
       last = now;
       // Ease towards the scroll position, but never faster than `maxRate` (a share of the whole story per second),
       // so a hard flick of the thumb cannot skip past beats. The limit is relaxed when scrolling back up (so returning
-      // to the top does not take seconds) and at the very end of the track (so the story always finishes).
-      const cap = maxRate * (target > 0.999 || target < current ? 4 : 1) * dt;
+      // to the top does not take seconds) and gently at the very end of the track (so the story always finishes).
+      const cap = maxRate * (target < current ? 4 : target > 0.999 ? 2 : 1) * dt;
       current += Math.max(-cap, Math.min(cap, (target - current) * (1 - Math.exp(-dt * 11))));
       if (Math.abs(target - current) < 0.00002) current = target;
       render(current);
