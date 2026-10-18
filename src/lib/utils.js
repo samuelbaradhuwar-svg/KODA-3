@@ -4,11 +4,13 @@ export const EMAIL = "info@heykoda.co.za";
 // WhatsApp button back on.
 export const PHONE = { digits: "", display: "" };
 
+import { smoothScrollTo } from "./smooth.js";
+
 export const cn = (...parts) => parts.filter(Boolean).join(" ");
 
 export function scrollToId(id) {
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (el) smoothScrollTo(el);
   else window.location.assign(`/#${id}`);
 }
 

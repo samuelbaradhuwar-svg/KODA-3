@@ -3,6 +3,7 @@ import { ArrowRight } from "@phosphor-icons/react";
 import { NAV_LINKS } from "../content.js";
 import { Logo } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
+import { smoothScrollTo } from "../lib/smooth.js";
 
 // Logo on the left, burger on the right, always in dark ink. Over the opening hero each sits on a small frosted
 // pill, so it stays readable on the black and white pool. Once the hero has scrolled away the bar becomes a solid
@@ -74,7 +75,7 @@ export default function Header() {
     setOpen(false);
     if (window.location.pathname.replace(/\/+$/, "") === "") {
       e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      smoothScrollTo(0);
     }
   };
 

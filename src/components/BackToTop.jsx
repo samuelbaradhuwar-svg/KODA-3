@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUp } from "@phosphor-icons/react";
 import { PHONE, cn } from "../lib/utils.js";
+import { smoothScrollTo } from "../lib/smooth.js";
 
 // Phones only: appears once the visitor has scrolled past the intro and takes them back to the top.
 export default function BackToTop() {
@@ -29,7 +30,8 @@ export default function BackToTop() {
 
   const toTop = () => {
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
+    if (calm) window.scrollTo({ top: 0, behavior: "auto" });
+    else smoothScrollTo(0);
   };
 
   return (

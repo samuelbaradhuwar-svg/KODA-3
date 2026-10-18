@@ -5,6 +5,7 @@ import { Button } from "./ui.jsx";
 import { ease, Timeline } from "../lib/timeline.js";
 import { LETTER_PATHS, MARK_PATH } from "../lib/logo-paths.js";
 import { scrollToId } from "../lib/utils.js";
+import { smoothScrollTo } from "../lib/smooth.js";
 
 // Brand colours (same values as tailwind.config.js: paper / ink).
 const PAPER = "#F6F6F4";
@@ -340,7 +341,7 @@ function MotionHero() {
 
   const skipIntro = () => {
     const next = trackRef.current?.nextElementSibling;
-    if (next) next.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (next) smoothScrollTo(next);
   };
 
   return (
