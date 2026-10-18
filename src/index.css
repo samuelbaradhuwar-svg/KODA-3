@@ -403,6 +403,8 @@
   }
   .process-card {
     height: clamp(21rem, 66svh, 33rem);
+    /* never taller than what is left below the sticky offset, so a short screen (a phone held sideways) shows the whole card */
+    max-height: calc(100svh - 7.75rem);
     transform-origin: 50% 0;
     will-change: transform;
     box-shadow: 0 -18px 40px -26px rgb(0 0 0 / 0.35);
