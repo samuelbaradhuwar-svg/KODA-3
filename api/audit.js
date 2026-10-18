@@ -17,7 +17,8 @@ import net from "node:net";
 export const config = { maxDuration: 60 };
 
 const MODE = () => (process.env.AUDIT_MODE === "live" ? "live" : "review");
-const NOTIFY_TO = () => process.env.AUDIT_NOTIFY_TO || "info@heykoda.co.za";
+// Where reports go for review (and the copy in live mode). Interim default until the heykoda.co.za mailbox is set up.
+const NOTIFY_TO = () => process.env.AUDIT_NOTIFY_TO || "samuelbaradhuwar@gmail.com";
 const FROM = () => process.env.AUDIT_FROM || "KODA Audits <onboarding@resend.dev>";
 const MAX_HTML = 1_500_000;
 

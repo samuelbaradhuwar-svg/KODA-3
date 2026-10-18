@@ -114,7 +114,7 @@ aiMode = "ok";
 const rev = await call({ url: hbase, email: "visitor@example.co.za", consent: true }, "6.6.6.4");
 assert.equal(rev.code, 200);
 assert.equal(rev.body.report, undefined);
-assert.deepEqual(sent.resend.to, ["info@heykoda.co.za"]);
+assert.deepEqual(sent.resend.to, ["samuelbaradhuwar@gmail.com"]);
 assert.match(sent.resend.html, /written by an AI/);
 
 globalThis.fetch = realFetch;

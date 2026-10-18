@@ -19,8 +19,8 @@ Google Business Profile, design and copy are **not** judged automatically. The r
 |---|---|---|
 | `RESEND_API_KEY` | yes | Sends the emails. Create a free account at resend.com and copy an API key. |
 | `AUDIT_MODE` | no | `review` (default): the report is emailed to you only; the visitor is told it is on its way. `live`: the visitor sees results on screen and gets the email, and you are copied. |
-| `AUDIT_NOTIFY_TO` | no | Where reviews and copies go. Default `info@heykoda.co.za`. |
-| `AUDIT_FROM` | no | The sender. Until your domain is verified in Resend, leave it unset (Resend's test sender can only email your own Resend address, which is fine for `review` mode). To email visitors, verify heykoda.co.za in Resend and set e.g. `KODA Audits <audit@heykoda.co.za>`. |
+| `AUDIT_NOTIFY_TO` | no | Where reviews and copies go. Default `samuelbaradhuwar@gmail.com` for now. Once the heykoda.co.za mailbox is set up, set this to `info@heykoda.co.za`. |
+| `AUDIT_FROM` | no | The sender. Until your domain is verified in Resend, leave it unset. Resend's test sender can only email the address the Resend account was created with, so create the Resend account with `samuelbaradhuwar@gmail.com` and review mode will work straight away. To email visitors, verify heykoda.co.za in Resend and set e.g. `KODA Audits <audit@heykoda.co.za>`. |
 | `ANTHROPIC_API_KEY` | no | Turns on the AI summary at the top of each report. Create a key at console.anthropic.com. Each report costs a few cents; set a monthly spend limit there. Without it, reports use the fixed wording. |
 | `AUDIT_AI_MODEL` | no | Which Claude model writes the summary. Default `claude-haiku-5-5` (fast and cheap). |
 | `PAGESPEED_API_KEY` | no | Free key from Google Cloud (PageSpeed Insights API). Avoids Google's shared rate limit. |
