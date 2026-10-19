@@ -6,6 +6,7 @@
 //
 // AUDIT_MODE=review (default): the report is emailed to KODA only, and the visitor is told their audit is on its way.
 // AUDIT_MODE=live:             the visitor sees the results on screen and also gets them by email; KODA gets a copy.
+//   (live: the report is emailed 30 minutes later, only Mon-Fri 08:00-17:00 SA time, with a PDF attached; it says it is an automatic check)
 // No RESEND_API_KEY:            behaves like live, minus the emails, so the check can be tried before email is set up.
 //
 // If ANTHROPIC_API_KEY is set, Claude also writes a short personal summary from the findings (see aiSummary below).
@@ -14,6 +15,7 @@
 // See AUDIT-SETUP.md for the settings this needs.
 import dns from "node:dns/promises";
 import net from "node:net";
+import { buildPdf } from "./_pdf.js";
 
 export const config = { maxDuration: 60 };
 
@@ -456,6 +458,27 @@ async function aiSummary(report) {
   }
 }
 
+// ---------------------------------------------------------------- when the emailed report is delivered
+// The report goes out half an hour after the request, and only in business hours (Mon to Fri, 08:00 to 17:00 South
+// African time, which has no daylight saving). The email says it is an automatic check, so the delay is only about
+// arriving at a sensible time, not about pretending anyone read the site.
+export function deliveryTime(now = new Date(), delayMin = 30) {
+  const SAST = 2 * 3600_000;
+  let t = new Date(now.getTime() + delayMin * 60_000);
+  const local = (d) => new Date(d.getTime() + SAST); // read the UTC fields of this to get SA wall-clock
+  const at = (d, h, m) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), h, m) - SAST);
+  let l = local(t);
+  const hour = l.getUTCHours() + l.getUTCMinutes() / 60;
+  const day = l.getUTCDay(); // 0 Sun .. 6 Sat
+  const weekday = day >= 1 && day <= 5;
+  if (weekday && hour >= 8 && hour < 17) return t;
+  if (weekday && hour < 8) return at(l, 8, 30);
+  // after hours or weekend: next weekday at 08:30
+  let next = new Date(l.getTime() + 86_400_000);
+  while ([0, 6].includes(next.getUTCDay())) next = new Date(next.getTime() + 86_400_000);
+  return at(next, 8, 30);
+}
+
 // ---------------------------------------------------------------- email
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const ICON = { pass: "✓", warn: "!", fail: "✕", info: "i" };
@@ -486,13 +509,13 @@ ${oppHtml(report)}<h3 style="margin:20px 0 6px">Everything we checked</h3><table
 <p style="margin:16px 0 0;color:#888;font-size:12px">KODA · Durban, South Africa</p></div>`;
 }
 
-async function sendEmail({ to, subject, html, replyTo, bcc }) {
+async function sendEmail({ to, subject, html, replyTo, bcc, scheduledAt, attachments }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return { ok: false, reason: "no-key" };
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-    body: JSON.stringify({ from: FROM(), to: Array.isArray(to) ? to : [to], subject, html, ...(replyTo ? { reply_to: replyTo } : {}), ...(bcc ? { bcc } : {}) }),
+    body: JSON.stringify({ from: FROM(), to: Array.isArray(to) ? to : [to], subject, html, ...(replyTo ? { reply_to: replyTo } : {}), ...(bcc ? { bcc } : {}), ...(scheduledAt ? { scheduled_at: scheduledAt.toISOString() } : {}), ...(attachments?.length ? { attachments } : {}) }),
   });
   return { ok: res.ok, reason: res.ok ? "" : `status-${res.status}` };
 }
@@ -536,12 +559,31 @@ export default async function handler(req, res) {
 
   // Without an email key nothing can be sent for review, so the visitor sees their results on screen instead.
   const live = MODE() === "live" || !process.env.RESEND_API_KEY;
-  const mail = live
-    ? await sendEmail({ to: lead.email, bcc: NOTIFY_TO(), replyTo: NOTIFY_TO(), subject: `Your free website check for ${new URL(report.finalUrl).hostname}`, html })
-    : await sendEmail({ to: NOTIFY_TO(), replyTo: lead.email, subject: `New audit to review: ${new URL(report.finalUrl).hostname} (${lead.email})`, html: `<p><b>${esc(lead.email)}</b> asked for a free check${lead.business ? ` for <b>${esc(lead.business)}</b>` : ""}. Forward this to them once you are happy with it. ${esc(draftNote)}</p>${html}` });
+  const host = new URL(report.finalUrl).hostname;
+  let attachments = [];
+  try {
+    attachments = [{ filename: `KODA-website-report-${host}.pdf`, content: (await buildPdf({ lead, report })).toString("base64") }];
+  } catch {
+    attachments = []; // the email still goes out with the report in the body
+  }
+  let mail;
+  let sendAt = null;
+  if (live) {
+    sendAt = deliveryTime();
+    const intro = `<p style="font-family:Arial,sans-serif;max-width:620px;line-height:1.55">Hi${lead.business ? ` ${esc(lead.business)}` : ""}, here is the website report you asked for. It comes from KODA's automatic website check, and a PDF copy is attached. If you would like to talk it through, just reply to this email.</p>`;
+    mail = await sendEmail({ to: lead.email, bcc: NOTIFY_TO(), replyTo: NOTIFY_TO(), subject: `Your website report for ${host}`, html: intro + html, scheduledAt: sendAt, attachments });
+    // If the scheduled send is refused (for example attachments on a scheduled email), tell KODA straight away so the report is not lost.
+    if (!mail.ok) {
+      const fallback = await sendEmail({ to: NOTIFY_TO(), replyTo: lead.email, subject: `Audit NOT scheduled for ${lead.email} (${host}): send it by hand`, html: `<p>The scheduled send to <b>${esc(lead.email)}</b> failed (${esc(mail.reason)}). Report below; PDF attached.</p>${html}`, attachments });
+      mail = { ok: false, reason: mail.reason, fallback: fallback.ok };
+      sendAt = null;
+    }
+  } else {
+    mail = await sendEmail({ to: NOTIFY_TO(), replyTo: lead.email, subject: `New audit to review: ${host} (${lead.email})`, html: `<p><b>${esc(lead.email)}</b> asked for a free check${lead.business ? ` for <b>${esc(lead.business)}</b>` : ""}. Forward this to them once you are happy with it. ${esc(draftNote)}</p>${html}`, attachments });
+  }
 
   if (!mail.ok && !live) return res.status(502).json({ ok: false, error: "Something went wrong sending your report. Please email info@heykoda.co.za and we will do it by hand." });
-  return res.status(200).json({ ok: true, mode: live ? "live" : "review", emailed: mail.ok, ...(live ? { report } : {}) });
+  return res.status(200).json({ ok: true, mode: live ? "live" : "review", emailed: mail.ok, ...(sendAt ? { scheduledFor: sendAt.toISOString() } : {}), ...(live ? { report } : {}) });
 }
 
 function safeJson(s) {

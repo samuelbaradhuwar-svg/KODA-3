@@ -3,7 +3,7 @@ import http from "node:http";
 import assert from "node:assert/strict";
 process.env.AUDIT_ALLOW_PRIVATE = "1";
 process.env.AUDIT_MODE = "live";
-const { default: handler, normaliseUrl, buildReport, parseAi } = await import("../api/audit.js");
+const { default: handler, normaliseUrl, buildReport, parseAi, deliveryTime } = await import("../api/audit.js");
 
 const page = `<!doctype html><html lang="en"><head><title>Plumber in Durban | Test Co</title>
 <meta name="viewport" content="width=device-width"><meta name="description" content="${"A fair description of the business that is long enough. ".repeat(2)}">
@@ -133,3 +133,20 @@ globalThis.fetch = realFetch;
 hostile.close();
 server.close();
 console.log("audit self-test: all checks passed");
+
+// ---- delivery window: 30 minutes later, but only Mon to Fri 08:00 to 17:00 South African time (UTC+2)
+const sa = (iso) => { const d = deliveryTime(new Date(iso)); return new Date(d.getTime() + 2 * 3600_000).toISOString().slice(0, 16); };
+assert.equal(sa("2026-10-19T08:00:00Z"), "2026-10-19T10:30", "Monday 10:00 SA -> 10:30");      // Mon
+assert.equal(sa("2026-10-19T16:00:00Z"), "2026-10-20T08:30", "Monday 18:00 SA -> Tuesday 08:30");
+assert.equal(sa("2026-10-19T14:45:00Z"), "2026-10-20T08:30", "Monday 16:45 SA +30m is after 17:00 -> next day");
+assert.equal(sa("2026-10-19T04:00:00Z"), "2026-10-19T08:30", "Monday 06:00 SA -> same day 08:30");
+assert.equal(sa("2026-10-23T16:00:00Z"), "2026-10-26T08:30", "Friday evening -> Monday 08:30");
+assert.equal(sa("2026-10-24T09:00:00Z"), "2026-10-26T08:30", "Saturday -> Monday 08:30");
+assert.equal(sa("2026-10-25T09:00:00Z"), "2026-10-26T08:30", "Sunday -> Monday 08:30");
+
+// ---- PDF builds and is a real PDF
+const { buildPdf } = await import("../api/_pdf.js");
+const pdf = await buildPdf({ lead: { business: "Test Co \u2013 Plumbers", email: "a@b.co" }, report: r });
+assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
+assert.ok(pdf.length > 2000);
+console.log("delivery window and PDF checks passed");
