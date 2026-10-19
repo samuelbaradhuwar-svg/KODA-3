@@ -7,7 +7,7 @@ import Faq from "../components/Faq.jsx";
 import Contact from "../components/Contact.jsx";
 import { scrollToId } from "../lib/utils.js";
 
-const INCLUDED = ["Website Design", "Branding and Logo Design", "Website Redesign", "Booking Systems", "Ecommerce Stores", "Google Business Profile", "SEO Optimisation", "Website Maintenance", "Google Workspace and Email"];
+const INCLUDED = ["Website Design", "Branding and Logo Design", "Website Redesign", "Booking Systems", "Ecommerce Stores", "Google Business Profile", "SEO Optimisation", "Website Maintenance", "SEO and Social Media"];
 
 export default function WebsiteDesignDurban() {
   return (
