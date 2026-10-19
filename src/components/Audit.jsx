@@ -411,7 +411,7 @@ export default function Audit() {
                 </div>
                 <label className="flex min-h-11 items-start gap-3 py-1 text-[14px] leading-[1.55] text-paper/70">
                   <input type="checkbox" name="consent" checked={form.consent} onChange={change} className="mt-0.5 h-6 w-6 shrink-0 accent-[#BDF64F]" disabled={busy} aria-invalid={error.field === "consent"} />
-                  <span>Email me my report. <Koda /> will use my details only to send it and to follow up about it, and I can ask for them to be deleted at any time.</span>
+                  <span>Email me my report. <Koda /> will use my details only to send it and to follow up about it, and I can ask for them to be deleted at any time. See the <a href="/privacy-policy" className="underline underline-offset-4 hover:text-paper">privacy policy</a>.</span>
                 </label>
                 {error.message && (
                   <p role="alert" className="rounded-xl bg-[#FF9A8B]/10 px-4 py-3 text-[14px] text-[#FF9A8B]">{error.message}</p>

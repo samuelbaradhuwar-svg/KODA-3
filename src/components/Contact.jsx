@@ -156,7 +156,7 @@ export default function Contact() {
                 <label htmlFor="f-consent" className="flex min-h-11 items-start gap-3 py-1 text-[14px] leading-[1.55] text-paper/70">
                   <input id="f-consent" type="checkbox" name="consent" checked={form.consent} onChange={change} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} className="mt-0.5 h-6 w-6 shrink-0 accent-[#BDF64F]" />
                   <span>
-                    I agree that <Koda /> may use my details to reply to this enquiry and, if we work together, to prepare a quote. I can ask for them to be deleted at any time.
+                    I agree that <Koda /> may use my details to reply to this enquiry and, if we work together, to prepare a quote. I can ask for them to be deleted at any time. See the <a href="/privacy-policy" className="underline underline-offset-4 hover:text-paper">privacy policy</a>.
                   </span>
                 </label>
                 {errors.consent && <span id="f-consent-error" role="alert" className="mt-1 block text-sm text-[#FF9A8B]">{errors.consent}</span>}

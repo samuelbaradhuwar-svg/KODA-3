@@ -17,6 +17,7 @@ import Footer from "./components/Footer.jsx";
 import WhatsApp from "./components/WhatsApp.jsx";
 import BackToTop from "./components/BackToTop.jsx";
 import WebsiteDesignDurban from "./pages/WebsiteDesignDurban.jsx";
+import { PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "./pages/Legal.jsx";
 import { PAGES } from "./content.js";
 import { scrollToId } from "./lib/utils.js";
 
@@ -59,7 +60,19 @@ export default function App({ path = "/" }) {
         Skip to content
       </a>
       <Header />
-      {path === "/website-design-durban" ? <WebsiteDesignDurban /> : <Home />}
+      {path === "/website-design-durban" ? (
+        <WebsiteDesignDurban />
+      ) : path === "/privacy-policy" ? (
+        <PrivacyPolicy />
+      ) : path === "/terms" ? (
+        <Terms />
+      ) : path === "/refund-policy" ? (
+        <RefundPolicy />
+      ) : path === "/cookie-policy" ? (
+        <CookiePolicy />
+      ) : (
+        <Home />
+      )}
       <Footer />
       <WhatsApp />
       <BackToTop />
