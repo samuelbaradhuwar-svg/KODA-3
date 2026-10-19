@@ -184,7 +184,7 @@ export const TRUSTED = ["The Blooming Bilingual", "Trynetix"];
 export const INCLUDED = [
   { title: "Managed hosting", desc: "Secure hosting with SSL, backups and uptime monitoring." },
   { title: "Built for phones", desc: "Designed phone first, because most of your customers are on one." },
-  { title: "Edit it yourself", desc: "A simple content editor, or we make the changes for you." },
+  { title: "We look after updates", desc: "No editor to learn. Tell us what to change and we take care of it, covered by our monthly plans." },
   { title: "Support after launch", desc: "Every plan includes support once you are live." },
 ];
 
@@ -206,7 +206,7 @@ export const COMPARE = {
 export const FAQS = [
   { q: "How long does a website take?", a: "Most single page sites launch within five to seven working days. Websites with multiple pages, or those with a booking system or ecommerce store, typically take two to four weeks, depending on content and revisions." },
   { q: "Do you provide hosting?", a: "Yes. Every website we build includes secure, managed hosting with SSL, backups and uptime monitoring, so you never have to think about the technical side." },
-  { q: "Can I update my website?", a: "Absolutely. We build every site with a simple content editor so you can update text, images and offers yourself, and we're always on hand if you'd rather we do it." },
+  { q: "Can I update my website?", a: "Yes, and we do it for you. There is no editor to learn or accidentally break. Tell us what to change and we take care of it, with ongoing updates, backups and security covered by our monthly plans." },
   { q: "Do you provide support?", a: "Yes. Every plan includes support after launch, and our maintenance service covers ongoing updates, security monitoring and small changes for a flat monthly fee." },
   { q: "Can you help if I only have an idea?", a: "Yes. Plenty of businesses start with just a name or a sketch. We can design your logo and brand look first, then build your website and set up Google, at a pace that suits you. There is no pressure and no obligation." },
   { q: "Do you design logos and brands?", a: "Yes. We design logos and a simple brand look (colours, type and style), so your website, Google profile, email and social pages all feel like one business. Ask us for a quote when you get in touch." },
