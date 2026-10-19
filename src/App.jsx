@@ -8,6 +8,7 @@ import Services from "./components/Services.jsx";
 import Process from "./components/Process.jsx";
 import About from "./components/About.jsx";
 import Pricing from "./components/Pricing.jsx";
+import Compare from "./components/Compare.jsx";
 import Testimonials from "./components/Testimonials.jsx";
 import Faq from "./components/Faq.jsx";
 import Audit from "./components/Audit.jsx";
@@ -33,6 +34,7 @@ function Home() {
       <Process />
       <About />
       <Pricing />
+      <Compare />
       <Testimonials />
       <Faq />
       <Audit />

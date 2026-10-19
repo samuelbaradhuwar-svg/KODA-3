@@ -8,6 +8,7 @@ const initials = (name) => {
 };
 
 export default function Testimonials() {
+  if (!TESTIMONIALS.length) return null;
   const [lead, ...rest] = TESTIMONIALS;
   return (
     <section className="sec bg-paper2">

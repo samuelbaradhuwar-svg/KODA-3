@@ -26,15 +26,15 @@ export function Proof() {
   return (
     <section aria-label="Clients" className="border-t border-paper/10 bg-ink2 py-10 sm:py-12">
       <div className="wrap grid items-center gap-6 lg:grid-cols-12">
-        <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60 lg:col-span-2">Trusted by local businesses across South Africa</p>
-        <ul className="flex flex-wrap gap-x-6 gap-y-2 lg:col-span-7">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60 lg:col-span-2">Recent client work</p>
+        <ul className="flex flex-wrap gap-x-8 gap-y-2 lg:col-span-7">
           {TRUSTED.map((t) => (
             <li key={t} className="whitespace-nowrap font-display text-[1.3rem] text-accent">{t}</li>
           ))}
         </ul>
         <div className="border-paper/15 lg:col-span-3 lg:col-start-10 lg:border-l lg:pl-8">
-          <p className="font-display text-4xl leading-none text-paper">4.9/5</p>
-          <p className="mt-1.5 text-sm text-paper/60">average rating from 120+ businesses</p>
+          <p className="font-display text-4xl leading-none text-paper">1 day</p>
+          <p className="mt-1.5 text-sm text-paper/60">to reply to every enquiry, from our Durban studio</p>
         </div>
       </div>
     </section>

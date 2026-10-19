@@ -1,6 +1,6 @@
 import React from "react";
 import { Check } from "@phosphor-icons/react";
-import { PLANS } from "../content.js";
+import { PLANS, INCLUDED, MOCKUP_OFFER } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
 
@@ -57,6 +57,31 @@ export default function Pricing() {
             );
           })}
         </div>
+
+        <Reveal className="mt-10 border-t border-ink/15 pt-10">
+          <h3 className="xwide text-[clamp(1.05rem,2.3vw,1.3rem)] leading-[1.1] tracking-[-0.02em]">Included with every website</h3>
+          <ul className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+            {INCLUDED.map((i) => (
+              <li key={i.title} className="flex items-start gap-3">
+                <span aria-hidden="true" className="mt-[0.5em] h-2.5 w-2.5 shrink-0 rounded-[3px] bg-accent ring-1 ring-ink/50" />
+                <span>
+                  <span className="block font-semibold">{i.title}</span>
+                  <span className="mt-1 block text-[15px] leading-[1.6] text-muted">{i.desc}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+
+        {MOCKUP_OFFER && (
+          <Reveal className="mt-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-5 rounded-[28px] bg-accent px-6 py-8 text-ink sm:px-10 sm:py-10">
+            <div className="max-w-[46ch]">
+              <h3 className="xwide text-[clamp(1.2rem,2.6vw,1.7rem)] leading-[1.08] tracking-[-0.02em]">See your homepage before you pay</h3>
+              <p className="mt-3 text-[15px] leading-[1.65] text-ink/80">Tell us about your business and we will design a free homepage mock-up first. If you like it, we carry on. If not, there is no cost and no pressure.</p>
+            </div>
+            <Button variant="dark" onClick={() => scrollToId("contact")}>Ask for a free mock-up</Button>
+          </Reveal>
+        )}
       </div>
     </section>
   );

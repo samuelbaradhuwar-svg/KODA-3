@@ -115,13 +115,35 @@ export const PLANS = [
   },
 ];
 
-export const TESTIMONIALS = [
-  { name: "Thandiwe Nkosi", role: "Owner, Ember & Oak Bistro", city: "Cape Town", text: "Bookings went up almost immediately. The site loads fast, looks incredible on mobile and customers actually compliment it." },
-  { name: "Dr. Kevin Petersen", role: "Riverside Medical Practice", city: "Johannesburg", text: "Our front desk used to be buried in phone calls. Now most patients just book online. KODA nailed the brief." },
-  { name: "Marius van der Berg", role: "Site & Steel Builders", city: "Pretoria", text: "Professional from the first call to launch day. The gallery alone has brought us three new contracts this month." },
+// Real client quotes only. Add them as { name, role, city, text } and the "Client stories" section appears on its own.
+// The sample quotes that were here were placeholders, so they are removed until real ones are available.
+export const TESTIMONIALS = [];
+
+// Clients shown under the hero. Only work that is on this site: the two projects in PROJECTS.
+export const TRUSTED = ["The Blooming Bilingual", "Trynetix"];
+
+// What every plan includes. Taken from the answers in FAQS, so nothing here is new.
+export const INCLUDED = [
+  { title: "Managed hosting", desc: "Secure hosting with SSL, backups and uptime monitoring." },
+  { title: "Built for phones", desc: "Designed phone first, because most of your customers are on one." },
+  { title: "Edit it yourself", desc: "A simple content editor, or we make the changes for you." },
+  { title: "Support after launch", desc: "Every plan includes support once you are live." },
 ];
 
-export const TRUSTED = ["The Cut Room", "Blooming Bilingual", "Trynetix", "Bloom", "Local Fuel"];
+// A free homepage mock-up before any payment. Set to false to hide the offer on the pricing section.
+export const MOCKUP_OFFER = true;
+
+// "Why not a DIY builder or the cheapest quote?" Generic and fair, no named competitors.
+export const COMPARE = {
+  cols: ["DIY website builder", "Cheapest quote", "KODA"],
+  rows: [
+    { label: "Who builds it", vals: ["You, in your own time", "Often a reused template", "We design and build it for you"] },
+    { label: "Google set-up", vals: ["You work it out yourself", "Often extra, or not included", "Google Business Profile and SEO set-up available"] },
+    { label: "Hosting and security", vals: ["A monthly plan you manage", "Varies", "Managed hosting with SSL, backups and monitoring"] },
+    { label: "After launch", vals: ["Help articles and forums", "Varies", "Support included on every plan"] },
+    { label: "Price", vals: ["Monthly, plus your time", "Low upfront price", "From R2,499 once off"] },
+  ],
+};
 
 export const FAQS = [
   { q: "How long does a website take?", a: "Most single page sites launch within five to seven working days. Websites with multiple pages, or those with a booking system or ecommerce store, typically take two to four weeks, depending on content and revisions." },
