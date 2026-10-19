@@ -150,3 +150,11 @@ const pdf = await buildPdf({ lead: { business: "Test Co \u2013 Plumbers", email:
 assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
 assert.ok(pdf.length > 2000);
 console.log("delivery window and PDF checks passed");
+
+// ---- specialist request goes to KODA only, and is validated
+delete process.env.RESEND_API_KEY;
+const sp = await call({ request: "specialist", url: "https://example.com", email: "bad" }, "9.9.9.1");
+assert.equal(sp.code, 400);
+const sp2 = await call({ request: "specialist", url: "https://example.com", email: "a@b.co" }, "9.9.9.2");
+assert.equal(sp2.code, 503, "no email key -> asks them to email us instead of pretending");
+console.log("specialist request checks passed");

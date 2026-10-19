@@ -12,10 +12,16 @@ const CHECKS = [
 ];
 
 const STATUS = {
-  pass: { Icon: CheckCircle, cls: "text-accent", label: "Good" },
-  warn: { Icon: WarningCircle, cls: "text-[#FFC76B]", label: "Could be better" },
-  fail: { Icon: XCircle, cls: "text-[#FF9A8B]", label: "Needs attention" },
-  info: { Icon: Info, cls: "text-paper/60", label: "Worth knowing" },
+  pass: { Icon: CheckCircle, cls: "text-accent", box: "bg-accent/[0.07] ring-accent/25", label: "Working well" },
+  warn: { Icon: WarningCircle, cls: "text-[#FFC76B]", box: "bg-[#FFC76B]/[0.08] ring-[#FFC76B]/25", label: "Could be better" },
+  fail: { Icon: XCircle, cls: "text-[#FF9A8B]", box: "bg-[#FF9A8B]/[0.09] ring-[#FF9A8B]/30", label: "Needs attention" },
+  info: { Icon: Info, cls: "text-paper/60", box: "bg-paper/[0.05] ring-paper/10", label: "Worth knowing" },
+};
+// opportunities are shaded by how much they could be worth
+const IMPACT = {
+  high: { box: "bg-[#FF9A8B]/[0.09] ring-[#FF9A8B]/30", tag: "bg-[#FF9A8B]/20 text-[#FF9A8B]" },
+  medium: { box: "bg-[#FFC76B]/[0.08] ring-[#FFC76B]/25", tag: "bg-[#FFC76B]/20 text-[#FFC76B]" },
+  low: { box: "bg-paper/[0.05] ring-paper/10", tag: "bg-paper/10 text-paper/60" },
 };
 
 
@@ -78,7 +84,72 @@ function when(iso) {
   return `, around ${time} ${label}`;
 }
 
-function Results({ report, onReset, sample = false, emailed = true, scheduledFor = "" }) {
+// Asks for a hand-done audit by a KODA specialist. Sent to KODA as a request; nothing is promised beyond a reply.
+function Specialist({ report, lead, sample }) {
+  const [open, setOpen] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [note, setNote] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [msg, setMsg] = useState("");
+
+  const send = async (e) => {
+    e.preventDefault();
+    if (status === "sending") return;
+    if (sample) return setStatus("sent"); // the sample report sends nothing
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ request: "specialist", url: report.finalUrl, email: lead.email, business: lead.business, phone, note, consent: true, company: "" }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        setMsg(data.error || "Something went wrong. Please email info@heykoda.co.za.");
+        setStatus("error");
+        return;
+      }
+      setStatus("sent");
+    } catch {
+      setMsg("We could not reach the server. Please try again, or email info@heykoda.co.za.");
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="mt-10 rounded-2xl bg-accent/[0.08] p-5 ring-1 ring-accent/30">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-accent">Go deeper, by hand</p>
+      <h4 className="xwide mt-2 text-[clamp(1.1rem,2.4vw,1.4rem)] leading-[1.1] tracking-[-0.03em]">Get a detailed audit from a specialist</h4>
+      <p className="mt-3 text-[15px] leading-[1.65] text-paper/75">
+        This report is an automatic check of your home page. If you would like more, one of our specialists will go through your whole site by hand: the design, the writing, your Google Business Profile and how you compare with local competitors. They will send you a detailed audit with clear recommendations. It is free and there is no obligation.
+      </p>
+      {status === "sent" ? (
+        <p role="status" className="mt-4 rounded-xl bg-accent/15 px-4 py-3 text-[14px] text-accent">Request received. We will email {lead.email} to confirm, and a specialist will take it from there.</p>
+      ) : !open ? (
+        <Button variant="lime" className="mt-5" onClick={() => setOpen(true)}>Request a detailed audit</Button>
+      ) : (
+        <form onSubmit={send} className="mt-5 grid gap-4">
+          <p className="text-[13px] text-paper/60">We will use {lead.email} for {report.finalUrl}.</p>
+          <div>
+            <label htmlFor="s-phone" className="mb-1 block text-[12px] font-semibold uppercase tracking-[0.16em] text-paper/60">Phone or WhatsApp (optional)</label>
+            <input id="s-phone" value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="tel" className="field" disabled={status === "sending"} />
+          </div>
+          <div>
+            <label htmlFor="s-note" className="mb-1 block text-[12px] font-semibold uppercase tracking-[0.16em] text-paper/60">Anything we should focus on? (optional)</label>
+            <textarea id="s-note" value={note} onChange={(e) => setNote(e.target.value.slice(0, 600))} rows={3} className="field resize-none" disabled={status === "sending"} />
+          </div>
+          {status === "error" && <p role="alert" className="rounded-xl bg-[#FF9A8B]/10 px-4 py-3 text-[14px] text-[#FF9A8B]">{msg}</p>}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Button type="submit" variant="lime" disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Send my request"}</Button>
+            <button type="button" onClick={() => setOpen(false)} className="border-b border-paper/40 pb-0.5 text-sm transition-colors hover:border-paper">Cancel</button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
+function Results({ report, onReset, sample = false, emailed = true, scheduledFor = "", lead = {} }) {
   return (
     <div role="status" aria-live="polite">
       {sample && (
@@ -98,6 +169,12 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
         <p className="mt-6 text-sm text-paper/60">Google's speed check was not available this time{report.speedCheckNote ? ` (${report.speedCheckNote})` : ""}. The checks below still apply.</p>
       )}
 
+      <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-paper/70" aria-label="Colour key">
+        <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-accent" />Working well</li>
+        <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-[#FFC76B]" />Could be better</li>
+        <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-[#FF9A8B]" />Needs attention</li>
+      </ul>
+
       {report.opportunities?.length > 0 && (
         <div className="mt-8">
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-accent">Where you could win more customers</p>
@@ -106,11 +183,11 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
           </p>
           <ul className="mt-3 grid gap-3">
             {report.opportunities.map((o) => (
-              <li key={o.id} className="rounded-2xl bg-paper/[0.06] p-4 ring-1 ring-paper/10">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <li key={o.id} className={`rounded-2xl p-4 ring-1 ${(IMPACT[o.impact] || IMPACT.low).box}`}>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                   <p className="font-medium">{o.title}</p>
-                  <span className="rounded-full bg-paper/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-paper/70">{o.area}</span>
-                  <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${o.impact === "high" ? "text-accent" : "text-paper/50"}`}>{o.impact} impact</span>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] ${(IMPACT[o.impact] || IMPACT.low).tag}`}>{o.impact} impact</span>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-paper/55">{o.area}</span>
                 </div>
                 <p className="mt-1 text-[15px] leading-[1.6] text-paper/70">{o.why}</p>
                 <p className="mt-2 text-[13px] leading-[1.55] text-paper/50">Seen: {o.evidence}. <span className="text-paper/80">KODA can help with: {o.service}.</span></p>
@@ -128,7 +205,7 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
               ? report.ai.priorities.map((p) => ({ title: p.title, body: `${p.why} ${p.how}` }))
               : report.topFixes.map((f) => ({ title: f.title, body: f.fix }))
             ).map((f) => (
-              <li key={f.title} className="rounded-2xl bg-paper/[0.06] p-4 ring-1 ring-paper/10">
+              <li key={f.title} className="rounded-2xl bg-[#FF9A8B]/[0.09] p-4 ring-1 ring-[#FF9A8B]/30">
                 <p className="font-medium">{f.title}</p>
                 <p className="mt-1 text-[15px] leading-[1.6] text-paper/70">{f.body}</p>
               </li>
@@ -137,20 +214,31 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
         </div>
       )}
 
-      <ul className="mt-8 grid gap-0 border-t border-paper/15">
-        {report.checks.map((c) => {
-          const s = STATUS[c.status] || STATUS.info;
-          return (
-            <li key={c.id} className="flex gap-3 border-b border-paper/10 py-3.5">
-              <s.Icon size={22} weight="fill" className={`mt-0.5 shrink-0 ${s.cls}`} aria-label={s.label} />
-              <div>
-                <p className="font-medium">{c.label}</p>
-                <p className="text-[14px] leading-[1.55] text-paper/60">{c.detail}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+      {[
+        { title: "What needs attention", items: report.checks.filter((c) => c.status !== "pass") },
+        { title: "What is working well", items: report.checks.filter((c) => c.status === "pass") },
+      ].map((g) =>
+        g.items.length === 0 ? null : (
+          <div key={g.title} className="mt-8">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60">{g.title}</p>
+            <ul className="mt-3 grid gap-2">
+              {g.items.map((c) => {
+                const s = STATUS[c.status] || STATUS.info;
+                return (
+                  <li key={c.id} className={`flex gap-3 rounded-2xl p-3.5 ring-1 ${s.box}`}>
+                    <s.Icon size={22} weight="fill" className={`mt-0.5 shrink-0 ${s.cls}`} aria-label={s.label} />
+                    <div>
+                      <p className="font-medium">{c.label}</p>
+                      <p className="text-[14px] leading-[1.55] text-paper/65">{c.detail}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )
+      )}
+      <Specialist report={report} lead={sample ? { email: "you@yourbusiness.co.za" } : lead} sample={sample} />
       <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">{report.note}{sample ? "" : emailed ? ` We will also email you the full report with a PDF attached${when(scheduledFor)}. It comes from our automatic check.` : " Emailed copies are not switched on yet, so none was sent."}</p>
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
         {sample ? (
@@ -269,7 +357,7 @@ export default function Audit() {
         <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
           <div ref={panelRef} className="rounded-[28px] bg-ink p-6 text-paper sm:p-10">
             {state === "live" && report ? (
-              <Results report={report} onReset={reset} sample={sample} emailed={emailed} scheduledFor={scheduledFor} />
+              <Results report={report} onReset={reset} sample={sample} emailed={emailed} scheduledFor={scheduledFor} lead={form} />
             ) : state === "review" ? (
               <div role="status" className="grid min-h-[18rem] content-center">
                 <h3 className="xwide text-[clamp(1.3rem,3vw,1.9rem)] leading-[1.05] tracking-[-0.03em]">Thanks, your check is on its way.</h3>

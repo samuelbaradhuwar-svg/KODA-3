@@ -535,6 +535,21 @@ export default async function handler(req, res) {
   const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "").split(",")[0].trim();
   if (limited(ip)) return res.status(429).json({ ok: false, error: "That is a lot of requests. Please try again in an hour, or email us." });
 
+  // A visitor asking for a specialist to audit their site by hand. Goes to KODA only.
+  if (body.request === "specialist") {
+    const sUrl = normaliseUrl(body.url);
+    if (!sUrl || !validEmail(body.email)) return res.status(400).json({ ok: false, error: "Please check your website address and email, then try again." });
+    if (!process.env.RESEND_API_KEY) return res.status(503).json({ ok: false, error: "We could not send that just now. Please email info@heykoda.co.za and we will take it from there." });
+    const cut = (v, n) => String(v ?? "").slice(0, n).trim();
+    const mailed = await sendEmail({
+      to: NOTIFY_TO(), replyTo: body.email.trim(),
+      subject: `Specialist audit requested: ${new URL(sUrl).hostname}`,
+      html: `<div style="font-family:Arial,sans-serif;max-width:560px;line-height:1.55"><h3>Specialist audit requested</h3><p><b>Site:</b> ${esc(sUrl)}<br><b>Email:</b> ${esc(body.email.trim())}<br><b>Business:</b> ${esc(cut(body.business, 120)) || "-"}<br><b>Phone:</b> ${esc(cut(body.phone, 40)) || "-"}</p><p><b>Their note:</b><br>${esc(cut(body.note, 600)) || "-"}</p><p style="color:#666">They have already seen the automatic report. Reply to this email to reach them.</p></div>`,
+    });
+    if (!mailed.ok) return res.status(502).json({ ok: false, error: "We could not send that just now. Please email info@heykoda.co.za and we will take it from there." });
+    return res.status(200).json({ ok: true });
+  }
+
   const url = normaliseUrl(body.url);
   if (!url) return res.status(400).json({ ok: false, error: "Please enter your website address, for example yourbusiness.co.za.", field: "url" });
   if (!validEmail(body.email)) return res.status(400).json({ ok: false, error: "Please enter a valid email address.", field: "email" });
