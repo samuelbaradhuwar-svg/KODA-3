@@ -39,7 +39,7 @@ export default function Work() {
             </article>
           ))}
 
-          <Reveal className="grid items-center gap-6 rounded-[28px] bg-ink px-7 py-12 text-paper sm:px-12 sm:py-16 lg:grid-cols-12">
+          <Reveal className="grid items-center gap-6 keep-light rounded-[28px] bg-ink px-7 py-12 text-paper sm:px-12 sm:py-16 lg:grid-cols-12">
             <div className="lg:col-span-8">
               <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60">Next</p>
               <Headline as="h3" light className="h-section mt-4">

@@ -10,7 +10,7 @@ const WHY_ICONS = [Lightning, DeviceMobile, ShieldCheck, Timer];
 
 export default function About() {
   return (
-    <section id="about" className="sec bg-ink text-paper">
+    <section id="about" className="keep-light sec bg-ink text-paper">
       <div className="wrap">
         <div>
           <Reveal>

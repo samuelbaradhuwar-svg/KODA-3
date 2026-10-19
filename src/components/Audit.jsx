@@ -378,7 +378,7 @@ export default function Audit() {
         </Reveal>
 
         <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
-          <div ref={panelRef} className="rounded-[28px] bg-ink p-6 text-paper sm:p-10">
+          <div ref={panelRef} className="keep-light rounded-[28px] bg-ink p-6 text-paper sm:p-10">
             {state === "live" && report ? (
               <Results report={report} onReset={reset} sample={sample} emailed={emailed} scheduledFor={scheduledFor} lead={form} />
             ) : state === "review" ? (

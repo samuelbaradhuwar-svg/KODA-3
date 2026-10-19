@@ -345,7 +345,7 @@ function MotionHero() {
   };
 
   return (
-    <div ref={trackRef} id="home" className="track relative">
+    <div ref={trackRef} id="home" className="keep-light track relative">
       <section ref={stageRef} aria-label="KODA introduction" className="stage sticky top-0 w-full overflow-hidden bg-paper">
         {/* Full-screen pool of flowing shapes that the cursor stirs */}
         <div ref={poolRef} aria-hidden="true" className="absolute inset-0 will-change-transform">
@@ -486,7 +486,7 @@ function AuditChip({ className = "" }) {
 
 function StaticHero() {
   return (
-    <div id="home" className="safe-x bg-paper pb-16 pt-32 sm:pt-40 lg:pb-24">
+    <div id="home" className="keep-light safe-x bg-paper pb-16 pt-32 sm:pt-40 lg:pb-24">
       <div className="mx-auto max-w-[1280px]">
         <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{EYEBROW}</p>
         <h1 className="hero-h1 mt-5 !text-[clamp(1.7rem,6.2vw,4.6rem)]">

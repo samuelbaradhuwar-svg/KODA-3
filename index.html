@@ -6,6 +6,18 @@
     <title>KODA | Website Design in Durban</title>
     <meta name="description" content="KODA is a Durban web design studio. We build fast, professional websites for small and medium sized businesses, set up your Google Business profile and help customers find you." />
     <meta name="theme-color" content="#F6F6F4" />
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem("koda-theme");
+          var dark = s ? s === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (dark) {
+            document.documentElement.classList.add("dark");
+            document.querySelector('meta[name="theme-color"]').setAttribute("content", "#101010");
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="canonical" href="https://www.heykoda.co.za/" />
     <link rel="icon" type="image/webp" href="/favicon.webp" />
 

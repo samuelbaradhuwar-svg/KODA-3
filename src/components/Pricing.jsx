@@ -91,7 +91,7 @@ export default function Pricing() {
         </Reveal>
 
         {MOCKUP_OFFER && (
-          <Reveal className="mt-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-5 rounded-[28px] bg-ink px-6 py-8 text-paper sm:px-10 sm:py-10">
+          <Reveal className="mt-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-5 keep-light rounded-[28px] bg-ink px-6 py-8 text-paper sm:px-10 sm:py-10">
             <div className="max-w-[46ch]">
               <p className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60"><span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-[3px] bg-accent" />Free mock-up</p>
               <h3 className="xwide mt-4 text-[clamp(1.2rem,2.6vw,1.7rem)] leading-[1.08] tracking-[-0.02em]">See your homepage before you pay</h3>

@@ -81,7 +81,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="sec bg-ink text-paper">
+    <section id="contact" className="keep-light sec bg-ink text-paper">
       <div className="wrap grid gap-14 lg:grid-cols-12 lg:gap-10">
         <Reveal className="lg:col-span-5">
           <Eyebrow light>Get in touch</Eyebrow>

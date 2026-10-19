@@ -6,11 +6,11 @@ export default {
       colors: {
         // Neutral black and white with one lime accent (the streetwear reference). Lime is used as a fill, a highlight on
         // dark backgrounds and for small marks, never as body text on light backgrounds.
-        paper: "#F6F6F4",
-        paper2: "#E8E7E5",
-        ink: "#101010",
-        ink2: "#1B1B1B",
-        muted: "#595958",
+        paper: "rgb(var(--c-paper) / <alpha-value>)",
+        paper2: "rgb(var(--c-paper2) / <alpha-value>)",
+        ink: "rgb(var(--c-ink) / <alpha-value>)",
+        ink2: "rgb(var(--c-ink2) / <alpha-value>)",
+        muted: "rgb(var(--c-muted) / <alpha-value>)",
         accent: "#BDF64F",
         accentDeep: "#9BD02D",
       },

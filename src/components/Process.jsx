@@ -9,9 +9,9 @@ const PROCESS_ICONS = [Binoculars, PencilRuler, RocketLaunch, TrendUp];
 // Alternating surfaces, all from the site palette.
 const SURFACES = [
   "bg-paper2 text-ink",
-  "bg-ink text-paper",
+  "keep-light bg-ink text-paper",
   "bg-paper2 text-ink",
-  "bg-ink text-paper",
+  "keep-light bg-ink text-paper",
 ];
 
 // Stacking cards: every card sticks to the top of the screen as you scroll, the next one slides up over it, and the

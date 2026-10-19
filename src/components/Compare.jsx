@@ -10,8 +10,8 @@ import { cn } from "../lib/utils.js";
 // The KODA column is the dark one; the name is always in the logo lettering and never green.
 const TONE = {
   pro: { label: "Strength", Icon: Check, dot: "bg-accent text-ink", tint: "bg-accent/20" },
-  mid: { label: "Depends", Icon: Minus, dot: "bg-[#FFC76B] text-ink", tint: "bg-[#FFC76B]/20" },
-  con: { label: "Drawback", Icon: X, dot: "bg-[#FF9A8B] text-ink", tint: "bg-[#FF9A8B]/15" },
+  mid: { label: "Depends", Icon: Minus, dot: "bg-[#FFC76B] text-[#101010]", tint: "bg-[#FFC76B]/20" },
+  con: { label: "Drawback", Icon: X, dot: "bg-[#FF9A8B] text-[#101010]", tint: "bg-[#FF9A8B]/15" },
   plain: { label: "", Icon: Minus, dot: "bg-paper/25 text-paper", tint: "" },
 };
 

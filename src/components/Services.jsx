@@ -22,7 +22,7 @@ export function ServiceList({ items = SERVICES }) {
   );
 }
 
-const SURFACES = ["bg-paper text-ink", "bg-ink text-paper", "bg-accent text-ink"];
+const SURFACES = ["bg-paper text-ink", "keep-light bg-ink text-paper", "bg-accent text-ink"];
 
 const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, ShareNetwork];
 const TONES = ["paper", "ink", "accent"];

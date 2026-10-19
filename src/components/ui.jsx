@@ -175,7 +175,14 @@ export function TextLink({ children, href, onClick, external, light, className }
 export function Logo({ light = false, className }) {
   return (
     <span className={cn("inline-flex select-none items-center gap-2.5", className)}>
-      <img src={light ? LOGO_LIGHT : LOGO_DARK} alt="" width={240} height={250} className="h-8 w-auto" draggable={false} />
+      {light ? (
+        <img src={LOGO_LIGHT} alt="" width={240} height={250} className="h-8 w-auto" draggable={false} />
+      ) : (
+        <>
+          <img src={LOGO_DARK} alt="" width={240} height={250} className="logo-on-light h-8 w-auto" draggable={false} />
+          <img src={LOGO_LIGHT} alt="" width={240} height={250} className="logo-on-dark h-8 w-auto" draggable={false} />
+        </>
+      )}
       <span className={cn("logo-word text-[1.08rem] uppercase leading-none", light ? "text-paper" : "text-ink")}>KODA</span>
     </span>
   );
@@ -196,7 +203,7 @@ export function withBrand(text) {
 // A real site screenshot inside a quiet browser window.
 export function BrowserFrame({ project, className, priority = false, high = false }) {
   return (
-    <div className={cn("overflow-hidden rounded-xl bg-white shadow-[0_40px_70px_-30px_rgba(16,16,16,0.45)] ring-1 ring-ink/10", className)}>
+    <div className={cn("keep-light overflow-hidden rounded-xl bg-white shadow-[0_40px_70px_-30px_rgba(16,16,16,0.45)] ring-1 ring-ink/10", className)}>
       <div className="flex items-center gap-1.5 border-b border-ink/10 bg-paper px-3 py-2">
         <span className="h-2 w-2 rounded-full bg-ink/15" />
         <span className="h-2 w-2 rounded-full bg-ink/15" />

@@ -23,8 +23,48 @@
       --g: 2.5rem;
     }
   }
+  /* Colour tokens as RGB channels so Tailwind's opacity modifiers keep working. Dark mode swaps paper and ink.
+     .keep-light puts the light values back for a block: the hero and menu look the same in both modes, and the
+     blocks that are always dark (footer, contact and so on) keep their light text on a dark box. */
+  :root,
+  .keep-light {
+    --c-paper: 246 246 244;
+    --c-paper2: 232 231 229;
+    --c-ink: 16 16 16;
+    --c-ink2: 27 27 27;
+    --c-muted: 89 89 88;
+  }
+  .dark {
+    --c-paper: 16 16 16;
+    --c-paper2: 27 27 27;
+    --c-ink: 246 246 244;
+    --c-ink2: 232 231 229;
+    --c-muted: 176 176 172;
+    color-scheme: dark;
+  }
+  /* The boxes that are black in light mode become the brand grey in dark mode. A block that keeps the light
+     palette (the always-dark sections) sits on a slightly lifted dark grey so it still reads against the page. */
+  .dark .bg-ink:not(.keep-light) { background-color: #E8E7E5; }
+  .dark .keep-light .bg-ink { background-color: #101010; }
+  .dark .keep-light.bg-ink { background-color: #1B1B1B; }
+  .dark .keep-light .bg-ink2 { background-color: #262625; }
+  /* The logo mark: the dark one on light surfaces, the light one on dark surfaces. */
+  .logo-on-dark { display: none; }
+  .dark .logo-on-light { display: none; }
+  .dark .logo-on-dark { display: block; }
+  .dark .keep-light .logo-on-light { display: block; }
+  .dark .keep-light .logo-on-dark { display: none; }
+  .dark .bg-accent .bg-ink { background-color: #101010; }
+  /* Lime blocks keep their dark text in both modes. */
+  .dark .bg-accent,
+  .dark .hover\:bg-accent:hover,
+  .dark .group:hover .group-hover\:bg-accent {
+    --c-ink: 16 16 16;
+    --c-paper: 246 246 244;
+    --c-muted: 89 89 88;
+  }
   html {
-    background-color: #F6F6F4;
+    background-color: rgb(var(--c-paper));
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -42,7 +82,7 @@
     scroll-margin-top: 4.5rem;
   }
   :focus-visible {
-    outline: 2px solid #101010;
+    outline: 2px solid rgb(var(--c-ink));
     outline-offset: 3px;
     border-radius: 4px;
   }
@@ -481,13 +521,13 @@
     flex: 1;
     height: 3px;
     border-radius: 3px;
-    background: rgb(16 16 16 / 0.12);
+    background: rgb(var(--c-ink) / 0.12);
     overflow: hidden;
   }
   .deck-bar-fill {
     position: absolute;
     inset: 0;
-    background: #101010;
+    background: rgb(var(--c-ink));
     transform-origin: 0 50%;
     transform: scaleX(0);
   }

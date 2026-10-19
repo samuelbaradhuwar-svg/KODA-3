@@ -13,7 +13,7 @@ export function Ticker() {
     </ul>
   );
   return (
-    <div className="overflow-hidden bg-ink py-5" aria-hidden="true">
+    <div className="keep-light overflow-hidden bg-ink py-5" aria-hidden="true">
       <div className="flex w-max animate-marquee will-change-transform">
         {row(false)}
         {row(true)}
@@ -24,7 +24,7 @@ export function Ticker() {
 
 export function Proof() {
   return (
-    <section aria-label="Clients" className="border-t border-paper/10 bg-ink2 py-10 sm:py-12">
+    <section aria-label="Clients" className="keep-light border-t border-paper/10 bg-ink2 py-10 sm:py-12">
       <div className="wrap grid items-center gap-6 lg:grid-cols-12">
         <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60 lg:col-span-2">Recent client work</p>
         <ul className="flex flex-wrap gap-x-8 gap-y-2 lg:col-span-7">

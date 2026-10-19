@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowRight } from "@phosphor-icons/react";
+import { ArrowRight, Moon, Sun } from "@phosphor-icons/react";
 import { NAV_LINKS } from "../content.js";
 import { Logo } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
@@ -14,6 +14,18 @@ export default function Header() {
   const [active, setActive] = useState("");
   const [solid, setSolid] = useState(false);
   const toggleRef = useRef(null);
+  // null until mounted, so the server HTML and the first client render match. The page already carries the right class.
+  const [dark, setDark] = useState(null);
+  useEffect(() => setDark(document.documentElement.classList.contains("dark")), []);
+  const flipTheme = () => {
+    const next = !document.documentElement.classList.contains("dark");
+    document.documentElement.classList.toggle("dark", next);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", next ? "#101010" : "#F6F6F4");
+    try {
+      localStorage.setItem("koda-theme", next ? "dark" : "light");
+    } catch (e) {}
+    setDark(next);
+  };
 
   // Solid bar once the hero is behind us (and always on pages that have no hero).
   useEffect(() => {
@@ -96,20 +108,31 @@ export default function Header() {
         >
           <Logo />
         </a>
-        <button
-          ref={toggleRef}
-          type="button"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          aria-controls="site-menu"
-          onClick={() => setOpen((v) => !v)}
-          className={cn("pointer-events-auto grid h-11 w-11 place-items-center rounded-full border transition-transform active:scale-95", solid ? "border-ink/40" : "border-ink/30 bg-paper/80 backdrop-blur-md")}
-        >
-          <span className="relative block h-[10px] w-[18px]">
-            <span className={cn("absolute left-0 top-0 h-[1.5px] w-full bg-current transition-transform duration-300", open && "translate-y-[4.25px] rotate-45")} />
-            <span className={cn("absolute bottom-0 left-0 h-[1.5px] w-full bg-current transition-transform duration-300", open && "-translate-y-[4.25px] -rotate-45")} />
-          </span>
-        </button>
+        <div className="pointer-events-none flex items-center gap-2">
+          <button
+            type="button"
+            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-pressed={dark === true}
+            onClick={flipTheme}
+            className={cn("pointer-events-auto grid h-11 w-11 place-items-center rounded-full border transition-transform active:scale-95", solid ? "border-ink/40" : "border-ink/30 bg-paper/80 backdrop-blur-md")}
+          >
+            {dark ? <Sun size={18} weight="bold" aria-hidden="true" /> : <Moon size={18} weight="bold" aria-hidden="true" />}
+          </button>
+          <button
+            ref={toggleRef}
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="site-menu"
+            onClick={() => setOpen((v) => !v)}
+            className={cn("pointer-events-auto grid h-11 w-11 place-items-center rounded-full border transition-transform active:scale-95", solid ? "border-ink/40" : "border-ink/30 bg-paper/80 backdrop-blur-md")}
+          >
+            <span className="relative block h-[10px] w-[18px]">
+              <span className={cn("absolute left-0 top-0 h-[1.5px] w-full bg-current transition-transform duration-300", open && "translate-y-[4.25px] rotate-45")} />
+              <span className={cn("absolute bottom-0 left-0 h-[1.5px] w-full bg-current transition-transform duration-300", open && "-translate-y-[4.25px] -rotate-45")} />
+            </span>
+          </button>
+        </div>
       </header>
 
       {/* click-away layer + the menu */}
@@ -120,7 +143,7 @@ export default function Header() {
         aria-label="Site menu"
         inert={!open}
         className={cn(
-          "glass menu-panel fixed z-50 origin-top-right overflow-y-auto overscroll-contain text-ink transition-[opacity,transform,visibility] duration-300 ease-out sm:w-[360px]",
+          "keep-light glass menu-panel fixed z-50 origin-top-right overflow-y-auto overscroll-contain text-ink transition-[opacity,transform,visibility] duration-300 ease-out sm:w-[360px]",
           open ? "visible translate-y-0 scale-100 opacity-100" : "invisible -translate-y-2 scale-[0.96] opacity-0"
         )}
       >
