@@ -17,6 +17,7 @@ import Footer from "./components/Footer.jsx";
 import WhatsApp from "./components/WhatsApp.jsx";
 import BackToTop from "./components/BackToTop.jsx";
 import WebsiteDesignDurban from "./pages/WebsiteDesignDurban.jsx";
+import { PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "./pages/Legal.jsx";
 import { PAGES } from "./content.js";
 import { scrollToId } from "./lib/utils.js";
 
@@ -43,6 +44,14 @@ function Home() {
   );
 }
 
+const PAGE_VIEWS = {
+  "/website-design-durban": WebsiteDesignDurban,
+  "/privacy-policy": PrivacyPolicy,
+  "/terms": Terms,
+  "/refund-policy": RefundPolicy,
+  "/cookie-policy": CookiePolicy,
+};
+
 export default function App({ path = "/" }) {
   useEffect(() => {
     // Pages that link to "/#section" land here, so scroll to the section once the page has rendered.
@@ -59,7 +68,7 @@ export default function App({ path = "/" }) {
         Skip to content
       </a>
       <Header />
-      {path === "/website-design-durban" ? <WebsiteDesignDurban /> : <Home />}
+      {PAGE_VIEWS[path] ? React.createElement(PAGE_VIEWS[path]) : <Home />}
       <Footer />
       <WhatsApp />
       <BackToTop />

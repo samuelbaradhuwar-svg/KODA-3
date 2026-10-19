@@ -165,6 +165,7 @@ export function TextLink({ children, href, onClick, external, light, className }
         )}
       >
         {children}
+          {external && <span className="sr-only"> (opens in a new tab)</span>}
         <ArrowUpRight size={15} weight="bold" className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </span>
     </a>

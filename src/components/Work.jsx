@@ -21,7 +21,7 @@ export default function Work() {
           {PROJECTS.map((p, i) => (
             <article key={p.name} className="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
               <Reveal className={cn("lg:col-span-7", i % 2 === 1 && "lg:order-2")}>
-                <a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${p.name} website`} className="group block">
+                <a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={`${p.host}: visit the ${p.name} website (opens in a new tab)`} className="group block">
                   <div className="transition-transform duration-700 ease-out group-hover:-translate-y-1.5" style={{ rotate: i % 2 === 0 ? "-0.8deg" : "0.8deg" }}>
                     <BrowserFrame project={p} />
                   </div>

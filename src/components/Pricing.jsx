@@ -51,7 +51,7 @@ export default function Pricing() {
                 </ul>
 
                 <div className="lg:col-span-2 lg:justify-self-end">
-                  <Button variant={hot ? "lime" : "dark"} onClick={() => scrollToId("contact")}>Get started</Button>
+                  <Button variant={hot ? "lime" : "dark"} onClick={() => scrollToId("contact")}>Get started<span className="sr-only"> with {p.name}</span></Button>
                 </div>
               </Reveal>
             );
