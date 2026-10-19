@@ -164,6 +164,19 @@ export function Terms() {
       <H>Quotes and services</H>
       <P>Prices on this site are in South African rand. Your written quote states what is included, the price, whether VAT applies, the payment terms and the timeline. If it differs from this website, the quote applies. Our <a className="underline underline-offset-4" href="/refund-policy">refund policy</a> explains cancellations and refunds.</P>
 
+      <H>Monthly growth plans</H>
+      <P>Our monthly plans (such as KODA Presence, KODA Growth and KODA Performance) are ongoing services. The prices shown on this site are proposed starting prices. Your written quote or agreement confirms what is included, the monthly price, how and when you are billed, and the date the plan starts.</P>
+      <UL>
+        <li><strong>Fixed allowances.</strong> Each plan includes a fixed monthly allowance, for example a number of social media posts and campaigns. It is not unlimited work. Your quote says what counts towards the allowance and whether anything unused carries over.</li>
+        <li><strong>Quoted separately.</strong> Advertising budgets, extensive video production, professional photography and initial website development are not part of a monthly plan and are quoted separately.</li>
+        <li><strong>What we need from you.</strong> To do the work we need timely content, approvals and access to the accounts involved, such as your website, Google Business Profile, social media and advertising accounts. Delays on your side can delay the work.</li>
+        <li><strong>Your accounts.</strong> We work in accounts that belong to you. Please keep ownership of them and give us only the access we need. We will only use that access for the work you have asked for.</li>
+        <li><strong>No guaranteed results.</strong> We do not promise rankings, traffic, enquiries or sales. Results depend on your business, your market, your content and third-party platforms such as Google and Meta, which can change their rules and algorithms without notice. We are not responsible for those changes.</li>
+        <li><strong>Platform rules.</strong> Content and advertising must follow the rules of the platforms we post to. We may decline content that breaks them or is unlawful.</li>
+        <li><strong>Changes to the price or scope.</strong> A change to your monthly price or what is included needs your written agreement.</li>
+        <li><strong>Cancelling.</strong> You can cancel a monthly plan as explained in our <a className="underline underline-offset-4" href="/refund-policy">refund policy</a>.</li>
+      </UL>
+
       <H>Intellectual property</H>
       <P>The design, text, code, logo and other content of this website belong to {name} or are used with permission, and are protected by copyright. You may not copy them without our written permission. Other businesses' names, logos and websites shown here belong to their owners and appear to show examples of our work. Who owns the work we create for a client is set out in that client's quote or agreement.</P>
 
@@ -191,7 +204,7 @@ export function RefundPolicy() {
     <Shell
       eyebrow="Legal"
       title="Refund policy"
-      intro={<>This policy explains when you can cancel and when we refund payments for {withBrand("KODA")} web design and related services. It sits alongside your quote and does not limit your rights under the Consumer Protection Act 68 of 2008 (CPA).</>}
+      intro={<>This policy explains when you can cancel and when we refund payments for {withBrand("KODA")} web design, monthly growth plans and related services. It sits alongside your quote and does not limit your rights under the Consumer Protection Act 68 of 2008 (CPA).</>}
     >
       <H>Free services</H>
       <P>The free website check and the free homepage mock-up cost nothing, so there is nothing to refund.</P>
@@ -205,8 +218,17 @@ export function RefundPolicy() {
       <H>If something is wrong with the work</H>
       <P>If we deliver work that is not as agreed, or not of the quality you are entitled to expect, tell us in writing and describe the problem. You have the right under section 54 of the CPA to have the service performed again properly or, if that is not possible, to a refund of a fair amount for the part that was not done properly. We will fix agreed problems at no charge.</P>
 
-      <H>Monthly services</H>
-      <P>For ongoing services such as website care or maintenance, you may cancel with 20 business days' written notice. If you pay in advance, we will refund any period you have paid for beyond the notice period, less any reasonable cancellation charge allowed by law.</P>
+      <H>Monthly growth plans</H>
+      <P>Our monthly plans (such as KODA Presence, KODA Growth and KODA Performance), and ongoing services such as website care, can be cancelled at any time with 20 business days' written notice. Email {mail(B.email)} to give notice.</P>
+      <UL>
+        <li><strong>During the notice period</strong> we keep delivering the plan, and you pay for it as normal.</li>
+        <li><strong>Paid in advance.</strong> If you have paid for any period beyond the notice period, we refund it, less any reasonable cancellation charge allowed by law.</li>
+        <li><strong>Work already delivered.</strong> We do not refund a month in which the agreed work was delivered.</li>
+        <li><strong>Work not delivered.</strong> If an agreed monthly item was not delivered, such as a post or a report, we will deliver it, or credit or refund a fair amount for it.</li>
+      </UL>
+
+      <H>Advertising budgets and extra services</H>
+      <P>Advertising budgets, extensive video production and professional photography are quoted separately, and your quote sets out how each is paid for and refunded. Money already paid to an advertising platform such as Google or Meta for advertising that has run cannot be refunded by us. If you paid us an advertising budget that has not yet been spent, we will refund the unspent part when the plan ends.</P>
 
       <H>Cooling-off for online agreements</H>
       <P>The Electronic Communications and Transactions Act 25 of 2002 may give you a seven day cooling-off period for some agreements concluded online. It does not apply once services have started with your consent within that period.</P>
