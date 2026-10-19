@@ -32,26 +32,32 @@ export function ServiceList({ items = SERVICES }) {
 
 const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, ShareNetwork];
 
-// One picture per service. Each card is light (the same in light and dark mode), the picture sits on the right on
-// wide screens and across the top on phones, and fades into the card colour so there is no hard edge. `bg` is the
-// picture's own background colour, so the fade is seamless. `pos` keeps the main subject in frame.
+// One picture per service, set in a rounded panel so it sits cleanly on any card colour. The cards cycle white,
+// black and lime like before; `pos` keeps the main subject of each picture in frame.
+const SURFACES = [
+  { card: "bg-paper text-ink", body: "text-ink/80", tile: "bg-accent text-ink" },
+  { card: "keep-light bg-ink text-paper", body: "text-paper/80", tile: "bg-accent text-ink" },
+  { card: "bg-accent text-ink", body: "text-ink/80", tile: "bg-ink text-accent" },
+];
+
 const ART = [
-  { src: art1, w: 1400, h: 934, bg: "#F0EFEA", pos: "50% 40%" },
-  { src: art2, w: 1400, h: 764, bg: "#E3E2DE", pos: "55% 50%" },
-  { src: art3, w: 1400, h: 934, bg: "#EEEDE9", pos: "55% 40%" },
-  { src: art4, w: 1400, h: 934, bg: "#EBEAE6", pos: "50% 40%" },
-  { src: art5, w: 1400, h: 934, bg: "#EAEBE5", pos: "50% 40%" },
-  { src: art6, w: 1400, h: 934, bg: "#EAEBE6", pos: "50% 40%" },
-  { src: art7, w: 1400, h: 934, bg: "#E8E9E3", pos: "50% 40%" },
-  { src: art8, w: 1400, h: 934, bg: "#F2F2ED", pos: "50% 45%" },
-  { src: art9, w: 1400, h: 764, bg: "#F1F0EC", pos: "50% 50%" },
+  { src: art1, w: 1400, h: 934, pos: "50% 40%" },
+  { src: art2, w: 1400, h: 764, pos: "55% 50%" },
+  { src: art3, w: 1400, h: 934, pos: "55% 40%" },
+  { src: art4, w: 1400, h: 934, pos: "50% 40%" },
+  { src: art5, w: 1400, h: 934, pos: "50% 40%" },
+  { src: art6, w: 1400, h: 934, pos: "50% 40%" },
+  { src: art7, w: 1400, h: 934, pos: "50% 40%" },
+  { src: art8, w: 1400, h: 934, pos: "50% 45%" },
+  { src: art9, w: 1400, h: 764, pos: "50% 50%" },
 ];
 
 function ServiceCard({ s, i }) {
   const art = ART[i % ART.length];
+  const surface = SURFACES[i % SURFACES.length];
   const Icon = SERVICE_ICONS[i % SERVICE_ICONS.length];
   return (
-    <article className="keep-light relative h-full overflow-hidden rounded-[28px] text-ink" style={{ backgroundColor: art.bg }}>
+    <article className={`relative h-full overflow-hidden rounded-[28px] ${surface.card}`}>
       <img
         src={art.src}
         width={art.w}
@@ -60,15 +66,15 @@ function ServiceCard({ s, i }) {
         loading="lazy"
         decoding="async"
         draggable={false}
-        className="svc-art absolute object-cover"
+        className="svc-art absolute rounded-[18px] object-cover shadow-[0_18px_40px_-24px_rgba(16,16,16,0.5)] ring-1 ring-black/10 md:rounded-[22px]"
         style={{ objectPosition: art.pos }}
       />
-      <div className="relative z-10 flex h-full flex-col justify-end gap-2.5 p-5 text-left sm:p-7 md:w-[42%] md:justify-center md:gap-4 md:p-10 [@media(max-height:520px)]:justify-center [@media(max-height:520px)]:p-4">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-ink md:h-14 md:w-14 [@media(max-height:520px)]:hidden">
+      <div className="relative z-10 flex h-full flex-col justify-end gap-2.5 p-5 text-left sm:p-7 md:w-[40%] md:justify-center md:gap-4 md:p-10 [@media(max-height:520px)]:justify-center [@media(max-height:520px)]:p-4">
+        <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${surface.tile} md:h-14 md:w-14 [@media(max-height:520px)]:hidden`}>
           <Icon size={24} weight="bold" aria-hidden="true" />
         </span>
         <h3 className="xwide text-[clamp(1.2rem,2.6vw,2.1rem)] leading-[1.05] tracking-[-0.03em]">{s.title}</h3>
-        <p className="max-w-[38ch] text-[14px] leading-[1.55] text-ink/80 md:text-[clamp(15px,1.4vw,17px)] md:leading-[1.6]">{s.desc}</p>
+        <p className={`max-w-[38ch] text-[14px] leading-[1.55] ${surface.body} md:text-[clamp(15px,1.4vw,17px)] md:leading-[1.6]`}>{s.desc}</p>
       </div>
     </article>
   );
