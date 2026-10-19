@@ -195,11 +195,11 @@ export const MOCKUP_OFFER = true;
 export const COMPARE = {
   cols: ["DIY website builder", "Cheapest quote", "KODA"],
   rows: [
-    { label: "Who builds it", vals: ["You, in your own time", "Often a reused template", "We design and build it for you"] },
-    { label: "Google set-up", vals: ["You work it out yourself", "Often extra, or not included", "Google Business Profile and SEO set-up available"] },
-    { label: "Hosting and security", vals: ["A monthly plan you manage", "Varies", "Managed hosting with SSL, backups and monitoring"] },
-    { label: "After launch", vals: ["Help articles and forums", "Varies", "Support included on every plan"] },
-    { label: "Price", vals: ["Monthly, plus your time", "Low upfront price", "From R3,499 once off"] },
+    { label: "Who builds it", tones: ["con", "con", "pro"], vals: ["You, in your own time", "Often a reused template", "We design and build it for you"] },
+    { label: "Google set-up", tones: ["con", "con", "pro"], vals: ["You work it out yourself", "Often extra, or not included", "Google Business Profile and SEO set-up available"] },
+    { label: "Hosting and security", tones: ["mid", "mid", "pro"], vals: ["A monthly plan you manage", "Varies", "Managed hosting with SSL, backups and monitoring"] },
+    { label: "After launch", tones: ["mid", "mid", "pro"], vals: ["Help articles and forums", "Varies", "Support included on every plan"] },
+    { label: "Price", tones: ["mid", "pro", "plain"], vals: ["Monthly, plus your time", "Low upfront price", "From R3,499 once off"] },
   ],
 };
 
