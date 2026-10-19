@@ -91,6 +91,7 @@ export function PrivacyPolicy() {
         <li><strong>Specialist audit request.</strong> If you ask for a detailed audit by a specialist: your email address, website address, business name if given, and optionally your phone number and a note. We use it to contact you about the audit.</li>
         <li><strong>Emails and messages you send us.</strong> We keep them to answer you and to keep a record of what we agreed.</li>
         <li><strong>Clients.</strong> If we work together, the contact, billing and business details and the content you supply (text, images, logos) so we can deliver and invoice the work.</li>
+        <li><strong>Monthly plans.</strong> To run a monthly plan we also need access to the accounts we manage for you, such as your website, Google Business Profile, Search Console, analytics, social media and advertising accounts. Wherever possible we ask you to give us access through each platform's own sharing or manager permissions, rather than sharing a password.</li>
         <li><strong>Technical data.</strong> Our hosting provider records your IP address, browser and the pages requested in server logs, for security and to keep the site running. To prevent misuse of the free check, requests are limited per IP address; this count is kept briefly in the server's memory and is not saved to a database.</li>
       </UL>
       <P>We do not use analytics, advertising or tracking tools on this website. We do not collect special personal information (such as health, religion or children's information), and this website is not directed at anyone under 18.</P>
@@ -108,11 +109,21 @@ export function PrivacyPolicy() {
       </UL>
       <P>We may also disclose information where the law requires it, or to protect our rights.</P>
 
+      <H>Monthly plans and your customers' information</H>
+      <P>When we manage a client's website, search visibility, social media, campaigns or reporting, we may come across personal information about that client's own customers, website visitors, leads and followers. For example, names, email addresses and phone numbers in enquiries, messages and comments, website analytics, and advertising audiences.</P>
+      <UL>
+        <li><strong>The client is responsible for it.</strong> For that information, the client is the responsible party under POPIA and we act as an operator. We process it only to deliver the services the client has asked for, and only on the client's instructions, under a written agreement.</li>
+        <li><strong>We keep it confidential and secure.</strong> We use it for no other purpose, and we do not use it to market our own services.</li>
+        <li><strong>Marketing rules.</strong> Email marketing and similar campaigns are sent only to people the client is entitled to contact, with a clear way to opt out, as POPIA requires. Clients remain responsible for having permission to use the people, images and content they ask us to publish.</li>
+        <li><strong>Tools.</strong> We may use tools such as Google Search Console, Google Analytics, Google Ads, Meta Business Suite and similar platforms, as the plan needs. Each has its own privacy terms, and information may be processed outside South Africa.</li>
+        <li><strong>If you are a client's customer.</strong> To see, correct or delete your information, please contact the business first. We will help them respond.</li>
+      </UL>
+
       <H>Sending information outside South Africa</H>
       <P>These providers store and process information in other countries, including the United States. When we send personal information abroad, we use providers that are contractually bound to protect it, as section 72 of POPIA requires. By submitting a form you understand that your information may be processed in this way.</P>
 
       <H>How long we keep it</H>
-      <P>We keep personal information only as long as needed for the purpose it was collected for. Enquiries that do not lead to work are deleted once they are no longer needed. Records about work we do and invoices are kept for as long as the law requires (for example, tax records are kept for five years). The free check is not stored in a database: your report is sent by email and we keep the email copy only as long as we need it to follow up.</P>
+      <P>We keep personal information only as long as needed for the purpose it was collected for. Enquiries that do not lead to work are deleted once they are no longer needed. Records about work we do and invoices are kept for as long as the law requires (for example, tax records are kept for five years). When a monthly plan ends, we stop using the access you gave us, and we delete or hand back the information we hold for you within a reasonable time, unless the law requires us to keep it. The free check is not stored in a database: your report is sent by email and we keep the email copy only as long as we need it to follow up.</P>
 
       <H>How we protect it</H>
       <P>We use reasonable technical and organisational measures: encrypted connections (HTTPS), access limited to people who need it, and providers with their own security controls. No system is perfectly secure. If a breach affects your personal information, we will notify you and the Information Regulator as POPIA requires.</P>
