@@ -303,7 +303,7 @@ export default function CardDeck({ items, renderCard, label, step = 0.62 }) {
         </ol>
         <div className="deck-meter" aria-hidden="true">
           <span className="deck-bar"><span ref={barRef} className="deck-bar-fill" /></span>
-          <span className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/70">Keep scrolling</span>
+          <span className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/50">Keep scrolling</span>
         </div>
       </div>
     </div>

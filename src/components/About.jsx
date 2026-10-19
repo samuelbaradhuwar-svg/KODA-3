@@ -28,7 +28,6 @@ export default function About() {
               </Reveal>
             ))}
           </SpotlightGrid>
-          <p className="mt-6 max-w-[60ch] text-[13px] leading-[1.6] text-paper/60">Results depend on your business, your market and your content. We cannot promise rankings, enquiries or sales.</p>
         </div>
 
         <div className="mt-24 sm:mt-32">

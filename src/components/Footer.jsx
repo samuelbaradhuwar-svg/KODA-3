@@ -1,6 +1,6 @@
 import React from "react";
 import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
-import { NAV_LINKS, SOCIALS, BUSINESS, LEGAL_LINKS } from "../content.js";
+import { NAV_LINKS, SOCIALS } from "../content.js";
 import { Logo, Koda } from "./ui.jsx";
 import { LETTER_PATHS } from "../lib/logo-paths.js";
 import { EMAIL, openGmailCompose, scrollToId } from "../lib/utils.js";
@@ -57,23 +57,7 @@ export default function Footer() {
             <path key={i} d={d} fill="currentColor" fillRule="evenodd" />
           ))}
         </svg>
-        <div className="mt-10 grid gap-6 border-t border-paper/10 pt-6 lg:grid-cols-12">
-          <nav aria-label="Legal" className="lg:col-span-7">
-            <ul className="flex flex-wrap gap-x-6">
-              {LEGAL_LINKS.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="inline-flex min-h-11 items-center text-sm text-paper/70 transition-colors hover:text-accent">{l.label}</a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <address className="text-[13px] not-italic leading-[1.6] text-paper/60 lg:col-span-5 lg:text-right">
-            {[BUSINESS.legalName, BUSINESS.entityType, BUSINESS.registrationNumber && `Reg. ${BUSINESS.registrationNumber}`, BUSINESS.vatNumber && `VAT ${BUSINESS.vatNumber}`].filter(Boolean).join(" · ") || null}
-            {BUSINESS.physicalAddress && <><br />{BUSINESS.physicalAddress}</>}
-            {BUSINESS.phone && <><br />{BUSINESS.phone}</>}
-          </address>
-        </div>
-        <p className="mt-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/60">
+        <p className="mt-10 border-t border-paper/10 pt-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/60">
           &copy; {new Date().getFullYear()} <Koda />. All rights reserved.
         </p>
       </div>

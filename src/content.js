@@ -23,7 +23,7 @@ export const PRESENCE = [
   },
   {
     title: "Found when customers search",
-    desc: "A website and a Google Business profile help you appear on Google Search and Maps when people look for what you do.",
+    desc: "A website and a Google Business profile put you on Google Search and Maps when people look for what you do.",
   },
   {
     title: "One story everywhere",
@@ -59,12 +59,12 @@ export const PROJECTS = [
 export const SERVICES = [
   { title: "Website Design", desc: "Professional websites built around how your customers search, browse and buy, with WhatsApp and Google Maps built in." },
   { title: "Branding and Logo Design", desc: "A logo and a clear brand look (colours, type and style) so your business looks the same everywhere, from your website to your social pages. A good place to start if all you have is an idea." },
-  { title: "Website Redesign", desc: "A modern rebuild of your existing site: the same business, with a sharper design and a faster, cleaner build." },
+  { title: "Website Redesign", desc: "A modern rebuild of your existing site, keeping your business the same while delivering faster load times, sharper design and better results." },
   { title: "Ecommerce Stores", desc: "Fully functional online stores with secure checkout, inventory management and shopping flows designed for mobile." },
   { title: "Booking Systems", desc: "Let customers book appointments, tables or services online, 24/7, without a single phone call." },
-  { title: "Google Business Profile", desc: "We set up and optimise your profile so your business can show up on Google Search and Maps when local customers look for you." },
-  { title: "SEO Optimisation", desc: "On page and technical SEO that helps your website get found by people who are looking for what you offer. We cannot promise a particular ranking." },
-  { title: "Website Maintenance", desc: "Ongoing updates, backups and security monitoring to help keep your site fast, safe and online." },
+  { title: "Google Business Profile", desc: "A fully optimised profile so your business shows up on Google Search and Maps when local customers look for you." },
+  { title: "SEO Optimisation", desc: "On page and technical SEO that helps your website rank higher and get found by people ready to buy." },
+  { title: "Website Maintenance", desc: "Ongoing updates, backups and security monitoring so your site stays fast, safe and always online." },
   { title: "Google Workspace and Email", desc: "Professional @yourbusiness email on Google Workspace, with Gmail, Calendar, Meet and Drive on your own domain, so every message builds credibility." },
 ];
 
@@ -76,22 +76,23 @@ export const PROCESS = [
 ];
 
 export const WHY_US = [
-  { title: "Built for speed", desc: "Lean, modern pages that load quickly, so visitors are not kept waiting." },
+  { title: "Lightning fast websites", desc: "Built for speed, so visitors never leave before your site even loads." },
   { title: "Mobile friendly", desc: "Designed for phones first, because most of your customers are on them." },
   { title: "Secure hosting", desc: "SSL, backups and monitoring included, so your site stays online and protected." },
-  { title: "Clear timelines", desc: "Single page sites typically launch within five to seven working days. Larger projects take longer, and we agree the timeline with you first." },
+  { title: "Fast turnaround", desc: "Most projects launch in days, not months, without cutting corners." },
 ];
 
 export const OUTCOMES = [
-  { title: "Easier to find", desc: "A website and Google profile make it easier for customers to find you and get in touch." },
-  { title: "Easier to trust", desc: "A clear, professional site with your details in one place helps people feel confident about contacting you." },
-  { title: "Easier to contact", desc: "WhatsApp, email and a simple form on every page, so enquiring takes seconds." },
-  { title: "Always open", desc: "Your website is available around the clock, so customers can learn about you whenever suits them." },
+  { title: "More clients", desc: "A website and Google profile make it easy for customers to find you and get in touch." },
+  { title: "More exposure", desc: "Be found on Google Maps, local search and social, right when customers are looking." },
+  { title: "More income", desc: "When more people find you and trust you, more of them become paying customers." },
+  { title: "More revenue", desc: "Your website works for you around the clock, so your business is always open to new customers." },
 ];
 
 export const PLANS = [
   {
     name: "Starter",
+    was: "R3,499",
     price: "R2,499",
     note: "once off",
     desc: "A polished single page presence for businesses just getting online.",
@@ -162,10 +163,6 @@ export const SOCIALS = [
 ];
 
 export const PAGES = {
-  "/privacy-policy": { title: "Privacy Policy | KODA", description: "How KODA collects, uses and protects personal information, in line with South Africa's Protection of Personal Information Act (POPIA)." },
-  "/terms": { title: "Terms and Conditions | KODA", description: "The terms for using the KODA website and our free website check." },
-  "/refund-policy": { title: "Refund Policy | KODA", description: "When and how KODA refunds payments for web design and related services." },
-  "/cookie-policy": { title: "Cookie Policy | KODA", description: "KODA does not use tracking or advertising cookies. This page explains what the site does and does not store on your device." },
   "/": {
     title: "KODA | Website Design in Durban",
     description:
@@ -177,5 +174,3 @@ export const PAGES = {
       "Professional website design in Durban for small and medium sized businesses. KODA designs and builds websites, sets up Google Business profiles and handles SEO. Book a free consultation.",
   },
 };
-
-export { BUSINESS, LEGAL, LEGAL_LINKS } from "./legal-config.js";

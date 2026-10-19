@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.mjs",
-    "preview": "vite preview",
-    "legal:check": "node scripts/legal-check.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
