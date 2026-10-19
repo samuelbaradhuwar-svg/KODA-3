@@ -132,14 +132,12 @@ export default function Header() {
               onClick={(e) => onNav(e, l.id)}
               aria-current={active === l.id ? "location" : undefined}
               className={cn(
-                l.id === "audit"
-                  ? "group my-1.5 flex items-center justify-between rounded-2xl bg-accent px-4 py-3.5 font-display font-black text-ink transition-[background,transform] hover:bg-accentDeep active:scale-[0.99] [@media(max-height:520px)]:py-2 [@media(max-height:520px)]:text-[1.15rem] text-[1.45rem] leading-none"
-                  : "group flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.45rem] leading-none transition-colors last:border-b-0 [@media(max-height:520px)]:py-2.5 [@media(max-height:520px)]:text-[1.15rem]",
-                l.id !== "audit" && (active === l.id ? "text-ink" : "text-ink/55 hover:text-ink")
+                "group flex items-center justify-between border-b border-ink/10 py-4 font-display text-[1.45rem] leading-none transition-colors last:border-b-0 [@media(max-height:520px)]:py-2.5 [@media(max-height:520px)]:text-[1.15rem]",
+                active === l.id ? "text-ink" : "text-ink/55 hover:text-ink"
               )}
             >
               {l.label}
-              <span aria-hidden="true" className={cn("menu-arrow", l.id === "audit" && "menu-arrow-ink", active === l.id && "is-active")}>
+              <span aria-hidden="true" className={cn("menu-arrow", active === l.id && "is-active")}>
                 <ArrowRight size={22} weight="bold" />
               </span>
             </a>

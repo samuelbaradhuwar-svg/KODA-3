@@ -548,8 +548,3 @@
 /* card text inside the audit report: one title size, one body size */
 .card-title { font-size: 16px; font-weight: 600; line-height: 1.3; letter-spacing: -0.005em; }
 .card-body { font-size: 15px; line-height: 1.6; color: rgba(246, 246, 244, 0.72); }
-
-/* the Free audit row in the menu: acid pill, bold ink text, plain black arrow (no glow) */
-.menu-arrow.menu-arrow-ink { color: #101010; }
-.menu-arrow.menu-arrow-ink svg { filter: none; animation: none; }
-.group:hover .menu-arrow.menu-arrow-ink svg, .menu-arrow.menu-arrow-ink.is-active svg { filter: none; }
