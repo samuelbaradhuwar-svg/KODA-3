@@ -1,6 +1,6 @@
 import React from "react";
 import { PROJECTS } from "../content.js";
-import { BrowserFrame, Button, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
+import { BrowserFrame, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
 
 export default function Work() {
@@ -38,18 +38,6 @@ export default function Work() {
               </Reveal>
             </article>
           ))}
-
-          <Reveal className="grid items-center gap-6 keep-light rounded-[28px] bg-ink px-7 py-12 text-paper sm:px-12 sm:py-16 lg:grid-cols-12">
-            <div className="lg:col-span-8">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60">Next</p>
-              <Headline as="h3" light className="h-section mt-4">
-                Your business could be <em>here.</em>
-              </Headline>
-            </div>
-            <div className="lg:col-span-4 lg:justify-self-end">
-              <Button variant="lime" onClick={() => scrollToId("contact")}>Book a free consultation</Button>
-            </div>
-          </Reveal>
         </div>
       </div>
     </section>
