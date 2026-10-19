@@ -92,25 +92,84 @@ export const OUTCOMES = [
 export const PLANS = [
   {
     name: "Starter",
-    price: "R2,499",
+    price: "R3,499",
     note: "once off",
     desc: "A polished single page presence for businesses just getting online.",
-    features: ["One page website", "WhatsApp button and contact form", "Google Maps integration", "Basic SEO setup"],
+    features: [
+      "One page website",
+      "WhatsApp button and contact form",
+      "Google Maps integration",
+      "Basic SEO setup",
+      "Managed hosting with SSL, backups and monitoring",
+      "Google Business Profile setup",
+      "Google Workspace email setup (Google's per-user fee is paid separately)",
+    ],
+    cta: "Get started",
   },
   {
     name: "Business",
-    price: "R5,999",
+    price: "R7,999",
     note: "once off",
     desc: "A complete website with several pages, built to win trust and generate leads.",
-    features: ["Everything in Starter", "Five page website", "Photo gallery and testimonials", "On page SEO", "Google indexing setup"],
+    features: ["Everything in Starter", "Five page website", "Photo gallery and testimonials", "On page SEO and Google indexing setup"],
     highlighted: true,
+    badge: "Most popular",
+    cta: "Get started",
   },
   {
-    name: "Premium",
-    price: "From R9,999",
+    name: "Custom",
+    price: "From R14,999",
     note: "custom quote",
-    desc: "For businesses that sell or book online and need a site to match.",
-    features: ["Everything in Business", "Booking system", "Ecommerce store", "Advanced SEO", "Custom integrations and priority support"],
+    desc: "For businesses that book or sell online and need a site to match.",
+    features: ["Everything in Business", "Online booking system or online store", "Advanced SEO", "Custom integrations", "Priority support"],
+    cta: "Get a quote",
+  },
+];
+
+// Monthly plans. Proposed starting prices with fixed monthly allowances, not unlimited work.
+export const MONTHLY_PLANS = [
+  {
+    name: "Presence",
+    price: "From R1,499",
+    note: "/ month",
+    desc: "For businesses establishing their online presence.",
+    features: ["Website maintenance", "Basic SEO optimisation", "Google Business Profile management", "4 social media posts monthly", "Monthly performance report"],
+    cta: "Start with Presence",
+  },
+  {
+    name: "Growth",
+    price: "From R2,999",
+    note: "/ month",
+    desc: "For businesses wanting consistent digital growth.",
+    features: [
+      "Everything included in Presence",
+      "Ongoing SEO management",
+      "8 social media posts monthly",
+      "2 promotional campaigns monthly",
+      "Content strategy",
+      "Website traffic and lead tracking",
+      "Monthly growth report",
+    ],
+    highlighted: true,
+    badge: "Recommended",
+    cta: "Start growing",
+  },
+  {
+    name: "Performance",
+    price: "From R4,999",
+    note: "/ month",
+    desc: "For businesses wanting a comprehensive digital marketing operation.",
+    features: [
+      "Everything included in Growth",
+      "12 social media posts monthly",
+      "4 marketing campaigns monthly",
+      "Advanced SEO strategy",
+      "Conversion optimisation",
+      "Google Ads campaign management",
+      "Competitor monitoring",
+      "Detailed monthly reporting",
+    ],
+    cta: "Start with Performance",
   },
 ];
 
@@ -140,7 +199,7 @@ export const COMPARE = {
     { label: "Google set-up", vals: ["You work it out yourself", "Often extra, or not included", "Google Business Profile and SEO set-up available"] },
     { label: "Hosting and security", vals: ["A monthly plan you manage", "Varies", "Managed hosting with SSL, backups and monitoring"] },
     { label: "After launch", vals: ["Help articles and forums", "Varies", "Support included on every plan"] },
-    { label: "Price", vals: ["Monthly, plus your time", "Low upfront price", "From R2,499 once off"] },
+    { label: "Price", vals: ["Monthly, plus your time", "Low upfront price", "From R3,499 once off"] },
   ],
 };
 
