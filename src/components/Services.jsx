@@ -4,7 +4,7 @@ import { Button, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
 import CardDeck from "./CardDeck.jsx";
 import CardCopy from "./CardCopy.jsx";
-import { Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, EnvelopeSimple } from "@phosphor-icons/react";
+import { Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, TrendUp } from "@phosphor-icons/react";
 
 export function ServiceList({ items = SERVICES }) {
   return (
@@ -24,7 +24,7 @@ export function ServiceList({ items = SERVICES }) {
 
 const SURFACES = ["bg-paper text-ink", "bg-ink text-paper", "bg-accent text-ink"];
 
-const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, EnvelopeSimple];
+const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, TrendUp];
 const TONES = ["paper", "ink", "accent"];
 
 function ServiceCard({ s, i }) {

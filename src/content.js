@@ -65,7 +65,7 @@ export const SERVICES = [
   { title: "Google Business Profile", desc: "We set up and optimise your profile so your business can show up on Google Search and Maps when local customers look for you." },
   { title: "SEO Optimisation", desc: "On page and technical SEO that helps your website get found by people who are looking for what you offer. We cannot promise a particular ranking." },
   { title: "Website Maintenance", desc: "Ongoing updates, backups and security monitoring to help keep your site fast, safe and online." },
-  { title: "Google Workspace and Email", desc: "Professional @yourbusiness email on Google Workspace, with Gmail, Calendar, Meet and Drive on your own domain, so every message builds credibility." },
+  { title: "KODA Growth", desc: "A monthly plan that keeps your business growing: ongoing SEO, social media posts, promotional campaigns and a monthly growth report, with fixed allowances. From R2,999 a month." },
 ];
 
 export const PROCESS = [
