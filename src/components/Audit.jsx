@@ -239,7 +239,9 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
         )
       )}
       <Specialist report={report} lead={sample ? { email: "you@yourbusiness.co.za" } : lead} sample={sample} />
-      <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">{report.note}{sample ? "" : emailed ? ` We will also email you the full report with a PDF attached${when(scheduledFor)}. It comes from our automatic check.` : " Emailed copies are not switched on yet, so none was sent."}</p>
+      {!sample && emailed && (
+        <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">We will also email you the full report with a PDF attached{when(scheduledFor)}. It comes from our automatic check.</p>
+      )}
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
         {sample ? (
           <Button variant="lime" onClick={onReset}>Check my own website</Button>
