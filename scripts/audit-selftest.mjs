@@ -46,6 +46,8 @@ assert.equal(by.contact, "pass");
 assert.equal(by.sitemap, "pass");
 assert.equal(by.https, "fail"); // the local test page is plain http
 assert.ok(r.topFixes.length >= 1);
+assert.ok(Array.isArray(r.opportunities) && r.opportunities.some((o) => o.id === "analytics"), "opportunities found on a bare page");
+assert.ok(r.opportunities.every((o) => o.service && o.evidence));
 assert.equal(r.speedCheckAvailable, false);
 
 // private addresses are refused when the test switch is off

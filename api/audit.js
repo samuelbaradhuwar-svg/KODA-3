@@ -81,7 +81,7 @@ async function safeFetch(url, { timeout = 8000, maxBytes = MAX_HTML, accept = "t
           }
         }
       }
-      return { status: res.status, url: current, body, ms: Date.now() - started, type: res.headers.get("content-type") || "" };
+      return { status: res.status, url: current, body, ms: Date.now() - started, type: res.headers.get("content-type") || "", headers: Object.fromEntries(res.headers) };
     } finally {
       clearTimeout(timer);
     }
@@ -198,26 +198,38 @@ async function extraChecks(origin) {
 }
 
 // ---------------------------------------------------------------- Google PageSpeed Insights
+let psiWhy = "";
 async function pageSpeed(url) {
+  psiWhy = "";
   const key = process.env.PAGESPEED_API_KEY ? `&key=${encodeURIComponent(process.env.PAGESPEED_API_KEY)}` : "";
   const cats = ["performance", "accessibility", "seo", "best-practices"].map((c) => `category=${c}`).join("&");
   const api = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&${cats}${key}`;
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 30_000);
+  const timer = setTimeout(() => ctrl.abort(), 40_000);
   try {
     const res = await fetch(api, { signal: ctrl.signal });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      psiWhy = res.status === 429 ? "Google's free speed quota is used up (add PAGESPEED_API_KEY)" : `Google answered ${res.status}`;
+      return null;
+    }
     const j = await res.json();
     const c = j.lighthouseResult?.categories;
-    if (!c) return null;
+    if (!c) {
+      psiWhy = "Google returned no scores";
+      return null;
+    }
     const a = j.lighthouseResult.audits || {};
     const pct = (x) => (typeof x?.score === "number" ? Math.round(x.score * 100) : null);
     return {
       scores: { speed: pct(c.performance), accessibility: pct(c.accessibility), seo: pct(c.seo), practice: pct(c["best-practices"]) },
       lcp: a["largest-contentful-paint"]?.numericValue ?? null,
       cls: a["cumulative-layout-shift"]?.numericValue ?? null,
+      tbt: a["total-blocking-time"]?.numericValue ?? null,
+      bytes: a["total-byte-weight"]?.numericValue ?? null,
+      savingsMs: Math.max(0, ...["render-blocking-resources", "unused-javascript", "unused-css-rules", "uses-optimized-images", "modern-image-formats", "uses-responsive-images"].map((k) => a[k]?.details?.overallSavingsMs || 0)),
     };
-  } catch {
+  } catch (e) {
+    psiWhy = e?.name === "AbortError" ? "Google took too long to answer" : "Could not reach Google";
     return null;
   } finally {
     clearTimeout(timer);
@@ -241,15 +253,124 @@ function speedChecks(psi) {
   return out;
 }
 
-export function buildReport({ url, finalUrl, html, ttfb, psi, extra }) {
+// ---------------------------------------------------------------- growth opportunities
+// A site can pass every basic check and still leave customers on the table. These are not faults: they are the
+// things a stronger site does that this one does not do yet, each tied to the KODA service that would add it.
+// Everything is read from the page itself, so every line is a fact about the site, never a guess.
+function opportunities(html, finalUrl, headers = {}, psi, extra = []) {
+  const o = [];
+  const add = (id, area, title, why, service, evidence, impact = "medium") => o.push({ id, area, title, why, service, evidence, impact });
+  const text = html.replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  const words = text.split(" ").filter(Boolean).length;
+  const lower = html.toLowerCase();
+  const host = new URL(finalUrl).hostname;
+
+  // what the site is built with
+  const stack = /wp-content|wp-includes/.test(lower) ? "WordPress" : /cdn\.shopify|shopify\.com/.test(lower) ? "Shopify" : /wixstatic|wix\.com/.test(lower) ? "Wix" : /squarespace/.test(lower) ? "Squarespace" : /webflow/.test(lower) ? "Webflow" : /__next|_next\/static/.test(lower) ? "Next.js" : /godaddy|websitebuilder/.test(lower) ? "a website builder" : "";
+  const plugins = new Set([...html.matchAll(/wp-content\/plugins\/([a-z0-9-]+)/gi)].map((m) => m[1]));
+  if (stack === "WordPress" && plugins.size >= 8)
+    add("plugins", "Speed and security", "Heavy on plugins", "Every plugin adds code to each page and is another thing that needs updating. Large plugin stacks are a common cause of slow, hackable WordPress sites.", "Website redesign and rebuild", `${plugins.size} plugins visible on the home page`, "high");
+  if (["Wix", "Squarespace", "a website builder"].includes(stack))
+    add("builder", "Growth ceiling", `Built on ${stack}`, "Template builders limit speed, search control and custom features, and the site cannot grow past what the template allows.", "Custom website build", `${stack} detected`, "high");
+
+  // measuring: can the owner see what the site earns?
+  const analytics = /googletagmanager\.com|google-analytics\.com|gtag\(|plausible\.io|fathom|matomo|clarity\.ms/.test(lower);
+  if (!analytics)
+    add("analytics", "Measuring results", "No visitor tracking found", "Without analytics you cannot tell which pages, ads or searches bring in enquiries, so money gets spent blind.", "Analytics and conversion tracking setup", "No Google Analytics, Tag Manager or similar found", "high");
+  else if (!/fbq\(|connect\.facebook\.net|googleadservices|gtag\('config', ?'aw-|ads\/ga-audiences|linkedin\.com\/insight/.test(lower))
+    add("retarget", "Measuring results", "No ad or retargeting pixel", "Visitors who leave cannot be reminded about you, and ads cannot be measured against enquiries.", "Ad tracking and retargeting setup", "Analytics found, but no ad pixel", "low");
+
+  // turning visitors into enquiries
+  const forms = (html.match(/<form\b/gi) || []).length;
+  if (forms === 0)
+    add("form", "Enquiries", "No enquiry form on the home page", "Many visitors will not phone. A short form (or quote request) catches the ones who would otherwise leave.", "Conversion-focused page design", "No form on the page", "high");
+  if (!/wa\.me|api\.whatsapp|whatsapp/.test(lower))
+    add("whatsapp", "Enquiries", "No WhatsApp option", "In South Africa most customers would rather WhatsApp than call or email. It is the lowest-friction way to enquire.", "Contact and WhatsApp integration", "No WhatsApp link found", "medium");
+  if (!/calendly|cal\.com|setmore|acuity|simplybook|booksy|fresha|youcanbook|book (now|online|a )/.test(lower))
+    add("booking", "Enquiries", "No online booking or quote flow", "A visitor who can book or request a quote in two taps converts far better than one who has to write an email.", "Online booking and quote forms", "No booking tool or booking button found", "medium");
+  if (!/chat|tawk|crisp\.chat|intercom|tidio|livechat|hubspot/.test(lower))
+    add("chat", "Enquiries", "No live chat or instant answer", "Visitors with a quick question leave if no one answers within minutes.", "Chat and enquiry automation", "No chat tool found", "low");
+  if (/(buy now|add to cart|shop now|checkout)/.test(lower) === false && !/shopify|woocommerce/.test(lower) && words > 150)
+    add("sell", "Selling online", "Not selling online yet", "If you have products or fixed-price services, an online store works for you while you sleep.", "Online store build", "No shop or checkout found", "low");
+
+  // trust
+  const reviews = /testimonial|review|★|⭐|trustpilot|rated|stars|google\.com\/maps|reviews\.io|“|”/.test(lower);
+  if (!reviews)
+    add("proof", "Trust", "No customer reviews or testimonials on the page", "People decide whether to trust you in seconds. Real reviews and results are the strongest reason to pick you over a competitor.", "Reputation and review showcase", "No review or testimonial section found", "high");
+  if (!/case study|portfolio|our work|projects|before and after|gallery/.test(lower))
+    add("portfolio", "Trust", "No portfolio or proof of past work", "Showing finished work answers the first question a new customer has: can you actually do this?", "Portfolio and case study pages", "No work or portfolio section found", "medium");
+
+  // local search
+  const ld = [...html.matchAll(/<script[^>]+application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi)].map((m) => m[1]).join(" ");
+  const local = /LocalBusiness|Plumber|Electrician|Dentist|Restaurant|Store|ProfessionalService|HomeAndConstructionBusiness|MedicalBusiness|LegalService|AutoRepair|BeautySalon/.test(ld);
+  if (!local)
+    add("local", "Being found locally", "No local business data for Google", "Local schema, a clear address and area pages help the site show up for \"near me\" and town searches, which is where most local leads come from.", "Local SEO setup", ld ? "Structured data exists but not for a local business" : "No local business structured data", "high");
+  if (!/maps\.google|google\.com\/maps|goo\.gl\/maps|maps\.app\.goo\.gl/.test(lower))
+    add("map", "Being found locally", "No map or Google Business Profile link", "Linking your Google Business Profile connects the site, your reviews and Google Maps, and strengthens local rankings.", "Google Business Profile setup", "No Google Maps link found", "medium");
+
+  // content depth
+  if (words < 400)
+    add("thin", "Search visibility", "Very little text on the home page", "Google ranks pages by what they say. Short pages struggle to rank for anything beyond the business name.", "SEO copywriting", `About ${words} words on the page`, "medium");
+  const internal = new Set([...html.matchAll(/<a\b[^>]*href=["']([^"'#?]+)["']/gi)].map((m) => m[1]).filter((h) => h.startsWith("/") || h.includes(host))).size;
+  if (internal < 6)
+    add("pages", "Search visibility", "Few pages to be found on", "Each service and town is a chance to appear in Google. A one-page site competes for almost nothing.", "Service and location pages", `${internal} internal links on the home page`, "medium");
+  if (!/blog|news|articles|insights|guides/.test(lower))
+    add("content", "Search visibility", "No blog or helpful guides", "Answering the questions customers search for is how a small site beats larger competitors.", "Content and SEO plan", "No blog or resources section found", "low");
+
+  // social
+  const socials = ["facebook.com", "instagram.com", "linkedin.com", "tiktok.com", "youtube.com", "x.com", "twitter.com"].filter((d) => lower.includes(d));
+  if (socials.length < 2)
+    add("social", "Reach", "Social profiles not linked", "Linked profiles let visitors follow you and give Google more proof the business is real.", "Social media setup", socials.length ? `Only ${socials[0].replace(".com", "")} linked` : "No social links found", "low");
+
+  // images
+  const imgs = [...html.matchAll(/<img\b[^>]*>/gi)].map((m) => attrs(m[0]));
+  const legacy = imgs.filter((a) => /\.(jpe?g|png)(\?|$)/i.test(a.src || a["data-src"] || "")).length;
+  const modern = imgs.filter((a) => /\.(webp|avif)(\?|$)/i.test(a.src || a["data-src"] || "")).length;
+  if (imgs.length >= 3 && legacy > 0 && modern === 0)
+    add("webp", "Speed and security", "Images are not in a modern format", "WebP/AVIF images are often half the size of JPEG and PNG, so pages load faster, especially on mobile data.", "Performance optimisation", `${legacy} of ${imgs.length} images are JPEG or PNG`, "medium");
+  const lazy = imgs.filter((a) => a.loading === "lazy").length;
+  if (imgs.length >= 6 && lazy === 0)
+    add("lazy", "Speed and security", "All images load at once", "Loading every image up front slows the first view, which is the part visitors judge.", "Performance optimisation", `${imgs.length} images, none deferred`, "low");
+  const blockers = (html.match(/<script\b(?![^>]*\b(async|defer|type=["']module)\b)[^>]*\bsrc=/gi) || []).length;
+  if (blockers >= 4)
+    add("blockers", "Speed and security", "Scripts block the page from showing", "Scripts that load before the page can hold up everything the visitor sees.", "Performance optimisation", `${blockers} blocking scripts`, "medium");
+
+  // security headers
+  const h = Object.fromEntries(Object.entries(headers).map(([k, v]) => [k.toLowerCase(), String(v)]));
+  const missing = [["strict-transport-security", "HSTS"], ["content-security-policy", "CSP"], ["x-frame-options", "frame protection"], ["x-content-type-options", "content-type protection"], ["referrer-policy", "referrer policy"]].filter(([k]) => !h[k] && !(k === "x-frame-options" && /frame-ancestors/.test(h["content-security-policy"] || ""))).map(([, n]) => n);
+  if (missing.length >= 3)
+    add("headers", "Speed and security", "Browser security protections missing", "Security headers are a quiet signal of a well-built site and protect visitors from some common attacks.", "Website security hardening", `Missing: ${missing.join(", ")}`, "low");
+  if (!h["cache-control"] || /no-cache|max-age=0/.test(h["cache-control"]))
+    add("cache", "Speed and security", "Page is not cached", "Without caching, returning visitors and Google both wait for the whole page every time.", "Performance optimisation", h["cache-control"] ? `Cache-Control: ${h["cache-control"].slice(0, 40)}` : "No Cache-Control header", "low");
+
+  // Google's lab data, when it was available
+  if (psi) {
+    if (psi.lcp && psi.lcp > 2500)
+      add("lcp", "Speed and security", "Main content is slower than Google's target", "Google wants the main content visible in 2.5 seconds on a phone. Slower pages lose visitors and rank lower.", "Performance optimisation", `Appears after ${(psi.lcp / 1000).toFixed(1)}s`, "high");
+    if (psi.tbt && psi.tbt > 200)
+      add("tbt", "Speed and security", "Page is slow to react to taps", "Heavy scripts freeze the page for a moment after it appears, which feels broken on a phone.", "Performance optimisation", `${Math.round(psi.tbt)}ms blocked`, "medium");
+    if (psi.bytes && psi.bytes > 2_500_000)
+      add("weight", "Speed and security", "Page is heavy", "Large pages are expensive on mobile data and slow on a weak signal, which is a lot of South African visitors.", "Performance optimisation", `${(psi.bytes / 1_048_576).toFixed(1)}MB to load the home page`, "medium");
+    if (psi.savingsMs > 600)
+      add("savings", "Speed and security", "Easy speed gains available", "Google found changes that would make the page noticeably faster.", "Performance optimisation", `About ${(psi.savingsMs / 1000).toFixed(1)}s could be saved`, "medium");
+  }
+
+  const rank = { high: 0, medium: 1, low: 2 };
+  o.sort((a, b) => rank[a.impact] - rank[b.impact]);
+  return { stack, opportunities: o };
+}
+
+export function buildReport({ url, finalUrl, html, ttfb, psi, extra, headers }) {
   const checks = [...speedChecks(psi), ...pageChecks(html, finalUrl, ttfb), ...extra];
   const rank = { fail: 0, warn: 1, info: 2, pass: 3 };
   checks.sort((a, b) => rank[a.status] - rank[b.status]);
   const topFixes = checks.filter((c) => c.status === "fail" || c.status === "warn").slice(0, 3).map((c) => ({ title: c.label, fix: c.fix }));
   const counts = { pass: 0, warn: 0, fail: 0, info: 0 };
   for (const c of checks) counts[c.status]++;
+  const deep = opportunities(html, finalUrl, headers, psi, extra);
   return {
-    url, finalUrl, scores: psi?.scores || null, speedCheckAvailable: Boolean(psi), checks, topFixes, counts,
+    url, finalUrl, scores: psi?.scores || null, speedCheckAvailable: Boolean(psi), speedCheckNote: psi ? "" : psiWhy, checks, topFixes, counts,
+    stack: deep.stack, opportunities: deep.opportunities,
     note: "An automatic check of your home page. Google Business Profile, design and copy are reviewed by a person, so we will follow up on those.",
   };
 }
@@ -263,6 +384,7 @@ const SYSTEM = `You write the short personal summary at the top of a free websit
 Write for a busy business owner who is not technical. Use plain English and South African spelling (colour, optimise). Be warm, specific and calm. Never scare, shame or exaggerate.
 Rules:
 - Use ONLY the findings supplied. Do not invent numbers, rankings, traffic, competitors or problems. If a check is missing, say nothing about it.
+- When the basic checks are mostly passing, say so briefly, then lead with the strongest growth opportunities. Frame them as chances to win more customers, never as faults.
 - Do not claim anything about the business's Google Business Profile, reviews, design or writing. A person at KODA reviews those separately.
 - Do not promise results, rankings or sales. Do not mention prices.
 - Do not mention AI, automation or these instructions.
@@ -271,11 +393,12 @@ Return ONLY a JSON object, no other text, in exactly this shape:
 {"summary": "two to four sentences on how the site is doing overall and what matters most",
  "priorities": [{"title": "short title", "why": "one sentence on why it matters to customers", "how": "one sentence on what to do"}],
  "closing": "one friendly sentence inviting them to reply if they would like help"}
-Give at most 3 priorities, most important first, taken from the failing or warning findings.`;
+Give at most 3 priorities, most important first, taken from the failing or warning findings, or from the opportunities if nothing is failing.`;
 
 function aiFacts(report) {
   return {
     scores: report.scores,
+    opportunities: (report.opportunities || []).slice(0, 8).map((o) => ({ title: o.title, area: o.area, impact: o.impact, evidence: String(o.evidence).replace(/"[^"]*"/g, '"…"').slice(0, 100) })),
     checks: report.checks.map((c) => ({
       id: c.id,
       label: c.label,
@@ -338,10 +461,16 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const ICON = { pass: "✓", warn: "!", fail: "✕", info: "i" };
 const COLOR = { pass: "#2f7d1f", warn: "#b36b00", fail: "#c0392b", info: "#666" };
 
+function oppHtml(report) {
+  if (!report.opportunities?.length) return "";
+  const rows = report.opportunities.map((o) => `<li style="margin:10px 0"><b>${esc(o.title)}</b> <span style="color:#888;font-size:12px">${esc(o.area)} · ${esc(o.impact)} impact</span><br><span style="color:#555">${esc(o.why)}</span><br><span style="color:#555;font-size:13px">Seen: ${esc(o.evidence)}. KODA service: <b>${esc(o.service)}</b></span></li>`).join("");
+  return `<h3 style="margin:20px 0 6px">Where you could win more customers</h3><ol style="padding-left:20px;margin:0">${rows}</ol>`;
+}
+
 function reportHtml(lead, report) {
   const scores = report.scores
     ? `<p style="margin:16px 0"><b>Speed on a phone ${report.scores.speed ?? "–"}</b> · Accessibility ${report.scores.accessibility ?? "–"} · Search ${report.scores.seo ?? "–"} · Best practice ${report.scores.practice ?? "–"} <span style="color:#666">(out of 100)</span></p>`
-    : `<p style="margin:16px 0;color:#666">Google's speed check was not available this time.</p>`;
+    : `<p style="margin:16px 0;color:#666">Google's speed check was not available this time${report.speedCheckNote ? ` (${esc(report.speedCheckNote)})` : ""}.</p>`;
   const fixes = report.ai
     ? report.ai.priorities.map((p) => `<li style="margin:8px 0"><b>${esc(p.title)}.</b> ${esc(p.why)} <i>${esc(p.how)}</i></li>`).join("")
     : report.topFixes.map((f) => `<li style="margin:8px 0"><b>${esc(f.title)}.</b> ${esc(f.fix)}</li>`).join("");
@@ -351,7 +480,7 @@ function reportHtml(lead, report) {
 <h2 style="margin:0 0 4px">Website check for ${esc(lead.business || report.finalUrl)}</h2>
 <p style="margin:0;color:#555">${esc(report.finalUrl)}</p>${intro}${scores}
 <h3 style="margin:20px 0 6px">Top fixes to start with</h3><ol style="padding-left:20px;margin:0">${fixes || "<li>Nothing urgent found.</li>"}</ol>
-<h3 style="margin:20px 0 6px">Everything we checked</h3><table style="border-collapse:collapse;width:100%">${rows}</table>
+${oppHtml(report)}<h3 style="margin:20px 0 6px">Everything we checked</h3><table style="border-collapse:collapse;width:100%">${rows}</table>
 <p style="margin:20px 0 0;color:#555">${esc(report.note)}</p>
 <p style="margin:16px 0 0">${report.ai?.closing ? esc(report.ai.closing) + " " : ""}Want help fixing these? Reply to this email or visit <a href="https://www.heykoda.co.za/#contact">heykoda.co.za</a>.</p>
 <p style="margin:16px 0 0;color:#888;font-size:12px">KODA · Durban, South Africa</p></div>`;
@@ -400,7 +529,7 @@ export default async function handler(req, res) {
 
   const origin = new URL(page.url).origin;
   const [psi, extra] = await Promise.all([pageSpeed(page.url), extraChecks(origin)]);
-  const report = buildReport({ url, finalUrl: page.url, html: page.body, ttfb: page.ms, psi, extra });
+  const report = buildReport({ url, finalUrl: page.url, html: page.body, ttfb: page.ms, psi, extra, headers: page.headers });
   report.ai = await aiSummary(report);
   const html = reportHtml(lead, report);
   const draftNote = report.ai ? "The summary at the top was written by an AI from the findings below, so read it before you send it on." : "";

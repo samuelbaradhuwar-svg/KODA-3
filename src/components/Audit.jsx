@@ -34,6 +34,13 @@ const SAMPLE_REPORT = {
     closing: "Reply to this email if you would like a hand with any of it.",
   },
   topFixes: [],
+  stack: "WordPress",
+  opportunities: [
+    { id: "analytics", area: "Measuring results", title: "No visitor tracking found", why: "Without analytics you cannot tell which pages, ads or searches bring in enquiries.", service: "Analytics and conversion tracking setup", evidence: "No Google Analytics or Tag Manager found", impact: "high" },
+    { id: "local", area: "Being found locally", title: "No local business data for Google", why: "Local data and area pages help the site appear for town and near me searches.", service: "Local SEO setup", evidence: "No local business structured data", impact: "high" },
+    { id: "proof", area: "Trust", title: "No customer reviews on the page", why: "Real reviews are the strongest reason to pick you over a competitor.", service: "Reputation and review showcase", evidence: "No review or testimonial section found", impact: "high" },
+    { id: "booking", area: "Enquiries", title: "No online booking or quote flow", why: "A visitor who can request a quote in two taps converts far better.", service: "Online booking and quote forms", evidence: "No booking button found", impact: "medium" },
+  ],
   note: "An automatic check of the home page. Google Business Profile, design and copy are reviewed by a person, so we follow up on those.",
   checks: [
     { id: "speed", label: "Speed on a phone", status: "fail", detail: "Google scores it 41 out of 100; the main content appears after about 5.2 seconds." },
@@ -76,7 +83,29 @@ function Results({ report, onReset, sample = false, emailed = true }) {
           <Score label="Best practice" value={report.scores.practice} />
         </div>
       ) : (
-        <p className="mt-6 text-sm text-paper/60">Google's speed check was not available this time. The checks below still apply.</p>
+        <p className="mt-6 text-sm text-paper/60">Google's speed check was not available this time{report.speedCheckNote ? ` (${report.speedCheckNote})` : ""}. The checks below still apply.</p>
+      )}
+
+      {report.opportunities?.length > 0 && (
+        <div className="mt-8">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-accent">Where you could win more customers</p>
+          <p className="mt-2 text-[14px] leading-[1.6] text-paper/60">
+            {report.stack ? `Built on ${report.stack}. ` : ""}These are not faults. They are things stronger sites do that this one does not do yet.
+          </p>
+          <ul className="mt-3 grid gap-3">
+            {report.opportunities.map((o) => (
+              <li key={o.id} className="rounded-2xl bg-paper/[0.06] p-4 ring-1 ring-paper/10">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <p className="font-medium">{o.title}</p>
+                  <span className="rounded-full bg-paper/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-paper/70">{o.area}</span>
+                  <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${o.impact === "high" ? "text-accent" : "text-paper/50"}`}>{o.impact} impact</span>
+                </div>
+                <p className="mt-1 text-[15px] leading-[1.6] text-paper/70">{o.why}</p>
+                <p className="mt-2 text-[13px] leading-[1.55] text-paper/50">Seen: {o.evidence}. <span className="text-paper/80">KODA can help with: {o.service}.</span></p>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {(report.ai?.priorities?.length > 0 || report.topFixes.length > 0) && (
