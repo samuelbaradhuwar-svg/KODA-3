@@ -158,7 +158,7 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
       <h3 className="xwide text-[clamp(1.3rem,3vw,1.9rem)] leading-[1.05] tracking-[-0.03em]">{sample ? "What your free check looks like" : "Your free website check"}</h3>
       <p className="mt-2 break-all text-sm text-paper/60">{report.finalUrl}</p>
       <div className="relative mt-5">
-        <div data-lenis-prevent tabIndex={0} role="region" aria-label="Full report, scrollable" className="audit-scroll max-h-[min(36rem,68svh)] overflow-y-auto overscroll-contain pb-10 pr-3">
+        <div data-lenis-prevent tabIndex={0} role="region" aria-label="Full report, scrollable" className="audit-scroll max-h-[min(36rem,68svh)] [@media(max-height:500px)]:max-h-[80svh] overflow-y-auto overscroll-contain pb-10 pr-3">
       {report.ai && <p className="mt-5 text-[16px] leading-[1.65] text-paper/85">{report.ai.summary}</p>}
       {report.scores ? (
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
