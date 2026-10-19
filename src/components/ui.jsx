@@ -180,6 +180,18 @@ export function Logo({ light = false, className }) {
   );
 }
 
+// Any time the name is written in running text it is set in the logo lettering (extended heavy caps), in whatever
+// colour the surrounding text is. Never accent green.
+export function Koda() {
+  return <span className="koda">KODA</span>;
+}
+
+export function withBrand(text) {
+  return String(text)
+    .split(/(KODA|Koda)/g)
+    .map((part, i) => (part === "KODA" || part === "Koda" ? <Koda key={i} /> : part));
+}
+
 // A real site screenshot inside a quiet browser window.
 export function BrowserFrame({ project, className, priority = false, high = false }) {
   return (

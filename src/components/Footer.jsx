@@ -1,7 +1,7 @@
 import React from "react";
 import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react";
 import { NAV_LINKS, SOCIALS } from "../content.js";
-import { Logo } from "./ui.jsx";
+import { Logo, Koda } from "./ui.jsx";
 import { LETTER_PATHS } from "../lib/logo-paths.js";
 import { EMAIL, openGmailCompose, scrollToId } from "../lib/utils.js";
 
@@ -58,7 +58,7 @@ export default function Footer() {
           ))}
         </svg>
         <p className="mt-10 border-t border-paper/10 pt-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/60">
-          &copy; {new Date().getFullYear()} KODA. All rights reserved.
+          &copy; {new Date().getFullYear()} <Koda />. All rights reserved.
         </p>
       </div>
     </footer>

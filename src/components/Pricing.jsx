@@ -74,12 +74,13 @@ export default function Pricing() {
         </Reveal>
 
         {MOCKUP_OFFER && (
-          <Reveal className="mt-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-5 rounded-[28px] bg-accent px-6 py-8 text-ink sm:px-10 sm:py-10">
+          <Reveal className="mt-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-5 rounded-[28px] bg-ink px-6 py-8 text-paper sm:px-10 sm:py-10">
             <div className="max-w-[46ch]">
-              <h3 className="xwide text-[clamp(1.2rem,2.6vw,1.7rem)] leading-[1.08] tracking-[-0.02em]">See your homepage before you pay</h3>
-              <p className="mt-3 text-[15px] leading-[1.65] text-ink/80">Tell us about your business and we will design a free homepage mock-up first. If you like it, we carry on. If not, there is no cost and no pressure.</p>
+              <p className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60"><span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-[3px] bg-accent" />Free mock-up</p>
+              <h3 className="xwide mt-4 text-[clamp(1.2rem,2.6vw,1.7rem)] leading-[1.08] tracking-[-0.02em]">See your homepage before you pay</h3>
+              <p className="mt-3 text-[15px] leading-[1.65] text-paper/70">Tell us about your business and we will design a free homepage mock-up first. If you like it, we carry on. If not, there is no cost and no pressure.</p>
             </div>
-            <Button variant="dark" onClick={() => scrollToId("contact")}>Ask for a free mock-up</Button>
+            <Button variant="lime" onClick={() => scrollToId("contact")}>Ask for a free mock-up</Button>
           </Reveal>
         )}
       </div>

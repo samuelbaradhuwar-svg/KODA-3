@@ -393,11 +393,18 @@
 }
 
 /* Wordmark: extended heavy caps to match the KODA logo lettering */
-.logo-word {
+.logo-word, .koda {
   font-family: "Archivo Variable", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
   font-stretch: 125%;
   font-weight: 800;
   letter-spacing: 0.02em;
+}
+/* the name inside running text: same lettering, a touch smaller so the wide caps sit level with the words around it */
+.koda {
+  text-transform: uppercase;
+  font-size: 0.9em;
+  letter-spacing: 0.04em;
+  color: inherit;
 }
 
 /* Process: stacking cards. Each <li> sticks near the top (a little lower than the one before, so the edges of the

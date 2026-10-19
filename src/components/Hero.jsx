@@ -1,7 +1,7 @@
 import React from "react";
 import LiquidMetalShader from "./shader/liquid-metal-shader.jsx";
 import { kodaContourFragmentShader } from "./shader/contour-shader.js";
-import { Button } from "./ui.jsx";
+import { Button, withBrand } from "./ui.jsx";
 import { ease, Timeline } from "../lib/timeline.js";
 import { LETTER_PATHS, MARK_PATH } from "../lib/logo-paths.js";
 import { scrollToId } from "../lib/utils.js";
@@ -394,7 +394,7 @@ function MotionHero() {
           <h1 className="hero-h1 mt-3 [@media(max-height:520px)]:mt-0">
             <span className="hl-lead">Your business</span> <span className="hl-sub">deserves to be</span> <span className="hl-found">found.</span>
           </h1>
-          <p className="mt-3 text-[15px] leading-[1.6] text-ink/75 md:text-base [@media(max-height:520px)]:hidden">{LEAD}</p>
+          <p className="mt-3 text-[15px] leading-[1.6] text-ink/75 md:text-base [@media(max-height:520px)]:hidden">{withBrand(LEAD)}</p>
           <div className="mt-6 [@media(max-height:520px)]:mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
             <span className="text-[13px] text-ink/70">{touch ? "Scroll to see how we work" : "Move your mouse, then scroll"}</span>
@@ -492,7 +492,7 @@ function StaticHero() {
         <h1 className="hero-h1 mt-5 !text-[clamp(1.7rem,6.2vw,4.6rem)]">
           <span className="hl-lead">Your business</span> <span className="hl-sub">deserves to be</span> <span className="hl-found">found.</span>
         </h1>
-        <p className="mt-6 max-w-[46ch] text-base leading-[1.7] text-muted">{LEAD}</p>
+        <p className="mt-6 max-w-[46ch] text-base leading-[1.7] text-muted">{withBrand(LEAD)}</p>
         <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
           <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
           <button onClick={() => scrollToId("portfolio")} className="inline-flex min-h-11 items-center text-sm font-medium text-ink">

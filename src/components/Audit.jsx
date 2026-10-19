@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Gauge, DeviceMobile, MagnifyingGlass, MapPin, CheckCircle, WarningCircle, XCircle, Info } from "@phosphor-icons/react";
-import { Button, Eyebrow, Headline, Reveal } from "./ui.jsx";
+import { Button, Eyebrow, Headline, Reveal, Koda } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
 import { smoothScrollTo } from "../lib/smooth.js";
 
@@ -222,7 +222,7 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
                   <p className="card-body mt-2.5">{o.why}</p>
                   <p className="mt-2.5 border-t border-paper/10 pt-2.5 text-[13px] leading-[1.55] text-paper/55">
                     Seen: {o.evidence}.<br />
-                    <span className="text-paper/85">KODA can help with: <b className="font-semibold">{o.service}</b></span>
+                    <span className="text-paper/85"><Koda /> can help with: <b className="font-semibold">{o.service}</b></span>
                   </p>
                 </li>
               );
@@ -411,7 +411,7 @@ export default function Audit() {
                 </div>
                 <label className="flex min-h-11 items-start gap-3 py-1 text-[14px] leading-[1.55] text-paper/70">
                   <input type="checkbox" name="consent" checked={form.consent} onChange={change} className="mt-0.5 h-6 w-6 shrink-0 accent-[#BDF64F]" disabled={busy} aria-invalid={error.field === "consent"} />
-                  <span>Email me my report. KODA will use my details only to send it and to follow up about it, and I can ask for them to be deleted at any time.</span>
+                  <span>Email me my report. <Koda /> will use my details only to send it and to follow up about it, and I can ask for them to be deleted at any time.</span>
                 </label>
                 {error.message && (
                   <p role="alert" className="rounded-xl bg-[#FF9A8B]/10 px-4 py-3 text-[14px] text-[#FF9A8B]">{error.message}</p>

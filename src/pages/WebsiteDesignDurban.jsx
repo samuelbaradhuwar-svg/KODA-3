@@ -1,6 +1,6 @@
 import React from "react";
 import { SERVICES } from "../content.js";
-import { Button, Eyebrow, Headline, Reveal } from "../components/ui.jsx";
+import { Button, Eyebrow, Headline, Reveal, Koda } from "../components/ui.jsx";
 import { ServiceList } from "../components/Services.jsx";
 import Process from "../components/Process.jsx";
 import Faq from "../components/Faq.jsx";
@@ -25,7 +25,7 @@ export default function WebsiteDesignDurban() {
             </Reveal>
             <Reveal delay={160}>
               <p className="t-body mt-7 max-w-[56ch] text-base">
-                KODA is a Durban web design studio. We design and build professional websites for small and medium sized businesses, set up your Google Business profile, and handle the technical side so customers can find you, trust you and get in touch.
+                <Koda /> is a Durban web design studio. We design and build professional websites for small and medium sized businesses, set up your Google Business profile, and handle the technical side so customers can find you, trust you and get in touch.
               </p>
             </Reveal>
             <Reveal delay={240} className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
