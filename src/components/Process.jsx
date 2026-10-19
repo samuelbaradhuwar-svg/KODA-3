@@ -3,15 +3,21 @@ import { PROCESS } from "../content.js";
 import { Binoculars, PencilRuler, RocketLaunch, TrendUp } from "@phosphor-icons/react";
 import { Eyebrow, Headline, Reveal } from "./ui.jsx";
 import CardCopy from "./CardCopy.jsx";
+import discoverImg from "../assets/process-discover.webp";
+import designImg from "../assets/process-design.webp";
+import launchImg from "../assets/process-launch.webp";
+import growImg from "../assets/process-grow.webp";
 
 const PROCESS_ICONS = [Binoculars, PencilRuler, RocketLaunch, TrendUp];
 
-// Alternating surfaces, all from the site palette.
-const SURFACES = [
-  "bg-paper2 text-ink",
-  "keep-light bg-ink text-paper",
-  "bg-paper2 text-ink",
-  "keep-light bg-ink text-paper",
+// Each step has a photo behind it. The photos are kept simple and dark so the copy stays readable, and the
+// position of each one keeps its subject (glasses, screens, rocket, cash) in frame on phones and on wide screens.
+// The text sits at the top of the card and a dark fade sits behind it, so the subject stays clear underneath.
+const PHOTOS = [
+  { src: discoverImg, w: 1600, h: 1200, img: "object-[50%_50%] md:object-[50%_72%]", fade: "linear-gradient(180deg, rgb(16 16 16 / 0.78), rgb(16 16 16 / 0.45) 45%, rgb(16 16 16 / 0.05))" },
+  { src: designImg, w: 1600, h: 1067, img: "object-[33%_50%] md:object-[50%_38%]", fade: "linear-gradient(180deg, rgb(16 16 16 / 0.8), rgb(16 16 16 / 0.5) 45%, rgb(16 16 16 / 0.1))" },
+  { src: launchImg, w: 1600, h: 1066, img: "object-[51%_50%] max-md:origin-[65%_0%] max-md:scale-[1.6] md:origin-[0%_20%] md:scale-[1.27] md:object-top", fade: "linear-gradient(180deg, rgb(16 16 16 / 0.62), rgb(16 16 16 / 0.28) 45%, rgb(16 16 16 / 0))" },
+  { src: growImg, w: 1264, h: 843, img: "object-[50%_50%] md:object-[50%_30%]", fade: "linear-gradient(180deg, rgb(16 16 16 / 0.8), rgb(16 16 16 / 0.55) 45%, rgb(16 16 16 / 0.25))" },
 ];
 
 // Stacking cards: every card sticks to the top of the screen as you scroll, the next one slides up over it, and the
@@ -124,9 +130,20 @@ export default function Process() {
             <li key={s.n} ref={(el) => { wrapRefs.current[i] = el; }} className="process-slot" style={{ "--i": i }}>
               <article
                 ref={(el) => { cardRefs.current[i] = el; }}
-                className={`process-card relative overflow-hidden rounded-[28px] ${SURFACES[i % SURFACES.length]}`}
+                className="keep-light process-card relative overflow-hidden rounded-[28px] bg-ink text-paper"
               >
-                <CardCopy icon={PROCESS_ICONS[i % PROCESS_ICONS.length]} title={s.title} desc={s.desc} tone={SURFACES[i % SURFACES.length].includes("bg-ink") ? "ink" : "paper"} />
+                <img
+                  src={PHOTOS[i % PHOTOS.length].src}
+                  width={PHOTOS[i % PHOTOS.length].w}
+                  height={PHOTOS[i % PHOTOS.length].h}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className={`absolute inset-0 h-full w-full object-cover ${PHOTOS[i % PHOTOS.length].img}`}
+                />
+                <span aria-hidden="true" className="absolute inset-0" style={{ background: PHOTOS[i % PHOTOS.length].fade }} />
+                <CardCopy top icon={PROCESS_ICONS[i % PROCESS_ICONS.length]} title={s.title} desc={s.desc} tone="ink" className="relative" />
                 {/* darkens this card as the next one covers it */}
                 <span ref={(el) => { veilRefs.current[i] = el; }} aria-hidden="true" className="pointer-events-none absolute inset-0 bg-black opacity-0" />
               </article>
