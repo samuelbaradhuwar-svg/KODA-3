@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Phone } from "@phosphor-icons/react";
-import { Button, Eyebrow, Headline, Reveal } from "./ui.jsx";
+import { Button, Eyebrow, Headline, Reveal, Koda } from "./ui.jsx";
 import { EMAIL, PHONE, openCompose, openGmailCompose } from "../lib/utils.js";
 
-const empty = { name: "", email: "", phone: "", business: "", message: "" };
+const empty = { name: "", email: "", phone: "", business: "", message: "", consent: false };
 
 function Field({ label, error, id, children }) {
   return (
@@ -11,6 +11,29 @@ function Field({ label, error, id, children }) {
       <label htmlFor={id} className="text-[12px] font-semibold uppercase tracking-[0.16em] text-paper/60">{label}</label>
       {children}
       {error && <span id={`${id}-error`} role="alert" className="text-sm text-[#FF9A8B]">{error}</span>}
+    </div>
+  );
+}
+
+// The Google map is only loaded once the visitor asks for it, so opening this page sends nothing to Google.
+function ServiceMap() {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="mt-8 h-44 overflow-hidden rounded-2xl ring-1 ring-paper/10">
+      {show ? (
+        <iframe
+          title="Map of Durban, our service area"
+          src="https://www.google.com/maps?q=Durban,+South+Africa&output=embed"
+          className="h-full w-full"
+          style={{ border: 0, filter: "grayscale(1) invert(0.92) contrast(1.05)" }}
+          referrerPolicy="no-referrer"
+        />
+      ) : (
+        <div className="grid h-full content-center justify-items-start gap-3 bg-ink2 p-5">
+          <p className="text-[14px] leading-[1.55] text-paper/70">Durban, South Africa. The map is provided by Google, which receives your visit when it loads.</p>
+          <button type="button" onClick={() => setShow(true)} className="inline-flex min-h-11 items-center rounded-full bg-paper px-5 text-sm font-medium text-ink transition-colors hover:bg-accent">Show map</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -28,8 +51,9 @@ export default function Contact() {
   }, [sent]);
 
   const change = (e) => {
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-    setErrors((er) => ({ ...er, [e.target.name]: undefined }));
+    const { name, type, checked, value } = e.target;
+    setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
+    setErrors((er) => ({ ...er, [name]: undefined }));
   };
 
   const submit = (e) => {
@@ -37,6 +61,7 @@ export default function Contact() {
     const er = {};
     if (!form.name.trim()) er.name = "Please tell us your name.";
     if (!/^\S+@\S+\.\S+$/.test(form.email)) er.email = "Please enter a valid email address.";
+    if (!form.consent) er.consent = "Please tick the box so we can use your details to reply.";
     setErrors(er);
     if (Object.keys(er).length) {
       formRef.current?.querySelector(`[name="${Object.keys(er)[0]}"]`)?.focus();
@@ -94,16 +119,7 @@ export default function Contact() {
             </li>
           </ul>
 
-          <div className="mt-8 h-44 overflow-hidden rounded-2xl ring-1 ring-paper/10">
-            <iframe
-              title="KODA service area, Durban"
-              src="https://www.google.com/maps?q=Durban,+South+Africa&output=embed"
-              className="h-full w-full"
-              style={{ border: 0, filter: "grayscale(1) invert(0.92) contrast(1.05)" }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
+          <ServiceMap />
         </Reveal>
 
         <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
@@ -135,6 +151,15 @@ export default function Contact() {
                 <Field label="What do you need help with?" id="f-message">
                   <textarea id="f-message" name="message" value={form.message} onChange={change} rows={4} placeholder="Tell us about your business or your idea, and what you're looking for." className="field resize-none" />
                 </Field>
+              </div>
+              <div className="sm:col-span-2">
+                <label htmlFor="f-consent" className="flex min-h-11 items-start gap-3 py-1 text-[14px] leading-[1.55] text-paper/70">
+                  <input id="f-consent" type="checkbox" name="consent" checked={form.consent} onChange={change} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} className="mt-0.5 h-6 w-6 shrink-0 accent-[#BDF64F]" />
+                  <span>
+                    I agree that <Koda /> may use my details to reply to this enquiry and, if we work together, to prepare a quote. I can ask for them to be deleted at any time.
+                  </span>
+                </label>
+                {errors.consent && <span id="f-consent-error" role="alert" className="mt-1 block text-sm text-[#FF9A8B]">{errors.consent}</span>}
               </div>
               <div className="sm:col-span-2">
                 <Button type="submit" variant="lime">Book a free consultation</Button>

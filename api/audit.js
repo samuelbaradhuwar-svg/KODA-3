@@ -506,7 +506,7 @@ function reportHtml(lead, report) {
 ${oppHtml(report)}<h3 style="margin:20px 0 6px">Everything we checked</h3><table style="border-collapse:collapse;width:100%">${rows}</table>
 <p style="margin:20px 0 0;color:#555">${esc(report.note)}</p>
 <p style="margin:16px 0 0">${report.ai?.closing ? esc(report.ai.closing) + " " : ""}Want help fixing these? Reply to this email or visit <a href="https://www.heykoda.co.za/#contact">heykoda.co.za</a>.</p>
-<p style="margin:16px 0 0;color:#888;font-size:12px">KODA · Durban, South Africa</p></div>`;
+<p style="margin:16px 0 0;color:#888;font-size:12px">KODA · Durban, South Africa<br>You are receiving this once because you asked for a website check at heykoda.co.za. We have not added you to any mailing list.</p></div>`;
 }
 
 async function sendEmail({ to, subject, html, replyTo, bcc, scheduledAt, attachments }) {
