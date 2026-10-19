@@ -131,6 +131,13 @@
   .sec {
     padding-block: clamp(5rem, 11vw, 10rem);
   }
+  /* Two plain sections one after the other (same page colour) share one gap instead of adding both paddings up. */
+  .sec:not([class*="bg-"]):has(+ .sec:not([class*="bg-"])) {
+    padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .sec:not([class*="bg-"]) + .sec:not([class*="bg-"]) {
+    padding-top: clamp(2.5rem, 5vw, 4.5rem);
+  }
   /* Short screens (a phone held sideways): the width-based spacing above would be far too tall. */
   @media (max-height: 520px) {
     .sec {
