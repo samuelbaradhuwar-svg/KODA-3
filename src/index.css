@@ -538,3 +538,9 @@
     transition: none;
   }
 }
+
+/* the audit report scrolls inside its own panel so it never stretches the page */
+.audit-scroll { scrollbar-width: thin; scrollbar-color: rgba(246,246,244,0.28) transparent; }
+.audit-scroll::-webkit-scrollbar { width: 6px; }
+.audit-scroll::-webkit-scrollbar-thumb { background: rgba(246,246,244,0.28); border-radius: 999px; }
+.audit-scroll:focus-visible { outline: 2px solid #BDF64F; outline-offset: 4px; border-radius: 12px; }

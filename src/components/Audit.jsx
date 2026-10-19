@@ -157,6 +157,8 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
       )}
       <h3 className="xwide text-[clamp(1.3rem,3vw,1.9rem)] leading-[1.05] tracking-[-0.03em]">{sample ? "What your free check looks like" : "Your free website check"}</h3>
       <p className="mt-2 break-all text-sm text-paper/60">{report.finalUrl}</p>
+      <div className="relative mt-5">
+        <div data-lenis-prevent tabIndex={0} role="region" aria-label="Full report, scrollable" className="audit-scroll max-h-[min(36rem,68svh)] overflow-y-auto overscroll-contain pb-10 pr-3">
       {report.ai && <p className="mt-5 text-[16px] leading-[1.65] text-paper/85">{report.ai.summary}</p>}
       {report.scores ? (
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -239,6 +241,10 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
         )
       )}
       <Specialist report={report} lead={sample ? { email: "you@yourbusiness.co.za" } : lead} sample={sample} />
+        </div>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-ink to-transparent" />
+      </div>
+      <p className="mt-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/45">Scroll for the full report</p>
       {!sample && emailed && (
         <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">We will also email you the full report with a PDF attached{when(scheduledFor)}. It comes from our automatic check.</p>
       )}
