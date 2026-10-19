@@ -21,7 +21,7 @@ const SERVICES = [
 const EYEBROW = "Web design studio, Durban";
 const HEADLINE = "Your business deserves to be found.";
 const LEAD =
-  "KODA is a Durban web design studio. We build modern websites, set up and optimise your Google Business profile, and help local businesses turn online visibility into real customers.";
+  "KODA is a Durban web design studio. We build modern websites, set up and optimise your Google Business profile, and help local customers find local businesses online.";
 
 const STATEMENT_ONE = [
   { w: "We", muted: true },
