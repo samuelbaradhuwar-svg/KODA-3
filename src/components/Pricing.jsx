@@ -15,50 +15,58 @@ export default function Pricing() {
           </div>
         </Reveal>
 
-        <div className="mt-14 grid gap-4">
+        <p className="t-body mt-6">Prices are once off and in South African rand. Your written quote confirms exactly what is included.</p>
+
+        <div className="mt-14 grid gap-5 lg:grid-cols-3 lg:items-stretch lg:gap-6">
           {PLANS.map((p, i) => {
             const hot = p.highlighted;
+            // "From R9,999" is shown as a small "From" line over the number, so every card's price lines up
+            const from = p.price.startsWith("From ");
+            const amount = from ? p.price.slice(5) : p.price;
             return (
-              <Reveal
-                key={p.name}
-                delay={i * 80}
-                className={cn(
-                  "grid gap-8 rounded-[28px] px-6 py-8 sm:px-10 sm:py-10 lg:grid-cols-12 lg:items-center lg:gap-10",
-                  hot ? "bg-ink text-paper" : "border border-ink/15"
-                )}
-              >
-                <div className="lg:col-span-4">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-display text-2xl leading-none">{p.name}</h3>
+              <Reveal key={p.name} delay={i * 90} className={cn("h-full", hot && "lg:-mt-6 lg:h-[calc(100%+3rem)]")}>
+                <article
+                  aria-labelledby={`plan-${p.name}`}
+                  className={cn(
+                    "relative flex h-full flex-col rounded-[28px] px-7 py-9 transition-transform duration-500 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-9 lg:py-10",
+                    hot ? "bg-ink text-paper shadow-[0_40px_70px_-30px_rgba(16,16,16,0.55)] lg:py-14" : "border border-ink/15 bg-paper"
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 id={`plan-${p.name}`} className="xwide text-[1.35rem] leading-none tracking-[-0.02em]">{p.name}</h3>
                     {hot && <span className="rounded-full bg-accent px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink">Most popular</span>}
                   </div>
-                  <p className={cn("mt-4 max-w-[34ch] text-[15px] leading-[1.7]", hot ? "text-paper/65" : "text-muted")}>{p.desc}</p>
-                </div>
+                  <p className={cn("mt-4 text-[15px] leading-[1.65]", hot ? "text-paper/70" : "text-muted")}>{p.desc}</p>
 
-                <div className="lg:col-span-3">
-                  {p.was && <p className={cn("text-sm line-through", hot ? "text-paper/60" : "text-muted")}>{p.was}</p>}
-                  <p className="font-display text-[clamp(2.6rem,4vw,3.4rem)] leading-none">{p.price}</p>
-                  <p className={cn("mt-2 text-[12px] font-semibold uppercase tracking-[0.16em]", hot ? "text-paper/60" : "text-muted")}>{p.note}</p>
-                </div>
+                  <div className={cn("mt-8 border-t pt-8", hot ? "border-paper/15" : "border-ink/10")}>
+                    <p aria-hidden={!from || undefined} className={cn("h-4 text-[12px] font-semibold uppercase tracking-[0.16em]", hot ? "text-paper/60" : "text-muted")}>{from ? "From" : "\u00A0"}</p>
+                    <p className="mt-2 font-display text-[clamp(2.4rem,4.4vw,3.3rem)] leading-[1.02]">{amount}</p>
+                    <p className={cn("mt-2 text-[12px] font-semibold uppercase tracking-[0.16em]", hot ? "text-paper/60" : "text-muted")}>{p.note}</p>
+                  </div>
 
-                <ul className="grid gap-2.5 lg:col-span-3">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm">
-                      <Check size={16} weight="bold" className={cn("mt-0.5 shrink-0", hot ? "text-accent" : "text-ink")} />
-                      <span className={hot ? "text-paper/85" : "text-ink/80"}>{f}</span>
-                    </li>
-                  ))}
-                </ul>
+                  <ul className="mt-8 grid flex-1 content-start gap-3">
+                    {p.features.map((f) => (
+                      <li key={f} className="flex items-start gap-3 text-[15px] leading-[1.5]">
+                        <span className={cn("mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full", hot ? "bg-accent text-ink" : "bg-ink text-paper")}>
+                          <Check size={12} weight="bold" aria-hidden="true" />
+                        </span>
+                        <span className={hot ? "text-paper/90" : "text-ink/85"}>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-                <div className="lg:col-span-2 lg:justify-self-end">
-                  <Button variant={hot ? "lime" : "dark"} onClick={() => scrollToId("contact")}>Get started<span className="sr-only"> with {p.name}</span></Button>
-                </div>
+                  <div className="mt-10">
+                    <Button variant={hot ? "lime" : "dark"} className="w-full justify-between" onClick={() => scrollToId("contact")}>
+                      <span>Get started<span className="sr-only"> with {p.name}</span></span>
+                    </Button>
+                  </div>
+                </article>
               </Reveal>
             );
           })}
         </div>
 
-        <Reveal className="mt-10 border-t border-ink/15 pt-10">
+        <Reveal className="mt-14 border-t border-ink/15 pt-10 lg:mt-16">
           <h3 className="xwide text-[clamp(1.05rem,2.3vw,1.3rem)] leading-[1.1] tracking-[-0.02em]">Included with every website</h3>
           <ul className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
             {INCLUDED.map((i) => (
