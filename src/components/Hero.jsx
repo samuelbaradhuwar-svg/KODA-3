@@ -472,11 +472,10 @@ function AuditChip({ className = "" }) {
     <button
       type="button"
       onClick={() => scrollToId("audit")}
-      className={`group inline-flex min-h-11 items-center gap-2.5 rounded-full bg-ink py-1.5 pl-4 pr-2 text-left text-[13px] font-semibold text-accent transition-transform active:scale-[0.98] ${className}`}
+      className={`group inline-flex min-h-11 w-fit items-center gap-3 whitespace-nowrap rounded-full bg-ink py-1.5 pl-5 pr-1.5 text-[14px] font-semibold text-accent transition-transform active:scale-[0.98] ${className}`}
     >
       <span>
-        <span className="mr-2 rounded-full bg-accent px-2 py-0.5 text-[12px] font-bold uppercase tracking-[0.14em] text-ink">Free</span>
-        Website audit: how easy are you to find?
+        Free website audit<span className="hidden sm:inline">: how easy are you to find?</span>
       </span>
       <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-ink transition-transform group-hover:translate-x-0.5">
         <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M221.66 133.66l-72 72a8 8 0 0 1-11.32-11.32L196.69 136H40a8 8 0 0 1 0-16h156.69l-58.35-58.34a8 8 0 0 1 11.32-11.32l72 72a8 8 0 0 1 0 11.32z" stroke="currentColor" stroke-width="12"/></svg>
