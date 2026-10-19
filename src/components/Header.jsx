@@ -97,6 +97,8 @@ export default function Header() {
         className={cn(
           "safe-x fixed inset-x-0 top-0 z-50 flex items-center justify-between pb-3 pt-[calc(var(--sat)+0.75rem)] transition-colors duration-300 sm:pb-4 sm:pt-[calc(var(--sat)+1rem)]",
           "text-ink",
+          // over the hero the bar looks the same in both modes; it only follows the theme once the page scrolls
+          !solid && "keep-light",
           solid ? "border-b border-ink/10 bg-paper/90 backdrop-blur-md" : "pointer-events-none border-b border-transparent"
         )}
       >
