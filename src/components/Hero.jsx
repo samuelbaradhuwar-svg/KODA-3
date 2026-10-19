@@ -399,6 +399,7 @@ function MotionHero() {
             <Button onClick={() => scrollToId("contact")}>Book a free consultation</Button>
             <span className="text-[13px] text-ink/70">{touch ? "Scroll to see how we work" : "Move your mouse, then scroll"}</span>
           </div>
+          <AuditChip className="mt-5 [@media(max-height:520px)]:hidden" />
         </div>
 
         <button
@@ -465,6 +466,25 @@ function MotionHero() {
 
 // For visitors who ask their device for less motion: no pinned scroll story, no moving pool. The same message,
 // laid out as an ordinary first screen.
+// A small dark pill that points at the free website check, in the same acid-on-ink language as the rest of the site.
+function AuditChip({ className = "" }) {
+  return (
+    <button
+      type="button"
+      onClick={() => scrollToId("audit")}
+      className={`group inline-flex min-h-11 items-center gap-2.5 rounded-full bg-ink py-1.5 pl-4 pr-2 text-left text-[13px] font-semibold text-accent transition-transform active:scale-[0.98] ${className}`}
+    >
+      <span>
+        <span className="mr-2 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-ink">Free</span>
+        Website audit: how easy are you to find?
+      </span>
+      <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-ink transition-transform group-hover:translate-x-0.5">
+        <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M221.66 133.66l-72 72a8 8 0 0 1-11.32-11.32L196.69 136H40a8 8 0 0 1 0-16h156.69l-58.35-58.34a8 8 0 0 1 11.32-11.32l72 72a8 8 0 0 1 0 11.32z" stroke="currentColor" stroke-width="12"/></svg>
+      </span>
+    </button>
+  );
+}
+
 function StaticHero() {
   return (
     <div id="home" className="safe-x bg-paper pb-16 pt-32 sm:pt-40 lg:pb-24">
@@ -480,6 +500,7 @@ function StaticHero() {
             <span className="border-b border-ink/40 pb-0.5 transition-colors hover:border-ink hover:text-ink/60">See our work</span>
           </button>
         </div>
+        <AuditChip className="mt-6" />
         <ol className="mt-16 grid gap-x-10 border-t border-ink/15 sm:grid-cols-3">
           {SERVICES.map((sv) => (
             <li key={sv.n} className="border-b border-ink/15 py-6 sm:border-b-0">
