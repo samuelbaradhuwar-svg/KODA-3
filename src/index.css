@@ -604,3 +604,22 @@
 .menu-arrow.menu-arrow-ink { color: #101010; }
 .menu-arrow.menu-arrow-ink svg { filter: none; animation: none; }
 .group:hover .menu-arrow.menu-arrow-ink svg, .menu-arrow.menu-arrow-ink.is-active svg { filter: none; }
+
+/* Services deck pictures: across the top of the card on phones, down the right side on wide screens. The edge facing the
+   text fades out so the picture melts into the card colour. */
+.svc-art {
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: 56%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+@media (min-width: 768px) {
+  .svc-art {
+    inset: 0 0 0 auto;
+    width: 66%;
+    height: 100%;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 34%);
+    mask-image: linear-gradient(to right, transparent, #000 34%);
+  }
+}

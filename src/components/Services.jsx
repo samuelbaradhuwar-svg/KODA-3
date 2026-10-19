@@ -3,7 +3,15 @@ import { SERVICES } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
 import CardDeck from "./CardDeck.jsx";
-import CardCopy from "./CardCopy.jsx";
+import art1 from "../assets/service-1-website-design.webp";
+import art2 from "../assets/service-2-branding.webp";
+import art3 from "../assets/service-3-redesign.webp";
+import art4 from "../assets/service-4-ecommerce.webp";
+import art5 from "../assets/service-5-booking.webp";
+import art6 from "../assets/service-6-google-profile.webp";
+import art7 from "../assets/service-7-seo.webp";
+import art8 from "../assets/service-8-maintenance.webp";
+import art9 from "../assets/service-9-social.webp";
 import { Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, ShareNetwork } from "@phosphor-icons/react";
 
 export function ServiceList({ items = SERVICES }) {
@@ -22,15 +30,46 @@ export function ServiceList({ items = SERVICES }) {
   );
 }
 
-const SURFACES = ["bg-paper text-ink", "keep-light bg-ink text-paper", "bg-accent text-ink"];
-
 const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, ShareNetwork];
-const TONES = ["paper", "ink", "accent"];
+
+// One picture per service. Each card is light (the same in light and dark mode), the picture sits on the right on
+// wide screens and across the top on phones, and fades into the card colour so there is no hard edge. `bg` is the
+// picture's own background colour, so the fade is seamless. `pos` keeps the main subject in frame.
+const ART = [
+  { src: art1, w: 1400, h: 934, bg: "#F0EFEA", pos: "50% 40%" },
+  { src: art2, w: 1400, h: 764, bg: "#E3E2DE", pos: "55% 50%" },
+  { src: art3, w: 1400, h: 934, bg: "#EEEDE9", pos: "55% 40%" },
+  { src: art4, w: 1400, h: 934, bg: "#EBEAE6", pos: "50% 40%" },
+  { src: art5, w: 1400, h: 934, bg: "#EAEBE5", pos: "50% 40%" },
+  { src: art6, w: 1400, h: 934, bg: "#EAEBE6", pos: "50% 40%" },
+  { src: art7, w: 1400, h: 934, bg: "#E8E9E3", pos: "50% 40%" },
+  { src: art8, w: 1400, h: 934, bg: "#F2F2ED", pos: "50% 45%" },
+  { src: art9, w: 1400, h: 764, bg: "#F1F0EC", pos: "50% 50%" },
+];
 
 function ServiceCard({ s, i }) {
+  const art = ART[i % ART.length];
+  const Icon = SERVICE_ICONS[i % SERVICE_ICONS.length];
   return (
-    <article className={`relative h-full overflow-hidden rounded-[28px] ${SURFACES[i % SURFACES.length]}`}>
-      <CardCopy icon={SERVICE_ICONS[i % SERVICE_ICONS.length]} title={s.title} desc={s.desc} tone={TONES[i % TONES.length]} />
+    <article className="keep-light relative h-full overflow-hidden rounded-[28px] text-ink" style={{ backgroundColor: art.bg }}>
+      <img
+        src={art.src}
+        width={art.w}
+        height={art.h}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        className="svc-art absolute object-cover"
+        style={{ objectPosition: art.pos }}
+      />
+      <div className="relative z-10 flex h-full flex-col justify-end gap-2.5 p-5 text-left sm:p-7 md:w-[42%] md:justify-center md:gap-4 md:p-10 [@media(max-height:520px)]:justify-center [@media(max-height:520px)]:p-4">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-ink md:h-14 md:w-14 [@media(max-height:520px)]:hidden">
+          <Icon size={24} weight="bold" aria-hidden="true" />
+        </span>
+        <h3 className="xwide text-[clamp(1.2rem,2.6vw,2.1rem)] leading-[1.05] tracking-[-0.03em]">{s.title}</h3>
+        <p className="max-w-[38ch] text-[14px] leading-[1.55] text-ink/80 md:text-[clamp(15px,1.4vw,17px)] md:leading-[1.6]">{s.desc}</p>
+      </div>
     </article>
   );
 }
