@@ -8,7 +8,6 @@ import { scrollToId } from "../lib/utils.js";
 import { smoothScrollTo } from "../lib/smooth.js";
 
 // Brand colours (same values as tailwind.config.js: paper / ink).
-const PAPER = "#F6F6F4";
 const INK = "#101010";
 const LIME = "#BDF64F";
 
@@ -345,7 +344,7 @@ function MotionHero() {
   };
 
   return (
-    <div ref={trackRef} id="home" className="keep-light track relative">
+    <div ref={trackRef} id="home" className="track relative">
       <section ref={stageRef} aria-label="KODA introduction" className="stage sticky top-0 w-full overflow-hidden bg-paper">
         {/* Full-screen pool of flowing shapes that the cursor stirs */}
         <div ref={poolRef} aria-hidden="true" className="absolute inset-0 will-change-transform">
@@ -377,9 +376,9 @@ function MotionHero() {
           </defs>
 
           {/* page colour; fades in on scroll to drain the pool */}
-          <rect ref={coverRef} width="100%" height="100%" fill={PAPER} opacity={0} />
+          <rect ref={coverRef} width="100%" height="100%" style={{ fill: "rgb(var(--c-paper))" }} opacity={0} />
           {/* the vector logo, shown once we land on the website */}
-          <g ref={inkGroup} opacity={0} style={{ color: INK }}>
+          <g ref={inkGroup} opacity={0} style={{ color: "rgb(var(--c-ink))" }}>
             <use href="#koda-shapes" />
           </g>
         </svg>
@@ -388,7 +387,7 @@ function MotionHero() {
             so they stay readable over the moving pool. It fades away as soon as the story starts. */}
         <div
           ref={hintRef}
-          className="glass glass-live hero-card absolute bottom-20 z-10 max-w-[34rem] p-6 sm:bottom-9 sm:p-8 md:max-w-[min(40rem,calc(100vw-12.5rem))] md:p-10 [@media(max-height:520px)]:bottom-6 [@media(max-height:520px)]:max-w-[30rem] [@media(max-height:520px)]:p-5"
+          className="keep-light glass glass-live hero-card absolute bottom-20 z-10 max-w-[34rem] p-6 sm:bottom-9 sm:p-8 md:max-w-[min(40rem,calc(100vw-12.5rem))] md:p-10 [@media(max-height:520px)]:bottom-6 [@media(max-height:520px)]:max-w-[30rem] [@media(max-height:520px)]:p-5"
         >
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/70 [@media(max-height:520px)]:hidden">{EYEBROW}</p>
           <h1 className="hero-h1 mt-3 [@media(max-height:520px)]:mt-0">
@@ -406,7 +405,7 @@ function MotionHero() {
           ref={skipRef}
           type="button"
           onClick={skipIntro}
-          className="skip-btn absolute z-10 inline-flex min-h-11 items-center rounded-full bg-paper/80 px-4 text-[13px] font-medium text-ink/80 ring-1 ring-ink/10 backdrop-blur-md transition-colors hover:text-ink"
+          className="keep-light skip-btn absolute z-10 inline-flex min-h-11 items-center rounded-full bg-paper/80 px-4 text-[13px] font-medium text-ink/80 ring-1 ring-ink/10 backdrop-blur-md transition-colors hover:text-ink"
         >
           Skip intro
         </button>
@@ -454,7 +453,7 @@ function MotionHero() {
 
         {/* closing calls to action, over the final logo lockup */}
         <div ref={ctaRef} className="cta-row invisible absolute inset-x-0 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 opacity-0">
-          <Button variant="lime" className="ring-1 ring-ink/15 hover:bg-ink hover:text-accent" onClick={() => scrollToId("contact")}>Book a free consultation</Button>
+          <Button variant="lime" className="keep-light ring-1 ring-ink/15 hover:bg-ink hover:text-accent" onClick={() => scrollToId("contact")}>Book a free consultation</Button>
           <button onClick={() => scrollToId("portfolio")} className="inline-flex min-h-11 items-center text-sm font-medium text-ink">
             <span className="border-b border-ink/40 pb-0.5 transition-colors hover:border-ink hover:text-ink/60">See our work</span>
           </button>
@@ -486,7 +485,7 @@ function AuditChip({ className = "" }) {
 
 function StaticHero() {
   return (
-    <div id="home" className="keep-light safe-x bg-paper pb-16 pt-32 sm:pt-40 lg:pb-24">
+    <div id="home" className="safe-x bg-paper pb-16 pt-32 sm:pt-40 lg:pb-24">
       <div className="mx-auto max-w-[1280px]">
         <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted">{EYEBROW}</p>
         <h1 className="hero-h1 mt-5 !text-[clamp(1.7rem,6.2vw,4.6rem)]">

@@ -13,6 +13,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("");
   const [solid, setSolid] = useState(false);
+  const [atTop, setAtTop] = useState(true);
   const toggleRef = useRef(null);
   // null until mounted, so the server HTML and the first client render match. The page already carries the right class.
   const [dark, setDark] = useState(null);
@@ -34,6 +35,7 @@ export default function Header() {
       raf = 0;
       const hero = document.getElementById("home");
       setSolid(!hero || hero.getBoundingClientRect().bottom < 80);
+      setAtTop(window.scrollY < 24);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(check);
@@ -97,8 +99,8 @@ export default function Header() {
         className={cn(
           "safe-x fixed inset-x-0 top-0 z-50 flex items-center justify-between pb-3 pt-[calc(var(--sat)+0.75rem)] transition-colors duration-300 sm:pb-4 sm:pt-[calc(var(--sat)+1rem)]",
           "text-ink",
-          // over the hero the bar looks the same in both modes; it only follows the theme once the page scrolls
-          !solid && "keep-light",
+          // at the very top the bar looks the same in both modes; it follows the theme as soon as the page scrolls
+          !solid && atTop && "keep-light",
           solid ? "border-b border-ink/10 bg-paper/90 backdrop-blur-md" : "pointer-events-none border-b border-transparent"
         )}
       >
