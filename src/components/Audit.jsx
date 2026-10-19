@@ -117,10 +117,9 @@ function Specialist({ report, lead, sample }) {
   };
 
   return (
-    <div className="mt-10 rounded-2xl bg-accent/[0.08] p-5 ring-1 ring-accent/30">
-      <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-accent">Go deeper, by hand</p>
-      <h4 className="xwide mt-2 text-[clamp(1.1rem,2.4vw,1.4rem)] leading-[1.1] tracking-[-0.03em]">Get a detailed audit from a specialist</h4>
-      <p className="mt-3 text-[15px] leading-[1.65] text-paper/75">
+    <div className="mt-9 rounded-2xl bg-accent/[0.08] p-5 ring-1 ring-accent/30">
+      <h4 className="xwide flex items-start gap-2.5 text-[clamp(1.05rem,2.3vw,1.3rem)] leading-[1.1] tracking-[-0.02em]"><span aria-hidden="true" className="mt-[0.28em] h-2.5 w-2.5 shrink-0 rounded-[3px] bg-accent" />Get a detailed audit from a specialist</h4>
+      <p className="card-body mt-3">
         This report is an automatic check of your home page. If you would like more, one of our specialists will go through your whole site by hand: the design, the writing, your Google Business Profile and how you compare with local competitors. They will send you a detailed audit with clear recommendations. It is free and there is no obligation.
       </p>
       {status === "sent" ? (
@@ -145,6 +144,19 @@ function Specialist({ report, lead, sample }) {
           </div>
         </form>
       )}
+    </div>
+  );
+}
+
+// Section heading in the brand's display voice: extended heavy caps, an acid marker, a hairline above.
+function SectionHead({ title, sub }) {
+  return (
+    <div className="mt-9 border-t border-paper/15 pt-6">
+      <h4 className="xwide flex items-start gap-2.5 text-[clamp(1.05rem,2.3vw,1.3rem)] leading-[1.1] tracking-[-0.02em]">
+        <span aria-hidden="true" className="mt-[0.28em] h-2.5 w-2.5 shrink-0 rounded-[3px] bg-accent" />
+        {title}
+      </h4>
+      {sub && <p className="mt-2.5 max-w-[56ch] text-[14px] leading-[1.6] text-paper/60">{sub}</p>}
     </div>
   );
 }
@@ -177,43 +189,46 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
         <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-[#FF9A8B]" />Needs attention</li>
       </ul>
 
-      {report.opportunities?.length > 0 && (
-        <div className="mt-8">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-accent">Where you could win more customers</p>
-          <p className="mt-2 text-[14px] leading-[1.6] text-paper/60">
-            {report.stack ? `Built on ${report.stack}. ` : ""}These are not faults. They are things stronger sites do that this one does not do yet.
-          </p>
-          <ul className="mt-3 grid gap-3">
-            {report.opportunities.map((o) => (
-              <li key={o.id} className={`rounded-2xl p-4 ring-1 ${(IMPACT[o.impact] || IMPACT.low).box}`}>
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                  <p className="font-medium">{o.title}</p>
-                  <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] ${(IMPACT[o.impact] || IMPACT.low).tag}`}>{o.impact} impact</span>
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-paper/55">{o.area}</span>
-                </div>
-                <p className="mt-1 text-[15px] leading-[1.6] text-paper/70">{o.why}</p>
-                <p className="mt-2 text-[13px] leading-[1.55] text-paper/50">Seen: {o.evidence}. <span className="text-paper/80">KODA can help with: {o.service}.</span></p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
       {(report.ai?.priorities?.length > 0 || report.topFixes.length > 0) && (
-        <div className="mt-8">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-accent">Start with these</p>
-          <ol className="mt-3 grid gap-3">
+        <section>
+          <SectionHead title="Fix these first" sub="The quickest wins on this site." />
+          <ol className="mt-4 grid gap-3">
             {(report.ai?.priorities?.length
               ? report.ai.priorities.map((p) => ({ title: p.title, body: `${p.why} ${p.how}` }))
               : report.topFixes.map((f) => ({ title: f.title, body: f.fix }))
             ).map((f) => (
               <li key={f.title} className="rounded-2xl bg-[#FF9A8B]/[0.09] p-4 ring-1 ring-[#FF9A8B]/30">
-                <p className="font-medium">{f.title}</p>
-                <p className="mt-1 text-[15px] leading-[1.6] text-paper/70">{f.body}</p>
+                <p className="card-title">{f.title}</p>
+                <p className="card-body mt-1.5">{f.body}</p>
               </li>
             ))}
           </ol>
-        </div>
+        </section>
+      )}
+
+      {report.opportunities?.length > 0 && (
+        <section>
+          <SectionHead title="Where you could win more customers" sub={`${report.stack ? `Built on ${report.stack}. ` : ""}These are not faults. They are things stronger sites do that this one does not do yet.`} />
+          <ul className="mt-4 grid gap-3">
+            {report.opportunities.map((o) => {
+              const t = IMPACT[o.impact] || IMPACT.low;
+              return (
+                <li key={o.id} className={`rounded-2xl p-4 ring-1 ${t.box}`}>
+                  <p className="card-title">{o.title}</p>
+                  <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] ${t.tag}`}>{o.impact} impact</span>
+                    <span className="text-[12px] font-medium text-paper/55">{o.area}</span>
+                  </p>
+                  <p className="card-body mt-2.5">{o.why}</p>
+                  <p className="mt-2.5 border-t border-paper/10 pt-2.5 text-[13px] leading-[1.55] text-paper/55">
+                    Seen: {o.evidence}.<br />
+                    <span className="text-paper/85">KODA can help with: <b className="font-semibold">{o.service}</b></span>
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       )}
 
       {[
@@ -221,23 +236,23 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
         { title: "What is working well", items: report.checks.filter((c) => c.status === "pass") },
       ].map((g) =>
         g.items.length === 0 ? null : (
-          <div key={g.title} className="mt-8">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60">{g.title}</p>
-            <ul className="mt-3 grid gap-2">
+          <section key={g.title}>
+            <SectionHead title={g.title} />
+            <ul className="mt-4 grid gap-2.5">
               {g.items.map((c) => {
                 const s = STATUS[c.status] || STATUS.info;
                 return (
-                  <li key={c.id} className={`flex gap-3 rounded-2xl p-3.5 ring-1 ${s.box}`}>
+                  <li key={c.id} className={`flex gap-3 rounded-2xl p-4 ring-1 ${s.box}`}>
                     <s.Icon size={22} weight="fill" className={`mt-0.5 shrink-0 ${s.cls}`} aria-label={s.label} />
                     <div>
-                      <p className="font-medium">{c.label}</p>
-                      <p className="text-[14px] leading-[1.55] text-paper/65">{c.detail}</p>
+                      <p className="card-title">{c.label}</p>
+                      <p className="card-body mt-1">{c.detail}</p>
                     </div>
                   </li>
                 );
               })}
             </ul>
-          </div>
+          </section>
         )
       )}
       <Specialist report={report} lead={sample ? { email: "you@yourbusiness.co.za" } : lead} sample={sample} />
