@@ -69,12 +69,12 @@ function ServiceCard({ s, i }) {
         className="svc-art absolute rounded-[18px] object-cover shadow-[0_18px_40px_-24px_rgba(16,16,16,0.5)] ring-1 ring-black/10 md:rounded-[22px]"
         style={{ objectPosition: art.pos }}
       />
-      <div className="relative z-10 flex h-full flex-col justify-end gap-2.5 p-5 text-left sm:p-7 md:w-[40%] md:justify-center md:gap-4 md:p-10 [@media(max-height:520px)]:justify-center [@media(max-height:520px)]:p-4">
+      <div className="relative z-10 flex h-full flex-col justify-end gap-2.5 p-5 text-left sm:p-7 md:w-[40%] md:justify-center md:gap-4 md:p-10 [@media(max-height:520px)]:w-[44%] [@media(max-height:520px)]:justify-center [@media(max-height:520px)]:gap-1.5 [@media(max-height:520px)]:p-4">
         <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${surface.tile} md:h-14 md:w-14 [@media(max-height:520px)]:hidden`}>
           <Icon size={24} weight="bold" aria-hidden="true" />
         </span>
-        <h3 className="xwide text-[clamp(1.2rem,2.6vw,2.1rem)] leading-[1.05] tracking-[-0.03em]">{s.title}</h3>
-        <p className={`max-w-[38ch] text-[14px] leading-[1.55] ${surface.body} md:text-[clamp(15px,1.4vw,17px)] md:leading-[1.6]`}>{s.desc}</p>
+        <h3 className="xwide text-[clamp(1.2rem,2.6vw,2.1rem)] leading-[1.05] tracking-[-0.03em] [@media(max-height:520px)]:text-[1rem]">{s.title}</h3>
+        <p className={`max-w-[38ch] text-[14px] leading-[1.55] ${surface.body} md:text-[clamp(15px,1.4vw,17px)] md:leading-[1.6] [@media(max-height:520px)]:text-[12.5px] [@media(max-height:520px)]:leading-[1.45]`}>{s.desc}</p>
       </div>
     </article>
   );
