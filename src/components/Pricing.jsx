@@ -30,7 +30,7 @@ export default function Pricing() {
                 <div className="lg:col-span-4">
                   <div className="flex items-center gap-3">
                     <h3 className="font-display text-2xl leading-none">{p.name}</h3>
-                    {hot && <span className="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">Most popular</span>}
+                    {hot && <span className="rounded-full bg-accent px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink">Most popular</span>}
                   </div>
                   <p className={cn("mt-4 max-w-[34ch] text-[15px] leading-[1.7]", hot ? "text-paper/65" : "text-muted")}>{p.desc}</p>
                 </div>
@@ -38,7 +38,7 @@ export default function Pricing() {
                 <div className="lg:col-span-3">
                   {p.was && <p className={cn("text-sm line-through", hot ? "text-paper/60" : "text-muted")}>{p.was}</p>}
                   <p className="font-display text-[clamp(2.6rem,4vw,3.4rem)] leading-none">{p.price}</p>
-                  <p className={cn("mt-2 text-[11px] font-semibold uppercase tracking-[0.16em]", hot ? "text-paper/60" : "text-muted")}>{p.note}</p>
+                  <p className={cn("mt-2 text-[12px] font-semibold uppercase tracking-[0.16em]", hot ? "text-paper/60" : "text-muted")}>{p.note}</p>
                 </div>
 
                 <ul className="grid gap-2.5 lg:col-span-3">

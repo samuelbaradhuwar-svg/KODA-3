@@ -216,7 +216,7 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
                 <li key={o.id} className={`rounded-2xl p-4 ring-1 ${t.box}`}>
                   <p className="card-title">{o.title}</p>
                   <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] ${t.tag}`}>{o.impact} impact</span>
+                    <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold uppercase tracking-[0.12em] ${t.tag}`}>{o.impact} impact</span>
                     <span className="text-[12px] font-medium text-paper/55">{o.area}</span>
                   </p>
                   <p className="card-body mt-2.5">{o.why}</p>
@@ -259,7 +259,7 @@ function Results({ report, onReset, sample = false, emailed = true, scheduledFor
         </div>
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-ink to-transparent" />
       </div>
-      <p className="mt-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/45">Scroll for the full report</p>
+      <p className="mt-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/60">Scroll for the full report</p>
       {!sample && emailed && (
         <p className="mt-6 text-[13px] leading-[1.6] text-paper/50">We will also email you the full report with a PDF attached{when(scheduledFor)}. It comes from our automatic check.</p>
       )}
@@ -409,8 +409,8 @@ export default function Audit() {
                 <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
                   <label>Company<input name="company" tabIndex={-1} autoComplete="off" value={form.company} onChange={change} /></label>
                 </div>
-                <label className="flex items-start gap-3 text-[14px] leading-[1.55] text-paper/70">
-                  <input type="checkbox" name="consent" checked={form.consent} onChange={change} className="mt-1 h-5 w-5 shrink-0 accent-[#BDF64F]" disabled={busy} aria-invalid={error.field === "consent"} />
+                <label className="flex min-h-11 items-start gap-3 py-1 text-[14px] leading-[1.55] text-paper/70">
+                  <input type="checkbox" name="consent" checked={form.consent} onChange={change} className="mt-0.5 h-6 w-6 shrink-0 accent-[#BDF64F]" disabled={busy} aria-invalid={error.field === "consent"} />
                   <span>Email me my report. KODA will use my details only to send it and to follow up about it, and I can ask for them to be deleted at any time.</span>
                 </label>
                 {error.message && (
@@ -421,7 +421,7 @@ export default function Audit() {
                   {busy ? (
                     <span className="text-[13px] text-paper/60">This can take up to a minute.</span>
                   ) : (
-                    <button type="button" onClick={showSample} className="border-b border-paper/40 pb-0.5 text-sm text-paper/80 transition-colors hover:border-paper hover:text-paper">See a sample report</button>
+                    <button type="button" onClick={showSample} className="group inline-flex min-h-11 items-center text-sm text-paper/80 transition-colors hover:text-paper"><span className="border-b border-paper/40 pb-0.5 transition-colors group-hover:border-paper">See a sample report</span></button>
                   )}
                 </div>
               </form>

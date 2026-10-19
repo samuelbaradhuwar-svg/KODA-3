@@ -28,12 +28,12 @@ export default function Footer() {
                     scrollToId(l.id);
                   }
                 }}
-                className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent"
+                className="inline-flex min-h-11 min-w-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent"
               >
                 {l.label}
               </a>
             ))}
-            <a href="/website-design-durban" className="inline-flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Website design Durban</a>
+            <a href="/website-design-durban" className="inline-flex min-h-11 min-w-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Website design Durban</a>
           </nav>
           <div className="lg:col-span-2">
             <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="inline-flex min-h-11 items-center break-all text-sm text-paper/70 transition-colors hover:text-accent">{EMAIL}</a>
@@ -57,7 +57,7 @@ export default function Footer() {
             <path key={i} d={d} fill="currentColor" fillRule="evenodd" />
           ))}
         </svg>
-        <p className="mt-10 border-t border-paper/10 pt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-paper/60">
+        <p className="mt-10 border-t border-paper/10 pt-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/60">
           &copy; {new Date().getFullYear()} KODA. All rights reserved.
         </p>
       </div>

@@ -154,7 +154,7 @@
     }
   }
   .field {
-    @apply w-full border-0 border-b border-paper/25 bg-transparent px-0 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-paper;
+    @apply w-full border-0 border-b border-paper/25 bg-transparent px-0 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/55 focus:border-paper;
     border-radius: 0;
   }
   /* Browser autofill paints fields pale blue; keep them in the dark form style instead. */

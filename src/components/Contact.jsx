@@ -8,7 +8,7 @@ const empty = { name: "", email: "", phone: "", business: "", message: "" };
 function Field({ label, error, id, children }) {
   return (
     <div className="grid gap-1.5">
-      <label htmlFor={id} className="text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">{label}</label>
+      <label htmlFor={id} className="text-[12px] font-semibold uppercase tracking-[0.16em] text-paper/60">{label}</label>
       {children}
       {error && <span id={`${id}-error`} role="alert" className="text-sm text-[#FF9A8B]">{error}</span>}
     </div>
@@ -72,7 +72,7 @@ export default function Contact() {
               <li className="border-b border-paper/15">
                 <a href={`tel:+${PHONE.digits}`} className="group flex items-center justify-between py-5">
                   <span>
-                    <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Call us</span>
+                    <span className="block text-[12px] font-semibold uppercase tracking-[0.16em] text-paper/60">Call us</span>
                     <span className="mt-1 block font-display text-2xl">{PHONE.display}</span>
                   </span>
                   <Phone size={20} className="text-paper/60 transition-colors group-hover:text-accent" />
@@ -82,14 +82,14 @@ export default function Contact() {
             <li className="border-b border-paper/15">
               <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="group flex items-center justify-between gap-4 py-5">
                 <span>
-                  <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Email us</span>
+                  <span className="block text-[12px] font-semibold uppercase tracking-[0.16em] text-paper/60">Email us</span>
                   <span className="mt-1 block break-words font-display text-[1.05rem] normal-case tracking-normal sm:text-2xl">{EMAIL}</span>
                 </span>
                 <ArrowUpRight size={22} className="shrink-0 text-paper/60 transition-[transform,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
               </a>
             </li>
             <li className="border-b border-paper/15 py-5">
-              <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/60">Hours</span>
+              <span className="block text-[12px] font-semibold uppercase tracking-[0.16em] text-paper/60">Hours</span>
               <span className="mt-1 block text-lg">Monday to Friday, 09:00 to 17:00</span>
             </li>
           </ul>

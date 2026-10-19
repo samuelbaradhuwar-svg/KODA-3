@@ -55,7 +55,7 @@ export default function Services() {
 
         <Reveal className="mt-16 sm:mt-24 grid items-center gap-6 rounded-[2rem] bg-accent px-6 py-10 text-ink sm:px-12 sm:py-14 lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink/70">Starting from scratch?</p>
+            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/70">Starting from scratch?</p>
             <h3 className="xwide mt-4 text-[clamp(1.4rem,2.7vw,2.4rem)] leading-[1.06] tracking-[-0.02em]">Just an idea? No pressure.</h3>
             <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.7] text-ink/75">
               Many businesses begin with nothing more than a name or a sketch. Tell us what you have in mind and we will help shape the logo, the brand and the website, at your pace, with no obligation.

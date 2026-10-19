@@ -475,7 +475,7 @@ function AuditChip({ className = "" }) {
       className={`group inline-flex min-h-11 items-center gap-2.5 rounded-full bg-ink py-1.5 pl-4 pr-2 text-left text-[13px] font-semibold text-accent transition-transform active:scale-[0.98] ${className}`}
     >
       <span>
-        <span className="mr-2 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-ink">Free</span>
+        <span className="mr-2 rounded-full bg-accent px-2 py-0.5 text-[12px] font-bold uppercase tracking-[0.14em] text-ink">Free</span>
         Website audit: how easy are you to find?
       </span>
       <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-ink transition-transform group-hover:translate-x-0.5">

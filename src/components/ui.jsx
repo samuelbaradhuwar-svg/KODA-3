@@ -188,7 +188,7 @@ export function BrowserFrame({ project, className, priority = false, high = fals
         <span className="h-2 w-2 rounded-full bg-ink/15" />
         <span className="h-2 w-2 rounded-full bg-ink/15" />
         <span className="h-2 w-2 rounded-full bg-ink/15" />
-        <span className="ml-2 truncate rounded bg-white px-2.5 py-1 font-mono text-[10px] leading-none text-muted ring-1 ring-ink/10">{project.host}</span>
+        <span className="ml-2 truncate rounded bg-white px-2.5 py-1 text-[12px] font-medium leading-none tracking-[0.02em] text-muted ring-1 ring-ink/10">{project.host}</span>
       </div>
       <img
         src={project.src}
