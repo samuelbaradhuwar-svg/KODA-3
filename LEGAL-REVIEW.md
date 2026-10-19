@@ -10,7 +10,8 @@ This is a technical and plain-English review, not legal advice. The four policie
    business (ECTA section 43) and for the privacy policy (POPIA). Nothing was guessed.
 2. **Attorney review**, then set `LEGAL.reviewed = true`. Until then the legal pages show a "Draft" notice.
 3. **Register your Information Officer** with the Information Regulator (online, free). For a sole proprietor this is
-   the owner. Check the current requirement on inforegulator.org.za.
+   the owner. NOT DONE YET. Check the current requirement on inforegulator.org.za, then set
+   `LEGAL.informationOfficerRegistered = true` in `src/legal-config.js`.
 4. **Confirm VAT**: prices say "R2,499" with no mention of VAT. If you are VAT registered, advertised prices must
    include VAT. If not, you may say so in quotes.
 5. **Confirm the promises on the site are true**: the free homepage mock-up, the detailed audit "by hand" from a

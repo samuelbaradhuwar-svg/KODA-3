@@ -19,6 +19,8 @@ export const BUSINESS = {
 // the four policies and the details above are complete.
 export const LEGAL = {
   reviewed: false,
+  // Set to true once the Information Officer is registered with the Information Regulator (not shown on the site).
+  informationOfficerRegistered: false,
   updated: "19 October 2026",
 };
 

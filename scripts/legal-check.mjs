@@ -22,7 +22,9 @@ for (const [, label] of missing) console.log(`  MISSING  ${label}`);
 for (const [, label] of notes) console.log(`  not set  ${label}`);
 console.log(`\nAttorney review (src/legal-config.js, LEGAL.reviewed): ${LEGAL.reviewed ? "done" : "NOT DONE, the legal pages show a draft notice"}`);
 
-if (missing.length || !LEGAL.reviewed) {
+console.log(`Information Officer registered with the Information Regulator: ${LEGAL.informationOfficerRegistered ? "done" : "NOT DONE"}`);
+
+if (missing.length || !LEGAL.reviewed || !LEGAL.informationOfficerRegistered) {
   console.log("\nNot ready to publish as final.");
   process.exit(1);
 }
