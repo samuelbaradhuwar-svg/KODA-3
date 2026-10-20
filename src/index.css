@@ -649,3 +649,39 @@
     height: calc(100% - 16px);
   }
 }
+
+/* Hero story, the three services: a picture or clip fills the rounded-square frame, the copy sits under it
+   (or beside it on a phone held sideways). The --f* sizes are set from the hero script to follow the frame. */
+.svc-media {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--fy, 0px));
+  width: var(--fw, 0px);
+  height: var(--fh, 0px);
+  transform: translate(-50%, -50%);
+  border-radius: var(--fr, 0px);
+  overflow: hidden;
+}
+.svc-media > img,
+.svc-media > video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.svc-copy {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--fy, 0px) + var(--foh, 0px) / 2 + 1.25rem);
+  width: min(420px, calc(100% - 2.5rem));
+  transform: translateX(-50%);
+  text-align: center;
+}
+@media (max-height: 520px) {
+  .svc-copy {
+    left: calc(50% + var(--fow, 0px) / 2 + 1.5rem);
+    top: calc(50% + var(--fy, 0px));
+    width: calc(50% - var(--fow, 0px) / 2 - 2.5rem);
+    transform: translateY(-50%);
+    text-align: left;
+  }
+}
