@@ -51,6 +51,31 @@ export default function App({ path = "/" }) {
     if (id) setTimeout(() => scrollToId(id), 50);
   }, []);
 
+  // Pulling the page past the bottom (iOS rubber band) shows the colour of the <html> element. Near the bottom it takes
+  // the footer's colour, so the footer seems to carry on; everywhere else it keeps the page colour.
+  useEffect(() => {
+    const root = document.documentElement;
+    let raf = 0;
+    const apply = () => {
+      raf = 0;
+      const footer = document.querySelector("footer");
+      const nearBottom = window.scrollY + window.innerHeight >= root.scrollHeight - 120;
+      root.style.backgroundColor = nearBottom && footer ? getComputedStyle(footer).backgroundColor : "";
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      root.style.backgroundColor = "";
+    };
+  }, [path]);
+
   return (
     <div className="overflow-x-clip">
       <a
