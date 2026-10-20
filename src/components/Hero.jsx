@@ -256,7 +256,16 @@ function MotionHero() {
       setStyle(twoRef.current, "visibility", twoVisible || fade(V.tagB) > 0.01 ? "visible" : "hidden");
 
       // services and the closing calls to action
-      for (let i = 0; i < 3; i++) fadeEl(serviceRefs.current[i], V[`svc${i}`], 22);
+      // the picture stays put inside the frame and only fades; the copy under it also drifts a little
+      for (let i = 0; i < 3; i++) {
+        const slide = serviceRefs.current[i];
+        const u = V[`svc${i}`];
+        const o = fade(u);
+        setStyle(slide, "opacity", num(o));
+        setStyle(slide, "visibility", o < 0.01 ? "hidden" : "visible");
+        const copy = slide?.lastElementChild;
+        if (copy && changed(copy, "drift", num(u * 22, 1))) copy.style.setProperty("--drift", `${num(u * 22, 1)}px`);
+      }
       fadeEl(ctaRef.current, V.cta, 18);
       setStyle(ctaRef.current, "pointerEvents", fade(V.cta) > 0.6 ? "auto" : "none");
 

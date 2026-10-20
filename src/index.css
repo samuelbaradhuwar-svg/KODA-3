@@ -673,7 +673,7 @@
   left: 50%;
   top: calc(50% + var(--fy, 0px) + var(--foh, 0px) / 2 + 1.25rem);
   width: min(420px, calc(100% - 2.5rem));
-  transform: translateX(-50%);
+  transform: translate(-50%, var(--drift, 0px));
   text-align: center;
 }
 @media (max-height: 520px) {
@@ -681,7 +681,7 @@
     left: calc(50% + var(--fow, 0px) / 2 + 1.5rem);
     top: calc(50% + var(--fy, 0px));
     width: calc(50% - var(--fow, 0px) / 2 - 2.5rem);
-    transform: translateY(-50%);
+    transform: translate(0, calc(-50% + var(--drift, 0px)));
     text-align: left;
   }
 }
