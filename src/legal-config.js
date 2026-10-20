@@ -9,10 +9,10 @@ export const BUSINESS = {
   vatNumber: "", // only if VAT registered
   physicalAddress: "", // a business address where documents can be served (not a home address you want to keep private)
   postalAddress: "", // optional
-  email: "info@heykoda.co.za",
+  email: "hello@heykoda.co.za",
   phone: "", // optional
   informationOfficer: "", // the person responsible for POPIA compliance (for a sole proprietor, the owner)
-  informationOfficerEmail: "info@heykoda.co.za",
+  informationOfficerEmail: "hello@heykoda.co.za",
 };
 
 // The legal pages show a "draft" notice until this is true. Set it to true only after an attorney has reviewed

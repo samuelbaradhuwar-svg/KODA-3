@@ -105,13 +105,13 @@ function Specialist({ report, lead, sample }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) {
-        setMsg(data.error || "Something went wrong. Please email info@heykoda.co.za.");
+        setMsg(data.error || "Something went wrong. Please email hello@heykoda.co.za.");
         setStatus("error");
         return;
       }
       setStatus("sent");
     } catch {
-      setMsg("We could not reach the server. Please try again, or email info@heykoda.co.za.");
+      setMsg("We could not reach the server. Please try again, or email hello@heykoda.co.za.");
       setStatus("error");
     }
   };
