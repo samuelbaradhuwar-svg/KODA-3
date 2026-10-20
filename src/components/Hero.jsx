@@ -13,7 +13,7 @@ const LIME = "#BDF64F";
 
 const SERVICES = [
   { n: "01", title: "Website design", body: "A modern, mobile friendly site that builds credibility." },
-  { n: "02", title: "Google Business", body: "Get found on Google Maps and in local searches." },
+  { n: "02", title: "Google Workspace", body: "Professional email and tools under your own business name." },
   { n: "03", title: "Digital presence", body: "One consistent story across your site, profile and email." },
 ];
 
