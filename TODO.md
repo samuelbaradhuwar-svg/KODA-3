@@ -12,7 +12,7 @@ Tick items off as they are done. `npm run legal:check` reports the legal items a
 - [ ] Confirm the source and licence of the hero shader code, and that the og-image is wholly your own artwork.
 
 ## Make the free audit work for real
-- [ ] Verify heykoda.co.za in Resend (SPF and DKIM), so emails reach real customers.
+- [ ] Verify heykoda.co.za in Resend (its own DKIM record is separate from Google's), so emails reach real customers. Then set `AUDIT_NOTIFY_TO=hello@heykoda.co.za` and `AUDIT_FROM` in Vercel.
 - [ ] In Vercel add: `RESEND_API_KEY`, `AUDIT_MODE=live`, `PAGESPEED_API_KEY`, `ANTHROPIC_API_KEY`, then redeploy.
 - [ ] Run one real audit with your own email and check the PDF arrives at the next business-hours slot.
 - [ ] Decide who follows up on specialist audit requests, and how fast, so the promise on the site is kept.
@@ -21,7 +21,14 @@ Tick items off as they are done. `npm run legal:check` reports the legal items a
 - [ ] Real testimonials (the section appears automatically once added in `src/content.js`).
 - [ ] Founder photo and short story.
 - [ ] Real phone number and WhatsApp number (`src/lib/utils.js`), and social profile links (`src/content.js`).
-- [ ] Set up the Google Business Profile and Google Search Console.
+- [x] Google Workspace set up for heykoda.co.za (mailbox `hello@`, alias `info@`, SPF and DKIM records at GoDaddy). Done 21 Oct 2026.
+- [x] Google Search Console: domain property verified and `sitemap.xml` submitted. Done 21 Oct 2026.
+- [ ] Google Business Profile: created, waiting for verification (a video check usually takes 1 to 5 working days). Once verified, add the profile link to the footer and contact section.
+- [ ] Turn on 2-Step Verification for `hello@heykoda.co.za`, and keep a note of the recovery codes.
+- [ ] Add the `_dmarc` TXT record at GoDaddy (`v=DMARC1; p=none; rua=mailto:hello@heykoda.co.za`) once mail has run cleanly for a week.
+- [ ] Remove the Google Admin connection in Composio (and optionally the OAuth client in Google Cloud) now the alias is done.
+- [ ] Put a reminder in the calendar for 31 Oct 2026: the Workspace free trial ends 3 Nov and the card is charged then.
+- [ ] Trade mark check for "KODA" (CIPC register and WIPO global database). Other businesses use "Koda" and "HeyKoda.ai" for software.
 - [ ] More portfolio projects.
 
 ## Housekeeping
