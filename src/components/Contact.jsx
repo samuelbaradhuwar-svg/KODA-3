@@ -3,7 +3,17 @@ import { ArrowUpRight, Phone } from "@phosphor-icons/react";
 import { Button, Eyebrow, Headline, Reveal, Koda } from "./ui.jsx";
 import { EMAIL, PHONE, openCompose, openGmailCompose } from "../lib/utils.js";
 
-const empty = { name: "", email: "", phone: "", business: "", message: "", consent: false };
+const empty = { name: "", email: "", phone: "", business: "", plan: "", message: "", consent: false };
+
+// "Which plan are you thinking of?" is optional, and only a hint for the reply.
+const PLAN_CHOICES = ["Starter", "Business", "Custom", "A monthly plan", "Not sure yet"];
+
+// What happens after the visitor sends the form.
+const NEXT_STEPS = [
+  { title: "We reply within one working day", desc: "We read your message and come back to you." },
+  { title: "A short call about what you need", desc: "So the quote and the mock-up fit your business." },
+  { title: "A free homepage mock-up", desc: "You see it before you pay anything." },
+];
 
 function Field({ label, error, id, children }) {
   return (
@@ -73,6 +83,7 @@ export default function Contact() {
       `Email: ${form.email}`,
       form.phone && `Phone: ${form.phone}`,
       form.business && `Business: ${form.business}`,
+      form.plan && `Plan I am thinking of: ${form.plan}`,
       "",
       form.message,
     ].filter((l) => l !== "" && l !== false).join("\n");
@@ -91,6 +102,29 @@ export default function Contact() {
           <p className="mt-6 max-w-[40ch] text-[15px] leading-[1.7] text-paper/65">
             Fill in the form or reach us directly. We reply within one working day. Only an idea so far? That is perfectly fine, and there is no pressure.
           </p>
+
+          <ol aria-label="What happens next" className="mt-9 grid gap-5">
+            {NEXT_STEPS.map((s, i) => (
+              <li key={s.title} className="flex items-start gap-4">
+                <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent font-display text-[15px] text-ink">{i + 1}</span>
+                <span>
+                  <span className="block text-[17px] font-semibold">{s.title}</span>
+                  <span className="mt-0.5 block text-[15px] leading-[1.6] text-paper/65">{s.desc}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          {PHONE.digits && (
+            <a
+              href={`https://wa.me/${PHONE.digits}?text=${encodeURIComponent("Hi, I would like to talk about a website for my business.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex min-h-11 w-fit items-center rounded-full border border-paper/35 px-5 text-[15px] font-semibold transition-colors hover:border-accent hover:text-accent"
+            >
+              Prefer WhatsApp? Message us<span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          )}
 
           <ul className="mt-9 grid gap-0 border-t border-paper/15">
             {PHONE.digits && (
@@ -147,6 +181,17 @@ export default function Contact() {
               <Field label="Business name (optional)" id="f-business">
                 <input id="f-business" name="business" value={form.business} onChange={change} placeholder="Your business" className="field" />
               </Field>
+              <fieldset className="sm:col-span-2">
+                <legend className="mb-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-paper/60">Which plan are you thinking of? (optional)</legend>
+                <div className="flex flex-wrap gap-2.5">
+                  {PLAN_CHOICES.map((c) => (
+                    <label key={c} className="cursor-pointer">
+                      <input type="radio" name="plan" value={c} checked={form.plan === c} onChange={change} className="peer sr-only" />
+                      <span className="inline-flex min-h-11 items-center rounded-full border border-paper/35 px-4 text-[14px] font-semibold transition-colors peer-checked:border-accent peer-checked:bg-accent peer-checked:text-ink peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent">{c}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
               <div className="sm:col-span-2">
                 <Field label="What do you need help with?" id="f-message">
                   <textarea id="f-message" name="message" value={form.message} onChange={change} rows={4} placeholder="Tell us about your business or your idea, and what you're looking for." className="field resize-none" />
@@ -162,7 +207,7 @@ export default function Contact() {
                 {errors.consent && <span id="f-consent-error" role="alert" className="mt-1 block text-sm text-[#FF9A8B]">{errors.consent}</span>}
               </div>
               <div className="sm:col-span-2">
-                <Button type="submit" variant="lime">Book a free consultation</Button>
+                <Button type="submit" variant="lime">Send my request</Button>
               </div>
             </form>
           )}

@@ -3,6 +3,7 @@ import { Check } from "@phosphor-icons/react";
 import { PLANS, MONTHLY_PLANS, INCLUDED, MOCKUP_OFFER } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal, Koda } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
+import FreeMockup from "./FreeMockup.jsx";
 
 // One plan card, used for both the once-off websites and the monthly plans.
 function PlanCard({ p, i, id, monthly }) {
@@ -44,6 +45,13 @@ function PlanCard({ p, i, id, monthly }) {
             </li>
           ))}
         </ul>
+
+        {p.timeline && (
+          <p className={cn("mt-8 flex items-center justify-between gap-3 rounded-2xl px-4 py-3 text-[14px]", hot ? "bg-paper/10" : "bg-paper2")}>
+            <span className={hot ? "text-paper/70" : "text-muted"}>Typical timeline</span>
+            <span className="text-right font-semibold">{p.timeline}</span>
+          </p>
+        )}
 
         <div className="mt-10">
           <Button variant={hot ? "lime" : "dark"} className="w-full justify-between" onClick={() => scrollToId("contact")}>
@@ -90,16 +98,7 @@ export default function Pricing() {
           </ul>
         </Reveal>
 
-        {MOCKUP_OFFER && (
-          <Reveal className="mt-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-5 keep-light rounded-[28px] bg-ink px-6 py-8 text-paper sm:px-10 sm:py-10">
-            <div className="max-w-[46ch]">
-              <p className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/60"><span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-[3px] bg-accent" />Free mock-up</p>
-              <h3 className="xwide mt-4 text-[clamp(1.2rem,2.6vw,1.7rem)] leading-[1.08] tracking-[-0.02em]">See your homepage before you pay</h3>
-              <p className="mt-3 text-[15px] leading-[1.65] text-paper/70">Tell us about your business and we will design a free homepage mock-up first. If you like it, we carry on. If not, there is no cost and no pressure.</p>
-            </div>
-            <Button variant="lime" onClick={() => scrollToId("contact")}>Ask for a free mock-up</Button>
-          </Reveal>
-        )}
+        {MOCKUP_OFFER && <FreeMockup />}
 
         {/* monthly plans */}
         <div className="mt-20 border-t border-ink/15 pt-14 lg:mt-24 lg:pt-16">
@@ -109,6 +108,7 @@ export default function Pricing() {
             <p className="t-body mt-6">
               Already have a website? Keep it working and growing, with fixed monthly allowances so you always know what is delivered. These are proposed starting prices.
             </p>
+            <p className="t-body mt-4">Monthly growth plans are month to month. You can cancel with 20 business days' written notice.</p>
           </Reveal>
 
           <div className="mt-14 grid gap-5 lg:grid-cols-3 lg:items-stretch lg:gap-6">

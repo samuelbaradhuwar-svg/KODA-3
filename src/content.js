@@ -92,6 +92,7 @@ export const OUTCOMES = [
 export const PLANS = [
   {
     name: "Starter",
+    timeline: "5 to 7 working days",
     price: "R3,499",
     note: "once off",
     desc: "A polished single page presence for businesses just getting online.",
@@ -108,6 +109,7 @@ export const PLANS = [
   },
   {
     name: "Business",
+    timeline: "2 to 4 weeks",
     price: "R7,999",
     note: "once off",
     desc: "A complete website with several pages, built to win trust and generate leads.",
@@ -118,6 +120,7 @@ export const PLANS = [
   },
   {
     name: "Custom",
+    timeline: "Agreed with you",
     price: "From R14,999",
     note: "custom quote",
     desc: "For businesses that book or sell online and need a site to match.",
@@ -191,6 +194,21 @@ export const INCLUDED = [
 // A free homepage mock-up before any payment. Set to false to hide the offer on the pricing section.
 export const MOCKUP_OFFER = true;
 
+// The four steps of the free mock-up offer. Nothing here promises a number of days.
+export const MOCKUP_STEPS = [
+  { title: "Tell us about your business", desc: "A short form or a WhatsApp message is enough." },
+  { title: "We design your homepage", desc: "A free mock-up, on a link you can open on your phone." },
+  { title: "You decide", desc: "Like it and we build the rest. If not, you owe nothing." },
+  { title: "We build and launch", desc: "Your full website, with Google set-up if you want it." },
+];
+
+// Straight talk: what we will and will not promise.
+export const STRAIGHT_TALK = [
+  { title: "A written quote", desc: "It lists exactly what is included, so there are no surprises." },
+  { title: "People who reply", desc: "We reply to every enquiry within one working day." },
+  { title: "Honest talk about results", desc: "We never promise a ranking, a number of calls, or a date we cannot keep." },
+];
+
 // "Why not a DIY builder or the cheapest quote?" Generic and fair, no named competitors.
 export const COMPARE = {
   cols: ["DIY website builder", "Cheapest quote", "KODA"],
@@ -198,6 +216,8 @@ export const COMPARE = {
     { label: "Who builds it", tones: ["con", "con", "pro"], vals: ["You, in your own time", "Often a reused template", "We design and build it for you"] },
     { label: "Google set-up", tones: ["con", "con", "pro"], vals: ["You work it out yourself", "Often extra, or not included", "Google Business Profile and SEO set-up available"] },
     { label: "Hosting and security", tones: ["mid", "mid", "pro"], vals: ["A monthly plan you manage", "Varies", "Managed hosting with SSL, backups and monitoring"] },
+    { label: "Who you talk to", tones: ["mid", "mid", "pro"], vals: ["Help articles and forums", "Varies", "The people who built your site"] },
+    { label: "Asking for a change", tones: ["con", "mid", "pro"], vals: ["You make it yourself", "Varies", "Send us a message and we do it, covered by our monthly plans"] },
     { label: "After launch", tones: ["mid", "mid", "pro"], vals: ["Help articles and forums", "Varies", "Support included on every plan"] },
     { label: "Price", tones: ["mid", "pro", "plain"], vals: ["Monthly, plus your time", "Low upfront price", "From R3,499 once off"] },
   ],
