@@ -24,4 +24,4 @@ drop function if exists
   public.ap_complete_onboarding(text, jsonb, text, boolean, boolean),
   public.ap_apply_billing_event(text, text, text, uuid, bigint, jsonb),
   public.ap_is_admin_email(text), public.ap_set_client_price(uuid, integer, text), public.ap_expected_amount(uuid),
-  public.ap_invite_info(text), public.ap_admin_overview();
+  public.ap_invite_info(text), public.ap_admin_overview(), public.ap_get_approval(uuid);

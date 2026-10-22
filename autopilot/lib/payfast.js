@@ -61,7 +61,7 @@ async function defaultConfirm(paramStr, sandbox) {
 // The four checks PayFast requires of every ITN. All four must pass before anything changes.
 //   1. signature matches   2. the call comes from a PayFast host   3. the amount is what we expect
 //   4. PayFast itself confirms it sent this notification
-export async function verifyItn({ rawBody, remoteIp, passphrase, expectedAmountCents, sandbox = false, resolveHosts = defaultResolveHosts, confirm = defaultConfirm }) {
+export async function verifyItn({ rawBody, remoteIp, passphrase, expectedAmountCents, skipAmount = false, sandbox = false, resolveHosts = defaultResolveHosts, confirm = defaultConfirm }) {
   const pairs = [...new URLSearchParams(String(rawBody || ""))].map(([k, v]) => [k, v]);
   const params = Object.fromEntries(pairs);
   const checks = { signature: false, source: false, amount: false, server: false };
@@ -73,7 +73,8 @@ export async function verifyItn({ rawBody, remoteIp, passphrase, expectedAmountC
   checks.source = Boolean(remoteIp) && ips.includes(remoteIp);
 
   const got = toCents(params.amount_gross);
-  checks.amount = got !== null && expectedAmountCents != null && got === Number(expectedAmountCents);
+  // skipAmount is only for cancellation notices, which may not carry the monthly amount (VERIFY); the other three checks still apply
+  checks.amount = skipAmount || (got !== null && expectedAmountCents != null && got === Number(expectedAmountCents));
 
   if (checks.source && checks.amount) {
     const withoutSig = pairs.filter(([k]) => k !== "signature").map(([k, v]) => `${k}=${pfEncode(v)}`).join("&");

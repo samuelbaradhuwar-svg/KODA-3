@@ -746,6 +746,16 @@ language sql stable security definer set search_path = public, pg_temp as $$
   );
 $$;
 
+-- One approval as the approval page shows it. Used by the signed email links.
+create function public.ap_get_approval(p_approval uuid) returns jsonb
+language sql stable security definer set search_path = public, pg_temp as $$
+  select jsonb_build_object('id', a.id, 'status', a.status, 'preview', a.preview, 'payload_hash', a.payload_hash,
+                            'expires_at', a.expires_at, 'business_name', c.business_name, 'task_type', t.task_type,
+                            'client_id', a.client_id, 'kill_switch', c.kill_switch)
+  from public.ap_approvals a join public.ap_clients c on c.id = a.client_id join public.ap_tasks t on t.id = a.task_id
+  where a.id = p_approval;
+$$;
+
 -- ------------------------------------------------------------------ row level security and grants
 do $$
 declare tbl text;
