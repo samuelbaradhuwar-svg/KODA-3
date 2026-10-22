@@ -1,6 +1,6 @@
 # KODA Autopilot: monthly plan deliverables (Phase 0 spec)
 
-Status: **DRAFT for owner review. No code exists yet.** Anything marked *(proposed)* is a number or definition I chose so it can be measured; the site does not say it today. Confirm or change each one before Phase 1.
+Status: **Decisions confirmed by the owner (see "Decisions" at the end). Phase 1 foundation is in progress.** Items marked *(proposed)* are numbers or definitions chosen so they can be measured; the owner accepted them for the pilot, and they still have to go into the written quote and the site copy (see `docs/COPY-GAPS.md`).
 
 Source of truth for what is promised today: `MONTHLY_PLANS` in `src/content.js`, plus the monthly-plan sections of the terms (`src/pages/Legal.jsx`) and refund policy.
 
@@ -81,10 +81,12 @@ Plans stack ("Everything included in ..."). I read the post and campaign counts 
 ## Gate before any paid client
 No paid client until: the pilot log (`docs/PILOT-LOG.md`) has no unresolved wrong-publish or data-safety issue; the legal items in `TODO.md` are done (Information Officer registered, attorney review, operator terms); and the copy gaps in `docs/COPY-GAPS.md` are fixed or consciously accepted.
 
-## Open decisions for the owner
-1. Are post and campaign counts **totals per tier** (my reading) or additions?
-2. Approve the *(proposed)* numbers: GBP posts, change requests, SEO fixes, competitors.
-3. **Unapproved drafts:** my proposal is that a draft delivered for approval counts as delivered, and lapses after 5 business days with no reply. The refund policy says an agreed item "not delivered" is delivered, credited or refunded, so an attorney should confirm this wording before it goes into a quote.
-4. Do campaign assets use the post allowance (I say no)?
-5. Who owns the Ads manager account and the cap process (client pays Google directly, in my design)?
-6. Is GA4 acceptable for your **own** site as client zero? The privacy and cookie pages currently say KODA uses no analytics or tracking. See `docs/COPY-GAPS.md`.
+## Decisions (confirmed by the owner)
+1. Post and campaign counts are **totals per tier** (Presence 4, Growth 8, Performance 12 posts; Growth 2 and Performance 4 campaigns), not additions.
+2. The *(proposed)* numbers are accepted for the pilot: Google Business Profile posts 2/4/4, change requests 2/4/6, SEO page fixes up to 3/6/8, competitors up to 3.
+3. Campaign assets do **not** use the post allowance.
+4. A draft delivered for approval counts as delivered and lapses after 5 business days with no reply. Attorney to confirm the wording before it goes into a quote (refund policy says an agreed item "not delivered" is delivered, credited or refunded).
+
+## Still open
+5. Who owns the Ads manager account and the cap process? (Design assumes the client pays Google directly.)
+6. Is GA4 acceptable on your **own** site as client zero? The privacy and cookie pages currently say KODA uses no analytics or tracking. See `docs/COPY-GAPS.md` item 21. Until decided, client zero uses Search Console and PageSpeed only.
