@@ -49,11 +49,11 @@
   "rewrites": [
     {
       "source": "/admin",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/onboarding",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ],
   "crons": [
