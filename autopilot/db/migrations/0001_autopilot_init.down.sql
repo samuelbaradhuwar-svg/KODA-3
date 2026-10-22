@@ -18,4 +18,10 @@ drop function if exists
   public.ap_set_kill_switch(uuid, boolean, text, text), public.ap_assert_not_killed(uuid),
   public.ap_ensure_ledger(uuid, date), public.ap_consume_allowance(uuid, date, text, integer, text),
   public.ap_set_spend_cap(uuid, date, bigint, text), public.ap_reserve_spend(uuid, date, bigint, text),
-  public.ap_enqueue_due(timestamptz);
+  public.ap_enqueue_due(timestamptz),
+  public.ap_create_client(text, text, text, text, text, boolean, text), public.ap_set_client_status(uuid, text, date, text),
+  public.ap_set_automation(uuid, text, text, text), public.ap_create_invite(uuid, text, interval, text), public.ap_peek_invite(text),
+  public.ap_complete_onboarding(text, jsonb, text, boolean, boolean),
+  public.ap_apply_billing_event(text, text, text, uuid, bigint, jsonb),
+  public.ap_is_admin_email(text), public.ap_set_client_price(uuid, integer, text), public.ap_expected_amount(uuid),
+  public.ap_invite_info(text), public.ap_admin_overview();

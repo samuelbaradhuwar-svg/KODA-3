@@ -47,6 +47,7 @@ create table public.ap_clients (
   kill_switch_reason text,
   kill_switch_at timestamptz,
   notice_ends_at date,                                  -- cancellation: work and billing continue to this date
+  price_cents integer check (price_cents is null or price_cents >= 0),  -- the agreed monthly price from the written quote; null = list price
   created_at timestamptz not null default now()
 );
 
@@ -600,6 +601,150 @@ begin
   end loop;
   return n;
 end $$;
+
+-- ------------------------------------------------------------------ clients, onboarding, billing, settings
+create function public.ap_create_client(p_business_name text, p_plan text, p_email text, p_contact text, p_website text,
+                                        p_internal boolean, p_actor text)
+returns public.ap_clients language plpgsql security definer set search_path = public, pg_temp as $$
+declare c public.ap_clients;
+begin
+  insert into public.ap_clients (business_name, plan_id, contact_email, contact_name, website_url, is_internal)
+  values (p_business_name, p_plan, nullif(trim(p_email), ''), nullif(trim(p_contact), ''), nullif(trim(p_website), ''), coalesce(p_internal, false))
+  returning * into c;
+  perform public.ap_audit(c.id, p_actor, 'client.created', null, null, jsonb_build_object('plan', p_plan, 'internal', c.is_internal));
+  return c;
+end $$;
+
+create function public.ap_set_client_status(p_client uuid, p_status text, p_notice_ends date, p_actor text)
+returns public.ap_clients language plpgsql security definer set search_path = public, pg_temp as $$
+declare c public.ap_clients;
+begin
+  update public.ap_clients set status = p_status, notice_ends_at = case when p_status = 'notice' then p_notice_ends else null end
+   where id = p_client returning * into c;
+  if not found then raise exception 'client_not_found'; end if;
+  perform public.ap_audit(p_client, p_actor, 'client.status', null, null, jsonb_build_object('status', p_status, 'notice_ends_at', p_notice_ends));
+  return c;
+end $$;
+
+-- 'auto' can be switched on per client and task type, never for money tasks. Default stays 'approve'.
+create function public.ap_set_automation(p_client uuid, p_type text, p_mode text, p_actor text)
+returns text language plpgsql security definer set search_path = public, pg_temp as $$
+begin
+  if p_mode not in ('approve', 'auto') then raise exception 'bad_mode'; end if;
+  if p_mode = 'auto' and exists (select 1 from public.ap_task_policy where task_type = p_type and (never_auto or not side_effect)) then
+    raise exception 'never_auto';
+  end if;
+  insert into public.ap_automation_settings (client_id, task_type, mode) values (p_client, p_type, p_mode)
+  on conflict (client_id, task_type) do update set mode = excluded.mode;
+  perform public.ap_audit(p_client, p_actor, 'automation.set', null, null, jsonb_build_object('task_type', p_type, 'mode', p_mode));
+  return p_mode;
+end $$;
+
+-- Onboarding invites: the token itself is never stored, only its sha256.
+create function public.ap_create_invite(p_client uuid, p_token_hash text, p_ttl interval, p_actor text)
+returns timestamptz language plpgsql security definer set search_path = public, pg_temp as $$
+declare exp timestamptz := now() + p_ttl;
+begin
+  insert into public.ap_onboarding_invites (token_hash, client_id, expires_at) values (p_token_hash, p_client, exp);
+  perform public.ap_audit(p_client, p_actor, 'invite.created', null, null, jsonb_build_object('expires_at', exp));
+  return exp;
+end $$;
+
+create function public.ap_peek_invite(p_token_hash text) returns uuid
+language sql stable security definer set search_path = public, pg_temp as $$
+  select client_id from public.ap_onboarding_invites where token_hash = p_token_hash and used_at is null and expires_at > now();
+$$;
+
+-- One call, all or nothing: use the invite, save the brand profile, record what the client agreed to and which wording they saw.
+create function public.ap_complete_onboarding(p_token_hash text, p_profile jsonb, p_wording_version text, p_ai_consent boolean, p_data_consent boolean)
+returns uuid language plpgsql security definer set search_path = public, pg_temp as $$
+declare cid uuid;
+begin
+  if not (coalesce(p_ai_consent, false) and coalesce(p_data_consent, false)) then raise exception 'consent_required'; end if;
+  update public.ap_onboarding_invites set used_at = now()
+   where token_hash = p_token_hash and used_at is null and expires_at > now() returning client_id into cid;
+  if cid is null then raise exception 'invite_invalid'; end if;
+  insert into public.ap_brand_profiles (client_id, tone, offers, dos, donts, audience, areas, banned_claims)
+  values (cid, left(p_profile ->> 'tone', 2000), left(p_profile ->> 'offers', 4000), left(p_profile ->> 'dos', 2000),
+          left(p_profile ->> 'donts', 2000), left(p_profile ->> 'audience', 2000), left(p_profile ->> 'areas', 2000),
+          coalesce(array(select left(x, 200) from jsonb_array_elements_text(coalesce(p_profile -> 'banned_claims', '[]')) x limit 50), '{}'))
+  on conflict (client_id) do update set tone = excluded.tone, offers = excluded.offers, dos = excluded.dos, donts = excluded.donts,
+    audience = excluded.audience, areas = excluded.areas, banned_claims = excluded.banned_claims, updated_at = now();
+  insert into public.ap_consents (client_id, kind, wording_version) values (cid, 'ai_assisted_work', p_wording_version), (cid, 'data_processing', p_wording_version);
+  perform public.ap_audit(cid, 'client', 'client.onboarded', null, null, jsonb_build_object('wording_version', p_wording_version));
+  return cid;
+end $$;
+
+-- Billing events from the payment provider. Safe to receive twice: the second time it does nothing.
+create function public.ap_apply_billing_event(p_provider text, p_payment_id text, p_status text, p_client uuid, p_amount_cents bigint, p_checks jsonb)
+returns text language plpgsql security definer set search_path = public, pg_temp as $$
+declare inserted bigint;
+begin
+  insert into public.ap_billing_events (provider, provider_payment_id, payment_status, client_id, amount_gross_cents, checks)
+  values (p_provider, p_payment_id, p_status, p_client, p_amount_cents, coalesce(p_checks, '{}'))
+  on conflict do nothing returning id into inserted;
+  if inserted is null then return 'duplicate'; end if;
+  if p_client is not null then
+    if p_status = 'COMPLETE' then update public.ap_clients set billing_status = 'active' where id = p_client;
+    elsif p_status = 'FAILED' then update public.ap_clients set billing_status = 'past_due' where id = p_client;
+    elsif p_status = 'CANCELLED' then update public.ap_clients set billing_status = 'cancelled' where id = p_client;
+    end if;
+    perform public.ap_audit(p_client, 'system', 'billing.' || lower(p_status), null, null, jsonb_build_object('provider', p_provider, 'amount_cents', p_amount_cents));
+  end if;
+  return 'applied';
+end $$;
+
+-- ------------------------------------------------------------------ helpers for the API and the admin page
+create function public.ap_is_admin_email(p_email text) returns boolean
+language sql stable security definer set search_path = public, pg_temp as $$
+  select exists (select 1 from public.ap_admins where email = lower(coalesce(p_email, '')));
+$$;
+
+create function public.ap_set_client_price(p_client uuid, p_price_cents integer, p_actor text)
+returns integer language plpgsql security definer set search_path = public, pg_temp as $$
+begin
+  update public.ap_clients set price_cents = p_price_cents where id = p_client;
+  if not found then raise exception 'client_not_found'; end if;
+  perform public.ap_audit(p_client, p_actor, 'client.price', null, null, jsonb_build_object('price_cents', p_price_cents));
+  return p_price_cents;
+end $$;
+
+-- What a payment from this client must be: the agreed price, else the plan's list price.
+create function public.ap_expected_amount(p_client uuid) returns bigint
+language sql stable security definer set search_path = public, pg_temp as $$
+  select coalesce(c.price_cents, p.monthly_price_cents)::bigint from public.ap_clients c join public.ap_plans p on p.id = c.plan_id where c.id = p_client;
+$$;
+
+create function public.ap_invite_info(p_token_hash text) returns jsonb
+language sql stable security definer set search_path = public, pg_temp as $$
+  select jsonb_build_object('client_id', c.id, 'business_name', c.business_name, 'plan', c.plan_id)
+  from public.ap_onboarding_invites i join public.ap_clients c on c.id = i.client_id
+  where i.token_hash = p_token_hash and i.used_at is null and i.expires_at > now();
+$$;
+
+-- Everything the admin page shows, in one call. Never includes tokens or credentials.
+create function public.ap_admin_overview() returns jsonb
+language sql stable security definer set search_path = public, pg_temp as $$
+  select jsonb_build_object(
+    'clients', coalesce((select jsonb_agg(to_jsonb(x) order by x.created_at) from (
+        select c.id, c.business_name, c.contact_email, c.website_url, c.plan_id, c.status, c.billing_status, c.is_internal,
+               c.kill_switch, c.kill_switch_reason, c.notice_ends_at, c.price_cents, c.created_at,
+               public.ap_client_runnable(c) as runnable,
+               exists (select 1 from public.ap_brand_profiles b where b.client_id = c.id) as has_profile,
+               coalesce((select jsonb_object_agg(a.task_type, a.mode) from public.ap_automation_settings a where a.client_id = c.id), '{}') as automation
+        from public.ap_clients c) x), '[]'),
+    'pending_approvals', coalesce((select jsonb_agg(to_jsonb(y) order by y.requested_at) from (
+        select a.id, a.task_id, a.client_id, c.business_name, t.task_type, a.preview, a.payload_hash, a.requested_at, a.expires_at
+        from public.ap_approvals a join public.ap_clients c on c.id = a.client_id join public.ap_tasks t on t.id = a.task_id
+        where a.status = 'pending') y), '[]'),
+    'recent_tasks', coalesce((select jsonb_agg(to_jsonb(z)) from (
+        select t.id, t.client_id, c.business_name, t.task_type, t.state, t.attempts, t.last_error, t.updated_at
+        from public.ap_tasks t join public.ap_clients c on c.id = t.client_id order by t.updated_at desc limit 30) z), '[]'),
+    'recent_audit', coalesce((select jsonb_agg(to_jsonb(w)) from (
+        select id, at, client_id, actor, action, task_id from public.ap_audit_log order by id desc limit 40) w), '[]'),
+    'audit_chain_ok', public.ap_verify_audit_chain() is null
+  );
+$$;
 
 -- ------------------------------------------------------------------ row level security and grants
 do $$

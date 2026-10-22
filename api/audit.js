@@ -13,9 +13,13 @@
 // Without the key, or if the call fails, the report simply uses the fixed wording.
 //
 // See AUDIT-SETUP.md for the settings this needs.
-import dns from "node:dns/promises";
-import net from "node:net";
 import { buildPdf } from "./_pdf.js";
+// Shared with KODA Autopilot: see autopilot/lib
+import { safeFetch } from "../autopilot/lib/net.js";
+import { deliveryTime } from "../autopilot/lib/schedule.js";
+import { sendEmail as sendViaResend } from "../autopilot/lib/email.js";
+
+export { deliveryTime };
 
 export const config = { maxDuration: 60 };
 
@@ -23,73 +27,6 @@ const MODE = () => (process.env.AUDIT_MODE === "live" ? "live" : "review");
 // Where reports go for review (and the copy in live mode). Interim default until the heykoda.co.za mailbox is set up.
 const NOTIFY_TO = () => process.env.AUDIT_NOTIFY_TO || "samuelbaradhuwar@gmail.com";
 const FROM = () => process.env.AUDIT_FROM || "KODA Audits <onboarding@resend.dev>";
-const MAX_HTML = 1_500_000;
-
-// ---------------------------------------------------------------- safety: only ever fetch public web addresses
-function isPrivateIp(ip) {
-  if (net.isIPv4(ip)) {
-    const [a, b] = ip.split(".").map(Number);
-    return (
-      a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) ||
-      (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224
-    );
-  }
-  const v = ip.toLowerCase();
-  return v === "::1" || v === "::" || v.startsWith("fc") || v.startsWith("fd") || v.startsWith("fe80") || v.startsWith("::ffff:127.") || v.startsWith("::ffff:10.") || v.startsWith("::ffff:192.168.");
-}
-
-async function assertPublic(url) {
-  const u = new URL(url);
-  if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("Only web addresses are supported");
-  if (u.username || u.password) throw new Error("Addresses with a login are not supported");
-  if (process.env.AUDIT_ALLOW_PRIVATE === "1") return u;
-  const host = u.hostname.replace(/^\[|\]$/g, "");
-  if (host === "localhost" || host.endsWith(".local") || host.endsWith(".internal")) throw new Error("That address is not public");
-  const addrs = net.isIP(host) ? [{ address: host }] : await dns.lookup(host, { all: true });
-  if (!addrs.length || addrs.some((a) => isPrivateIp(a.address))) throw new Error("That address is not public");
-  return u;
-}
-
-async function safeFetch(url, { timeout = 8000, maxBytes = MAX_HTML, accept = "text/html,*/*;q=0.5" } = {}) {
-  let current = url;
-  for (let hop = 0; hop < 5; hop++) {
-    await assertPublic(current);
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), timeout);
-    const started = Date.now();
-    try {
-      const res = await fetch(current, {
-        redirect: "manual",
-        signal: ctrl.signal,
-        headers: { "user-agent": "KODA-Audit/1.0 (+https://www.heykoda.co.za)", accept },
-      });
-      if ([301, 302, 303, 307, 308].includes(res.status) && res.headers.get("location")) {
-        current = new URL(res.headers.get("location"), current).toString();
-        continue;
-      }
-      let body = "";
-      if (res.body) {
-        const reader = res.body.getReader();
-        const dec = new TextDecoder();
-        let got = 0;
-        for (;;) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          got += value.length;
-          body += dec.decode(value, { stream: true });
-          if (got > maxBytes) {
-            await reader.cancel();
-            break;
-          }
-        }
-      }
-      return { status: res.status, url: current, body, ms: Date.now() - started, type: res.headers.get("content-type") || "", headers: Object.fromEntries(res.headers) };
-    } finally {
-      clearTimeout(timer);
-    }
-  }
-  throw new Error("Too many redirects");
-}
 
 // ---------------------------------------------------------------- input
 export function normaliseUrl(raw) {
@@ -458,27 +395,6 @@ async function aiSummary(report) {
   }
 }
 
-// ---------------------------------------------------------------- when the emailed report is delivered
-// The report goes out half an hour after the request, and only in business hours (Mon to Fri, 08:00 to 17:00 South
-// African time, which has no daylight saving). The email says it is an automatic check, so the delay is only about
-// arriving at a sensible time, not about pretending anyone read the site.
-export function deliveryTime(now = new Date(), delayMin = 30) {
-  const SAST = 2 * 3600_000;
-  let t = new Date(now.getTime() + delayMin * 60_000);
-  const local = (d) => new Date(d.getTime() + SAST); // read the UTC fields of this to get SA wall-clock
-  const at = (d, h, m) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), h, m) - SAST);
-  let l = local(t);
-  const hour = l.getUTCHours() + l.getUTCMinutes() / 60;
-  const day = l.getUTCDay(); // 0 Sun .. 6 Sat
-  const weekday = day >= 1 && day <= 5;
-  if (weekday && hour >= 8 && hour < 17) return t;
-  if (weekday && hour < 8) return at(l, 8, 30);
-  // after hours or weekend: next weekday at 08:30
-  let next = new Date(l.getTime() + 86_400_000);
-  while ([0, 6].includes(next.getUTCDay())) next = new Date(next.getTime() + 86_400_000);
-  return at(next, 8, 30);
-}
-
 // ---------------------------------------------------------------- email
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const ICON = { pass: "✓", warn: "!", fail: "✕", info: "i" };
@@ -509,16 +425,7 @@ ${oppHtml(report)}<h3 style="margin:20px 0 6px">Everything we checked</h3><table
 <p style="margin:16px 0 0;color:#888;font-size:12px">KODA · Durban, South Africa<br>You are receiving this once because you asked for a website check at heykoda.co.za. We have not added you to any mailing list. <a href="https://www.heykoda.co.za/privacy-policy" style="color:#888">Privacy policy</a></p></div>`;
 }
 
-async function sendEmail({ to, subject, html, replyTo, bcc, scheduledAt, attachments }) {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return { ok: false, reason: "no-key" };
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-    body: JSON.stringify({ from: FROM(), to: Array.isArray(to) ? to : [to], subject, html, ...(replyTo ? { reply_to: replyTo } : {}), ...(bcc ? { bcc } : {}), ...(scheduledAt ? { scheduled_at: scheduledAt.toISOString() } : {}), ...(attachments?.length ? { attachments } : {}) }),
-  });
-  return { ok: res.ok, reason: res.ok ? "" : `status-${res.status}` };
-}
+const sendEmail = (opts) => sendViaResend({ from: FROM(), ...opts });
 
 // ---------------------------------------------------------------- handler
 export default async function handler(req, res) {

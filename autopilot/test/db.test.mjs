@@ -313,3 +313,80 @@ test("spend can never pass the cap; no cap means no spend", async () => {
   await q(db, `select ap_set_kill_switch($1,true,'t')`, [c]);
   await expectError(q(db, `select ap_reserve_spend($1,$2,1)`, [c, month2]), /client_killed/);
 });
+
+// ------------------------------------------------------------------ clients, onboarding, billing, settings
+test("onboarding: one-time invite, consent required, profile and consents saved together", async () => {
+  const db = await newDb();
+  const c = (await one(db, `select * from ap_create_client('Acme Plumbing','growth','a@acme.co.za','Ann','https://acme.co.za',false,'admin:me')`));
+  assert.equal(c.status, "onboarding");
+  await q(db, `select ap_create_invite($1,'hash1', interval '7 days','admin:me')`, [c.id]);
+  assert.equal((await one(db, `select ap_peek_invite('hash1') c`)).c, c.id);
+  assert.equal((await one(db, `select ap_peek_invite('nope') c`)).c, null);
+
+  const profile = { tone: "warm", offers: "Free quote", audience: "Homeowners", banned_claims: ["#1 in Durban", "guaranteed"] };
+  await expectError(q(db, `select ap_complete_onboarding('hash1',$1,'draft-0',true,false)`, [JSON.stringify(profile)]), /consent_required/);
+  assert.equal((await one(db, `select ap_peek_invite('hash1') c`)).c, c.id, "a refused submission does not use up the invite");
+  await q(db, `select ap_complete_onboarding('hash1',$1,'draft-0',true,true)`, [JSON.stringify(profile)]);
+  assert.deepEqual((await one(db, `select banned_claims from ap_brand_profiles where client_id=$1`, [c.id])).banned_claims, ["#1 in Durban", "guaranteed"]);
+  assert.equal((await one(db, `select count(*)::int n from ap_consents where client_id=$1 and wording_version='draft-0'`, [c.id])).n, 2);
+  await expectError(q(db, `select ap_complete_onboarding('hash1',$1,'draft-0',true,true)`, [JSON.stringify(profile)]), /invite_invalid/);
+  await q(db, `select ap_create_invite($1,'hash2', interval '-1 minute','admin:me')`, [c.id]);
+  await expectError(q(db, `select ap_complete_onboarding('hash2',$1,'draft-0',true,true)`, [JSON.stringify(profile)]), /invite_invalid/);
+});
+
+test("billing events apply once, and unpaid clients stop being served", async () => {
+  const db = await newDb();
+  const c = await mkClient(db, { billing: "none" });
+  assert.equal((await one(db, `select ap_apply_billing_event('payfast','pf1','COMPLETE',$1,149900,'{}') r`, [c])).r, "applied");
+  assert.equal((await one(db, `select ap_apply_billing_event('payfast','pf1','COMPLETE',$1,149900,'{}') r`, [c])).r, "duplicate");
+  assert.equal((await one(db, `select billing_status from ap_clients where id=$1`, [c])).billing_status, "active");
+  await q(db, `select ap_apply_billing_event('payfast','pf2','FAILED',$1,149900,'{}')`, [c]);
+  assert.equal((await one(db, `select billing_status from ap_clients where id=$1`, [c])).billing_status, "past_due");
+  await q(db, `select ap_enqueue_task($1,'heartbeat')`, [c]);
+  assert.equal((await q(db, `select * from ap_claim_task('w')`)).length, 0);
+});
+
+test("automation can be switched on per task type, but never for money", async () => {
+  const db = await newDb();
+  const c = await mkClient(db);
+  await q(db, `select ap_set_automation($1,'social_post','auto','admin:me')`, [c]);
+  assert.equal((await one(db, `select ap_effective_mode($1,'social_post') m`, [c])).m, "auto");
+  await q(db, `select ap_set_automation($1,'social_post','approve','admin:me')`, [c]);
+  assert.equal((await one(db, `select ap_effective_mode($1,'social_post') m`, [c])).m, "approve");
+  await expectError(q(db, `select ap_set_automation($1,'ads_change','auto','admin:me')`, [c]), /never_auto/);
+  await expectError(q(db, `select ap_set_automation($1,'heartbeat','auto','admin:me')`, [c]), /never_auto/); // read-only: nothing to switch
+});
+
+test("admin overview, expected amounts and admin email lookup", async () => {
+  const db = await newDb();
+  const c = await mkClient(db, { plan: "growth" });
+  await q(db, `insert into ap_admins (email) values ('boss@example.co.za')`);
+  assert.equal((await one(db, `select ap_is_admin_email('BOSS@example.co.za') r`)).r, true);
+  assert.equal((await one(db, `select ap_is_admin_email('x@example.co.za') r`)).r, false);
+  assert.equal((await one(db, `select ap_is_admin_email(null) r`)).r, false);
+  assert.equal(Number((await one(db, `select ap_expected_amount($1) a`, [c])).a), 299900, "list price by default");
+  await q(db, `select ap_set_client_price($1, 249900, 'admin:me')`, [c]);
+  assert.equal(Number((await one(db, `select ap_expected_amount($1) a`, [c])).a), 249900, "the agreed price once set");
+
+  const { id, a } = await (async () => {
+    const id = (await one(db, `select ap_enqueue_task($1,'selftest_draft') id`, [c])).id;
+    await q(db, `select * from ap_claim_task('w')`);
+    return { id, a: await one(db, `select * from ap_request_approval($1,'{"text":"Hi"}')`, [id]) };
+  })();
+  const o = (await one(db, `select ap_admin_overview() o`)).o;
+  assert.equal(o.clients.length, 1);
+  assert.equal(o.clients[0].runnable, true);
+  assert.equal(o.pending_approvals[0].id, a.id);
+  assert.deepEqual(o.pending_approvals[0].preview, { text: "Hi" });
+  assert.equal(o.audit_chain_ok, true);
+  assert.ok(o.recent_tasks.some((t) => t.id === id));
+  assert.ok(!JSON.stringify(o).includes("token_ciphertext"));
+  await q(db, `insert into ap_connected_accounts (client_id, provider, external_account_id, token_ciphertext) values ($1,'google','a','v1.1.x.y.z')`, [c]);
+  assert.ok(!JSON.stringify((await one(db, `select ap_admin_overview() o`)).o).includes("v1.1.x.y.z"), "credentials never appear in the overview");
+
+  const info = await one(db, `select ap_create_invite($1,'h9', interval '1 day','admin:me')`, [c]);
+  assert.ok(info);
+  const inv = (await one(db, `select ap_invite_info('h9') i`)).i;
+  assert.equal(inv.business_name, "Test Co");
+  assert.equal((await one(db, `select ap_invite_info('nope') i`)).i, null);
+});
