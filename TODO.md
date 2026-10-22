@@ -31,6 +31,15 @@ Tick items off as they are done. `npm run legal:check` reports the legal items a
 - [ ] Trade mark check for "KODA" (CIPC register and WIPO global database). Other businesses use "Koda" and "HeyKoda.ai" for software.
 - [ ] More portfolio projects.
 
+## KODA Autopilot (Phase 1 go-live; see docs/AUTOPILOT-SETUP.md)
+- [ ] Create the Supabase project, run `autopilot/db/migrations/0001_autopilot_init.sql`, create your admin login and add your email to `ap_admins`.
+- [ ] Add the Autopilot environment variables in Vercel (generate the secrets yourself), keep `AUTOPILOT_DRY_RUN=1`, redeploy.
+- [ ] Run the client zero pilot (self-test, approval email, kill switch, onboarding link) and note what broke in `docs/PILOT-LOG.md`.
+- [ ] Decide GA4 for your own site (COPY-GAPS item 21) and who owns the Google Ads manager account (DELIVERABLES, "Still open").
+- [ ] Verify PayFast's docs and test the sandbox (see "Billing" in the setup guide) before any client pays through it.
+- [ ] Attorney: consent wording on the onboarding page, operator agreement, and the privacy-policy tool list (COPY-GAPS 19 to 23).
+- [ ] Apply early for the long-lead approvals Phase 2 needs: Google Business Profile API access, Google OAuth verification (Search Console, GA4), and Meta only if direct posting is wanted.
+
 ## Housekeeping
 - [ ] Delete the old preview branches on GitHub (https://github.com/samuelbaradhuwar-svg/KODA-3/branches): `preview/brand-polish`, `preview/compliance-1-wording`, `preview/compliance-2-forms`, `preview/compliance-3-policies`, `preview/ecommerce-custom-code`, `preview/free-audit`, `preview/hero-audit`, `preview/hero-pill-mobile`, `preview/legal-compliance`, `preview/trust-and-pricing`. Keep `claude/new-session-kcqrga`, which the site deploys from.
 - [ ] Screen reader pass (VoiceOver or NVDA) on the whole site.

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import Header from "./components/Header.jsx";
 import Hero from "./components/Hero.jsx";
 import { Ticker, Proof } from "./components/Ticker.jsx";
@@ -21,6 +21,10 @@ import WebsiteDesignDurban from "./pages/WebsiteDesignDurban.jsx";
 import { PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "./pages/Legal.jsx";
 import { PAGES } from "./content.js";
 import { scrollToId } from "./lib/utils.js";
+
+// KODA Autopilot pages. Standalone (no site header or footer), never indexed, loaded only when visited.
+const Admin = lazy(() => import("./pages/Admin.jsx"));
+const Onboarding = lazy(() => import("./pages/Onboarding.jsx"));
 
 export { PAGES };
 
@@ -77,6 +81,15 @@ export default function App({ path = "/" }) {
       root.style.backgroundColor = "";
     };
   }, [path]);
+
+  if (path === "/admin" || path === "/onboarding") {
+    const Page = path === "/admin" ? Admin : Onboarding;
+    return (
+      <Suspense fallback={null}>
+        <Page />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="overflow-x-clip">

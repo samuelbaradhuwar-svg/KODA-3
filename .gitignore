@@ -1,3 +1,8 @@
 node_modules
 dist
 dist-ssr
+
+# local secrets: never commit these (the repo is public)
+.env
+.env.*
+!.env.example
