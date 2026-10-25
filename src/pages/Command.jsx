@@ -6,7 +6,8 @@ import { EMAIL } from "../lib/utils.js";
 // KODA command centre (private, noindex). Signs in with an emailed link; the server (api/command) checks the signed-in
 // address on every request, so this page is a convenience and not the guard.
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
-const SB_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Supabase calls this the "anon" key or the newer "publishable" key. Either name works; both are public by design.
+const SB_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 const field = "w-full rounded-xl border border-ink/20 bg-paper px-3 py-2 text-[15px]";
 const btn = "rounded-full px-4 py-2 text-[14px] font-semibold transition-opacity disabled:opacity-40";
@@ -386,7 +387,7 @@ export default function Command() {
     if (token) call("me").then(setMe).catch(() => setMe({ denied: true }));
   }, [token, call]);
 
-  if (!sb) return <Shell><p className="mt-10">Sign-in is not set up yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel (see COMMAND-CENTER.md).</p></Shell>;
+  if (!sb) return <Shell><p className="mt-10">Sign-in is not set up yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY) in Vercel (see COMMAND-CENTER.md).</p></Shell>;
   if (session === undefined) return <p className="p-10 text-muted">Loading…</p>;
   if (!session) return <SignIn />;
   const out = <button className={light} onClick={() => sb.auth.signOut()}>Sign out</button>;

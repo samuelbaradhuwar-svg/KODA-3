@@ -38,7 +38,7 @@ the Supabase dashboard (or move to the paid plan).
 | `SUPABASE_URL` | Project URL | Server |
 | `SUPABASE_SERVICE_ROLE_KEY` | `service_role` secret | Server only. Never prefix with `VITE_`. Never paste it in chat or commit it. |
 | `VITE_SUPABASE_URL` | Project URL | Browser sign-in |
-| `VITE_SUPABASE_ANON_KEY` | `anon` public key | Browser sign-in (public by design) |
+| `VITE_SUPABASE_ANON_KEY` | `anon` or `publishable` public key | Browser sign-in (public by design). If Vercel says the name already exists, use `VITE_SUPABASE_PUBLISHABLE_KEY` instead; the page accepts either. |
 | `COMMAND_ADMIN_EMAIL` | `hello@heykoda.co.za` | Optional; this is the default |
 | `COMMAND_RETENTION_DAYS` | `180` | Optional; days before a request deletes itself |
 | `PAGESPEED_API_KEY` | free Google key | Optional but recommended: without it Google's shared speed quota often runs out |
