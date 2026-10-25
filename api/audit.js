@@ -520,6 +520,20 @@ async function sendEmail({ to, subject, html, replyTo, bcc, scheduledAt, attachm
   return { ok: res.ok, reason: res.ok ? "" : `status-${res.status}` };
 }
 
+// The findings the visitor saw, sent back with a specialist request. It goes to KODA only, but it is still trimmed and escaped.
+export function specialistSummaryHtml(sum) {
+  if (!sum || typeof sum !== "object") return "";
+  const t = (v, n) => esc(String(v ?? "").slice(0, n));
+  const num = (v) => (Number.isFinite(Number(v)) && v !== null && v !== "" ? Math.round(Number(v)) : "–");
+  const list = (a, n) => (Array.isArray(a) ? a.slice(0, n) : []);
+  const sc = sum.scores && typeof sum.scores === "object" ? sum.scores : null;
+  const scores = sc ? `<p style="margin:14px 0"><b>Speed on a phone ${num(sc.speed)}</b> · Accessibility ${num(sc.accessibility)} · Search ${num(sc.seo)} · Best practice ${num(sc.practice)} <span style="color:#666">(out of 100)</span></p>` : "";
+  const fixes = list(sum.fixes, 3).map((f) => `<li style="margin:6px 0"><b>${t(f?.title, 120)}.</b> ${t(f?.body, 400)}</li>`).join("");
+  const rows = list(sum.checks, 30).map((c) => { const st = ICON[c?.status] ? c.status : "info"; return `<tr><td style="padding:4px 8px;color:${COLOR[st]};font-weight:700">${ICON[st]}</td><td style="padding:4px 8px"><b>${t(c?.label, 80)}</b><br><span style="color:#555">${t(c?.detail, 300)}</span></td></tr>`; }).join("");
+  const opps = list(sum.opportunities, 8).map((o) => `<li style="margin:4px 0">${t(o?.title, 120)} <span style="color:#888">(${t(o?.service, 100)})</span></li>`).join("");
+  return `<h4 style="margin:22px 0 4px">What the automatic check found</h4>${scores}${fixes ? `<p style="margin:10px 0 2px"><b>Top fixes shown to them</b></p><ol style="padding-left:20px;margin:0">${fixes}</ol>` : ""}${opps ? `<p style="margin:14px 0 2px"><b>Opportunities listed</b></p><ul style="padding-left:20px;margin:0">${opps}</ul>` : ""}${rows ? `<p style="margin:14px 0 2px"><b>Everything checked</b></p><table style="border-collapse:collapse;width:100%">${rows}</table>` : ""}`;
+}
+
 // ---------------------------------------------------------------- handler
 export default async function handler(req, res) {
   res.setHeader("cache-control", "no-store");
@@ -544,7 +558,7 @@ export default async function handler(req, res) {
     const mailed = await sendEmail({
       to: NOTIFY_TO(), replyTo: body.email.trim(),
       subject: `Specialist audit requested: ${new URL(sUrl).hostname}`,
-      html: `<div style="font-family:Arial,sans-serif;max-width:560px;line-height:1.55"><h3>Specialist audit requested</h3><p><b>Site:</b> ${esc(sUrl)}<br><b>Email:</b> ${esc(body.email.trim())}<br><b>Business:</b> ${esc(cut(body.business, 120)) || "-"}<br><b>Phone:</b> ${esc(cut(body.phone, 40)) || "-"}</p><p><b>Their note:</b><br>${esc(cut(body.note, 600)) || "-"}</p><p style="color:#666">They have already seen the automatic report. Reply to this email to reach them.</p></div>`,
+      html: `<div style="font-family:Arial,sans-serif;max-width:620px;line-height:1.55"><p style="margin:0 0 10px;color:#2f7d1f"><b>Reply to this email to reach them and start the detailed audit.</b></p><h3 style="margin:0 0 8px">Specialist audit requested</h3><p><b>Site:</b> <a href="${esc(sUrl)}">${esc(sUrl)}</a><br><b>Email:</b> ${esc(body.email.trim())}<br><b>Business:</b> ${esc(cut(body.business, 120)) || "-"}<br><b>Phone:</b> ${esc(cut(body.phone, 40)) || "-"}</p><p><b>Their note:</b><br>${esc(cut(body.note, 600)) || "-"}</p>${specialistSummaryHtml(body.summary)}<p style="color:#666;margin-top:18px">They have already seen the automatic report. Reply to this email to reach them.</p></div>`,
     });
     if (!mailed.ok) return res.status(502).json({ ok: false, error: "We could not send that just now. Please email hello@heykoda.co.za and we will take it from there." });
     return res.status(200).json({ ok: true });

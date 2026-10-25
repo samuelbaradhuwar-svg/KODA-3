@@ -92,6 +92,14 @@ function Specialist({ report, lead, sample }) {
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [msg, setMsg] = useState("");
 
+  // What the visitor saw, so the request email shows it to us too.
+  const summary = {
+    scores: report.scores || null,
+    fixes: (report.ai?.priorities?.length ? report.ai.priorities.map((p) => ({ title: p.title, body: `${p.why} ${p.how}` })) : (report.topFixes || []).map((f) => ({ title: f.title, body: f.fix }))).slice(0, 3),
+    checks: (report.checks || []).map((c) => ({ label: c.label, status: c.status, detail: c.detail })),
+    opportunities: (report.opportunities || []).map((o) => ({ title: o.title, service: o.service, impact: o.impact })),
+  };
+
   const send = async (e) => {
     e.preventDefault();
     if (status === "sending") return;
@@ -101,7 +109,7 @@ function Specialist({ report, lead, sample }) {
       const res = await fetch("/api/audit", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ request: "specialist", url: report.finalUrl, email: lead.email, business: lead.business, phone, note, consent: true, company: "" }),
+        body: JSON.stringify({ request: "specialist", summary, url: report.finalUrl, email: lead.email, business: lead.business, phone, note, consent: true, company: "" }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) {

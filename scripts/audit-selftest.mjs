@@ -157,4 +157,9 @@ const sp = await call({ request: "specialist", url: "https://example.com", email
 assert.equal(sp.code, 400);
 const sp2 = await call({ request: "specialist", url: "https://example.com", email: "a@b.co" }, "9.9.9.2");
 assert.equal(sp2.code, 503, "no email key -> asks them to email us instead of pretending");
+// the findings are trimmed and escaped, and junk is ignored
+const { specialistSummaryHtml } = await import("../api/audit.js");
+const out = specialistSummaryHtml({ scores: { speed: 41.4, seo: "x" }, fixes: [{ title: "<b>A</b>", body: "why" }], checks: [{ label: "L", status: "bogus", detail: "d" }], opportunities: "nope" });
+assert.ok(out.includes("Speed on a phone 41") && out.includes("&lt;b&gt;A") && !out.includes("<b>A</b>"), out);
+assert.equal(specialistSummaryHtml(null), "");
 console.log("specialist request checks passed");
