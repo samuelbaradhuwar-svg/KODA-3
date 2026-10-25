@@ -20,10 +20,15 @@ enough to start. Free projects pause after about a week of no use; if the inbox 
 the Supabase dashboard (or move to the paid plan).
 
 ## One-time setup
-1. **Supabase project:** use a project that is only for this (not the autopilot one). In the SQL editor run
-   `command-center/db/0001_cc_init.sql`.
-2. **Create your login:** Supabase, Authentication, Users, Add user, `hello@heykoda.co.za` (tick auto-confirm). Sign-in
-   never creates users, so nobody else can get in.
+1. **Database:** the three `cc_` tables live in the `growth-command-center` Supabase project, next to the Autopilot
+   `ap_` tables (the free plan allows only 3 projects). The migration (`command-center/db/0001_cc_init.sql`, undo with
+   `0001_cc_init.down.sql`) only adds `cc_` tables and touches nothing else. Both apps share that project's service
+   key and its sign-in settings, so keep the key out of the browser and the repo. To move to a separate project later,
+   run the same file there and change the four Supabase variables.
+2. **Your login:** Supabase, Authentication, Users. Make sure `hello@heykoda.co.za` exists (Add user, tick auto-confirm).
+   Sign-in never creates users, and the server only accepts that one address, so other users in the project (for
+   example Autopilot's) cannot open the command centre. Supabase's built-in email sender is slow and limited to a few
+   links an hour; that is enough for one person.
 3. **Allow the sign-in link to come back to the site:** Authentication, URL Configuration. Add
    `https://www.heykoda.co.za/command` and `https://*.vercel.app/command` to Redirect URLs.
 4. **Vercel environment variables** (Project, Settings, Environment Variables; tick **Production and Preview**), then redeploy:
