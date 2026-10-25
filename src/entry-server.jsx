@@ -3,6 +3,7 @@ import { renderToString } from "react-dom/server";
 import App, { PAGES } from "./App.jsx";
 
 export const pages = PAGES;
+export { FAQS } from "./content.js";
 
 export function render(path) {
   return renderToString(

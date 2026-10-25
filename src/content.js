@@ -246,14 +246,13 @@ export const PAGES = {
   "/refund-policy": { title: "Refund Policy | KODA", description: "When and how KODA refunds payments for web design and related services." },
   "/cookie-policy": { title: "Cookie Policy | KODA", description: "KODA does not use tracking or advertising cookies. This page explains what the site does and does not store on your device." },
   "/": {
-    title: "KODA | Website Design in Durban",
-    description:
-      "KODA is a Durban web design studio. We build fast, professional websites for small and medium sized businesses, set up your Google Business profile and help customers find you.",
+    title: "Website Design Durban | Small Business Websites | KODA",
+    description: "Durban web design studio. Fast, mobile friendly websites from R3,499, with Google Business Profile and SEO set-up. Get a free homepage mock-up first.",
   },
   "/website-design-durban": {
     title: "Website Design in Durban for Small Businesses | KODA",
     description:
-      "Professional website design in Durban for small and medium sized businesses. KODA designs and builds websites, sets up Google Business profiles and handles SEO. Book a free consultation.",
+      "Website design in Durban for small and medium businesses: websites, ecommerce, booking systems, logos, Google Business Profile and SEO. Prices from R3,499. Free homepage mock-up.",
   },
 };
 
