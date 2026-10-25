@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /command
+Disallow: /report/
+Disallow: /api/
 
 Sitemap: https://www.heykoda.co.za/sitemap.xml

@@ -7,18 +7,21 @@
     "dev": "vite",
     "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
-    "legal:check": "node scripts/legal-check.mjs"
+    "legal:check": "node scripts/legal-check.mjs",
+    "test": "node scripts/audit-selftest.mjs && node scripts/command-selftest.mjs"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
     "@fontsource-variable/geist": "^5.3.0",
     "@phosphor-icons/react": "^2.1.10",
+    "@supabase/supabase-js": "^2.118.0",
     "lenis": "^1.3.27",
     "pdf-lib": "^1.17.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.11",
     "@vitejs/plugin-react": "^6.1.2",
     "autoprefixer": "^10.6.1",
     "postcss": "^8.5.29",

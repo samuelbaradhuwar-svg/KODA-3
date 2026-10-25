@@ -6,6 +6,8 @@ export default defineConfig({
   build: {
     target: "es2020",
     rollupOptions: {
+      // The private command centre is a second page; the public site is index.html. (SSR builds name their own entry.)
+      input: { main: "index.html", command: "command.html" },
       output: {
         manualChunks(id) {
           if (id.includes("node_modules/react") || id.includes("node_modules/scheduler")) return "react";
