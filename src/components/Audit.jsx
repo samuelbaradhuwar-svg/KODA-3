@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Gauge, DeviceMobile, MagnifyingGlass, MapPin, CheckCircle, WarningCircle, XCircle, Info } from "@phosphor-icons/react";
 import { Button, Eyebrow, Headline, Reveal, Koda } from "./ui.jsx";
-import { scrollToId } from "../lib/utils.js";
+import { scrollToId, EMAIL } from "../lib/utils.js";
 import { smoothScrollTo } from "../lib/smooth.js";
 
 const CHECKS = [
@@ -105,16 +105,21 @@ function Specialist({ report, lead, sample }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) {
-        setMsg(data.error || "Something went wrong. Please email info@heykoda.co.za.");
+        setMsg(data.error || `Something went wrong. Please email ${EMAIL}.`);
         setStatus("error");
         return;
       }
       setStatus("sent");
     } catch {
-      setMsg("We could not reach the server. Please try again, or email info@heykoda.co.za.");
+      setMsg(`We could not reach the server. Please try again, or email ${EMAIL}.`);
       setStatus("error");
     }
   };
+
+  // If the request cannot be sent from here, the visitor can send the same details from their own email app.
+  const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent("Detailed website audit request")}&body=${encodeURIComponent(
+    `Website: ${report.finalUrl}\nEmail: ${lead.email}\nBusiness: ${lead.business || "-"}\nPhone: ${phone || "-"}\nFocus on: ${note || "-"}\n`,
+  )}`;
 
   return (
     <div className="mt-9 rounded-2xl bg-accent/[0.08] p-5 ring-1 ring-accent/30">
@@ -138,6 +143,12 @@ function Specialist({ report, lead, sample }) {
             <textarea id="s-note" value={note} onChange={(e) => setNote(e.target.value.slice(0, 600))} rows={3} className="field resize-none" disabled={status === "sending"} />
           </div>
           {status === "error" && <p role="alert" className="rounded-xl bg-[#FF9A8B]/10 px-4 py-3 text-[14px] text-[#FF9A8B]">{msg}</p>}
+          {status === "error" && (
+            <p className="text-[14px] text-paper/80">
+              Your details are filled in.{" "}
+              <a href={mailto} className="border-b border-accent pb-0.5 text-accent">Open an email to {EMAIL}</a>
+            </p>
+          )}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <Button type="submit" variant="lime" disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Send my request"}</Button>
             <button type="button" onClick={() => setOpen(false)} className="border-b border-paper/40 pb-0.5 text-sm transition-colors hover:border-paper">Cancel</button>
