@@ -1,4 +1,4 @@
-export const EMAIL = "info@heykoda.co.za";
+export const EMAIL = "hello@heykoda.co.za";
 
 // Set the real number (digits only, with country code, e.g. "27XXXXXXXXX") to switch the phone line and
 // WhatsApp button back on.

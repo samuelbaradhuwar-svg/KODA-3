@@ -99,7 +99,7 @@ export async function buildPdf({ lead, report }) {
   }
 
   heading("Next step");
-  para("This report comes from an automatic check of your home page. It does not cover your Google Business Profile, design or copy. If you would like help with any of this, reply to the email this came with or write to info@heykoda.co.za, and we will go through it with you.", { size: 10.5 });
+  para("This report comes from an automatic check of your home page. It does not cover your Google Business Profile, design or copy. If you would like help with any of this, reply to the email this came with or write to hello@heykoda.co.za, and we will go through it with you.", { size: 10.5 });
   para("KODA - Durban, South Africa - heykoda.co.za", { size: 9, color: MUTED });
 
   return Buffer.from(await doc.save());

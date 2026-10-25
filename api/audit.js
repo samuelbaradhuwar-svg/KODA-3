@@ -611,7 +611,7 @@ export default async function handler(req, res) {
     mail = await sendEmail({ to: NOTIFY_TO(), replyTo: lead.email, subject: `New audit to review: ${host} (${lead.email})`, html: `<p><b>${esc(lead.email)}</b> asked for a free check${lead.business ? ` for <b>${esc(lead.business)}</b>` : ""}. Forward this to them once you are happy with it. ${esc(draftNote)}</p>${html}`, attachments });
   }
 
-  if (!mail.ok && !live) return res.status(502).json({ ok: false, error: "Something went wrong sending your report. Please email info@heykoda.co.za and we will do it by hand." });
+  if (!mail.ok && !live) return res.status(502).json({ ok: false, error: "Something went wrong sending your report. Please email hello@heykoda.co.za and we will do it by hand." });
   return res.status(200).json({ ok: true, mode: live ? "live" : "review", emailed: mail.ok, ...(sendAt ? { scheduledFor: sendAt.toISOString() } : {}), ...(live ? { report } : {}) });
 }
 
