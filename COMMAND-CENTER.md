@@ -3,8 +3,9 @@
 A private page for the owner only, at `/command`. Audit requests land in an inbox; later steps add the in-depth audit,
 the editable findings, the client report and the send flow. This file grows with each step.
 
-**Built so far (step 1):** sign-in, the inbox, request detail (status, private notes, delete), saving each detailed
-audit request when it arrives.
+**Built so far:**
+- Step 1: sign-in, the inbox, request detail (status, private notes, delete), saving each detailed audit request when it arrives.
+- Step 2: **Run in-depth audit** (crawler and technical checks, below).
 
 ## How it is protected
 - Sign-in is an emailed link (Supabase). Only the address in `COMMAND_ADMIN_EMAIL` is accepted, and the **server checks
@@ -35,14 +36,25 @@ the Supabase dashboard (or move to the paid plan).
 | `VITE_SUPABASE_ANON_KEY` | `anon` public key | Browser sign-in (public by design) |
 | `COMMAND_ADMIN_EMAIL` | `hello@heykoda.co.za` | Optional; this is the default |
 | `COMMAND_RETENTION_DAYS` | `180` | Optional; days before a request deletes itself |
+| `PAGESPEED_API_KEY` | free Google key | Optional but recommended: without it Google's shared speed quota often runs out |
 
 Already set and reused: `RESEND_API_KEY`, `AUDIT_FROM`, `AUDIT_NOTIFY_TO`, `AUDIT_MODE`. Note these are currently
 Production only; for the sign-in and for requests to be saved on a preview link, the Supabase ones above need Preview too.
+
+## The in-depth audit (step 2)
+**Run in-depth audit** on a request does, in order: crawl, Google speed on a phone, Google speed on a computer, then work out findings.
+- **Crawl:** the home page plus up to 9 key pages (services, about, contact, blog, pricing, areas, gallery, FAQ, shop; picked from the home page links and the sitemap). Only public addresses are opened (private networks, localhost and similar are refused, including after redirects), each request has a size and time limit, three pages are read at a time, and the whole crawl has a 45 second budget. If time runs out the page says what was skipped. At most 8 crawls an hour, and one at a time per audit.
+- **Technical checks:** secure connection, http to https and www redirects, redirect chains, 404 behaviour, error pages, noindex, robots.txt, sitemap, canonical tags, structured data, phone viewport setting, insecure items on secure pages, server response time, security headers, broken links (up to 40 checked, social sites that block bots are not called broken), image sizes (up to 14 checked), image descriptions and sizes, plus Google's Core Web Vitals, accessibility and best-practice results for phone and computer.
+- **Each finding** has a severity, what was seen and where, why it matters, the fix, the KODA service that does it, and a group (fix first, next, later). The service, plan, price and timeline are read from `src/catalog.js` (the same data as the website's pricing). Which service answers which kind of finding is in `api/_cc/catalog.js`; please review that list.
+- Only structured facts and short evidence are stored. Raw page HTML is never stored.
+- **Not judged automatically:** the rendered phone layout (only the phone setting is checked), Google Business Profile, design and copy. These get a manual-review checklist in the next step.
+- Re-running replaces the automatic findings and keeps any you have edited or added.
 
 ## Using it
 - Open `/command`, enter your address, click the link in the email.
 - Each detailed audit request appears in the inbox (the email to you still arrives as before).
 - **Reply by email** opens a reply to the visitor. Set the status as you go: new, replied, audit drafted, sent, won, lost.
+- **Run in-depth audit** takes up to about two minutes; leave the page open.
 - **Delete this request** removes it, its audit and its send log for good.
 
 ## POPIA

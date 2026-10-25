@@ -39,7 +39,7 @@ export async function assertPublic(url) {
   return u;
 }
 
-export async function safeFetch(url, { timeout = 8000, maxBytes = MAX_HTML, accept = "text/html,*/*;q=0.5", method = "GET", maxHops = 5 } = {}) {
+export async function safeFetch(url, { timeout = 8000, maxBytes = MAX_HTML, accept = "text/html,*/*;q=0.5", method = "GET", maxHops = 5, noFollow = false } = {}) {
   let current = url;
   const chain = [];
   for (let hop = 0; hop < maxHops; hop++) {
@@ -56,6 +56,10 @@ export async function safeFetch(url, { timeout = 8000, maxBytes = MAX_HTML, acce
       });
       chain.push({ url: current, status: res.status });
       if ([301, 302, 303, 307, 308].includes(res.status) && res.headers.get("location")) {
+        if (noFollow) {
+          await res.body?.cancel();
+          return { status: res.status, url: current, body: "", ms: Date.now() - started, type: "", headers: Object.fromEntries(res.headers), chain };
+        }
         current = new URL(res.headers.get("location"), current).toString();
         continue;
       }
