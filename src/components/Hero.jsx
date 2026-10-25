@@ -17,6 +17,16 @@ const SERVICES = [
   { n: "03", title: "Digital presence", body: "One consistent story across your site, profile and email." },
 ];
 
+// The picture or clip inside each of the three frames. Drop a file named hero-service-1, hero-service-2 and
+// hero-service-3 (.gif, .webp, .png, .jpg, .mp4 or .webm) into src/assets and it shows up in its frame.
+const MEDIA_FILES = import.meta.glob("../assets/hero-service-*.{gif,webp,png,jpg,jpeg,mp4,webm}", { eager: true, query: "?url", import: "default" });
+const MEDIA = Object.entries(MEDIA_FILES).reduce((acc, [path, url]) => {
+  const m = path.match(/hero-service-(\d+)\./);
+  if (m) acc[Number(m[1]) - 1] = url;
+  return acc;
+}, []);
+const isVideo = (url) => /\.(mp4|webm)(\?|$)/.test(url);
+
 const EYEBROW = "Web design studio, Durban";
 const HEADLINE = "Your business deserves to be found.";
 const LEAD =
@@ -97,6 +107,22 @@ function MotionHero() {
     function build() {
       const base = Math.min(W, H) / U;
       const short = H < 520; // a phone held sideways: smaller logo, nudged up, so the buttons below never touch it
+      // The frame while the services play: kept short enough that the copy fits under it (beside it on a phone held
+      // sideways), and nudged up to make room for that copy.
+      const fs = Math.min(base * 0.74, (H * (short ? 0.84 : 0.58)) / 640);
+      const fy = short ? 0 : -70;
+      // where the rounded-square frame sits on screen while the services play, so the picture and the copy can follow it
+      {
+        const st = stageRef.current?.style;
+        if (st) {
+          st.setProperty("--fw", `${(578 * fs).toFixed(1)}px`);
+          st.setProperty("--fh", `${(588 * fs).toFixed(1)}px`);
+          st.setProperty("--fr", `${(33 * fs).toFixed(1)}px`);
+          st.setProperty("--fow", `${(630 * fs).toFixed(1)}px`);
+          st.setProperty("--foh", `${(640 * fs).toFixed(1)}px`);
+          st.setProperty("--fy", `${fy}px`);
+        }
+      }
       const lockup = Math.min((H * (short ? 0.46 : 0.56)) / 840, (W * 0.8) / 980);
       const init = { ...initial, scale: base * 0.24, offY: -H * 0.22 };
       const tl = new Timeline(init);
@@ -130,8 +156,8 @@ function MotionHero() {
       tl.to("markOp", 0, T + 6.2, 0.8)
         .to("markScale", 0.86, T + 6.2, 0.8)
         .to("outline", 1, T + 6.3, 0.8)
-        .to("scale", base * 0.74, T + 6.3, 1.0)
-        .to("offY", 0, T + 6.3, 1.0);
+        .to("scale", fs, T + 6.3, 1.0)
+        .to("offY", fy, T + 6.3, 1.0);
 
       // 5. the three services, one at a time, each with room to be read
       for (let i = 0; i < 3; i++) {
@@ -230,7 +256,16 @@ function MotionHero() {
       setStyle(twoRef.current, "visibility", twoVisible || fade(V.tagB) > 0.01 ? "visible" : "hidden");
 
       // services and the closing calls to action
-      for (let i = 0; i < 3; i++) fadeEl(serviceRefs.current[i], V[`svc${i}`], 22);
+      // the picture stays put inside the frame and only fades; the copy under it also drifts a little
+      for (let i = 0; i < 3; i++) {
+        const slide = serviceRefs.current[i];
+        const u = V[`svc${i}`];
+        const o = fade(u);
+        setStyle(slide, "opacity", num(o));
+        setStyle(slide, "visibility", o < 0.01 ? "hidden" : "visible");
+        const copy = slide?.lastElementChild;
+        if (copy && changed(copy, "drift", num(u * 22, 1))) copy.style.setProperty("--drift", `${num(u * 22, 1)}px`);
+      }
       fadeEl(ctaRef.current, V.cta, 18);
       setStyle(ctaRef.current, "pointerEvents", fade(V.cta) > 0.6 ? "auto" : "none");
 
@@ -441,15 +476,24 @@ function MotionHero() {
           </h2>
         </div>
 
-        <div className="pointer-events-none absolute left-1/2 top-1/2 w-[min(420px,60vmin)] -translate-x-1/2 -translate-y-1/2 text-center">
-          {SERVICES.map((s, i) => (
-            <div key={s.n} ref={(el) => { serviceRefs.current[i] = el; }} className="invisible absolute inset-x-0 top-1/2 -translate-y-1/2 opacity-0">
-              <span className="text-[13px] tracking-[0.14em] text-muted">{s.n} / 03</span>
-              <h3 className="xwide mb-3 mt-3 text-[clamp(20px,3.9vmin,36px)] leading-[1.08] tracking-[-0.02em]">{s.title}</h3>
-              <p className="text-[clamp(14px,2.1vmin,19px)] leading-snug text-muted">{s.body}</p>
+        {/* the three services: a picture or clip inside the frame, the number, title and line underneath it */}
+        {SERVICES.map((s, i) => (
+          <div key={s.n} ref={(el) => { serviceRefs.current[i] = el; }} className="pointer-events-none invisible absolute inset-0 opacity-0">
+            <div className="svc-media" aria-hidden="true">
+              {MEDIA[i] &&
+                (isVideo(MEDIA[i]) ? (
+                  <video src={MEDIA[i]} autoPlay loop muted playsInline preload="metadata" />
+                ) : (
+                  <img src={MEDIA[i]} alt="" decoding="async" />
+                ))}
             </div>
-          ))}
-        </div>
+            <div className="svc-copy">
+              <span className="text-[13px] tracking-[0.14em] text-muted">{s.n} / 03</span>
+              <h3 className="xwide mb-2 mt-2 text-[clamp(20px,3.4vmin,32px)] leading-[1.08] tracking-[-0.02em]">{s.title}</h3>
+              <p className="text-[clamp(14px,2vmin,18px)] leading-snug text-muted">{s.body}</p>
+            </div>
+          </div>
+        ))}
 
         {/* closing calls to action, over the final logo lockup */}
         <div ref={ctaRef} className="cta-row invisible absolute inset-x-0 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 opacity-0">
