@@ -39,11 +39,32 @@ function viewLimited(ip) {
 const TOKEN = /^[A-Za-z0-9_-]{43}$/;
 const noteFail = (ip) => fails.set(ip, [...(fails.get(ip) || []), Date.now()]);
 
+// The path after /api/command. vercel.json rewrites /api/command/a/b to /api/command?p=a/b, so the rest of the path normally
+// arrives as the "p" parameter; the plain path is still understood (used by the tests and when called directly).
 function routeOf(req) {
-  const path = String(req.url || "").split("?")[0];
-  const i = path.indexOf("/api/command");
-  return path.slice(i + "/api/command".length).split("/").filter(Boolean).map((s) => decodeURIComponent(s));
+  let rest = req.query?.p;
+  if (Array.isArray(rest)) rest = rest[0];
+  if (typeof rest !== "string") {
+    const u = new URL(req.url || "", "http://x");
+    rest = u.searchParams.get("p");
+    if (rest === null) {
+      const i = u.pathname.indexOf("/api/command");
+      rest = u.pathname.slice(i + "/api/command".length);
+    }
+  }
+  try {
+    return rest.split("/").filter(Boolean).map((s) => decodeURIComponent(s));
+  } catch {
+    return [];
+  }
 }
+
+const queryParam = (req, name) => {
+  const v = req.query?.[name];
+  if (typeof v === "string") return v;
+  if (Array.isArray(v) && typeof v[0] === "string") return v[0];
+  return new URL(req.url || "", "http://x").searchParams.get(name);
+};
 
 const cut = (v, n) => String(v ?? "").slice(0, n);
 
@@ -217,7 +238,7 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
           const clientSendAllowed = !previewEnv || process.env.COMMAND_ALLOW_PREVIEW_CLIENT_SEND === "1";
 
           if (!c && method === "GET") {
-            const base = safeBase(new URL(req.url, "http://x").searchParams.get("base"));
+            const base = safeBase(queryParam(req, "base"));
             const url = active ? `${base}/report/${audit.report_token}` : "";
             const report = buildReport({ request: rq, audit, now: now() });
             const [prev] = await d.select("cc_sends", `select=id,sent_at&audit_id=eq.${id}&kind=eq.client&ok=is.true&order=sent_at.desc&limit=1`);

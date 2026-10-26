@@ -99,6 +99,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/command/:path*",
+      "destination": "/api/command?p=:path*"
+    },
+    {
       "source": "/command",
       "destination": "/command.html"
     },

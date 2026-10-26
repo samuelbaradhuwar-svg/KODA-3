@@ -100,6 +100,28 @@ r = await call(h, { url: "/api/command/requests" });
 assert.equal(r.body.requests.length, 1);
 assert.equal(r.body.requests[0].site_url, "https://new.co.za/");
 
+// ---- routing: the rewrite form (?p=) and the plain path are the same route
+{
+  const hr = createHandler({ db: memDb(), verify });
+  const viaRewrite = (route, extra = {}) => new Promise((resolve) => {
+    const res = { headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.code = c; return this; }, json(o) { resolve({ code: this.code, body: o }); } };
+    hr({ method: "GET", url: `/api/command?p=${encodeURIComponent(route)}`, query: { p: route, ...extra }, headers: { authorization: "Bearer good", "x-forwarded-for": "2.2.2.2" }, socket: {} }, res);
+  });
+  let q = await viaRewrite("me");
+  assert.equal(q.body.email, "hello@heykoda.co.za");
+  q = await viaRewrite("requests");
+  assert.equal(q.code, 200);
+  q = await viaRewrite("requests/not-a-uuid");
+  assert.equal(q.code, 404);
+  q = await viaRewrite(`report/${"B".repeat(43)}`);
+  assert.equal(q.code, 404, "the public report route works through the rewrite");
+  assert.match(q.body.error, /expired|withdrawn/);
+  q = await viaRewrite("report/short");
+  assert.match(q.body.error, /not valid/);
+  q = await viaRewrite("%E0%A4%A");
+  assert.equal(q.code, 404, "a malformed path is just not found");
+}
+
 // ---- repeated bad sign-ins are slowed down
 for (let i = 0; i < 20; i++) await call(h, { url: "/api/command/me", token: "bad", ip: "7.7.7.7" });
 r = await call(h, { url: "/api/command/me", token: "bad", ip: "7.7.7.7" });
