@@ -112,7 +112,7 @@ function defaultPlanText({ rec, sug, byService }) {
     const names = [rec.once && `${rec.once.name} (${rec.once.price} ${rec.once.note})`, rec.monthly && `${rec.monthly.name} (${rec.monthly.price} ${rec.monthly.note})`].filter(Boolean);
     lines.push(`Our recommendation: ${names.join(", with ")}.`);
     if (rec.once && sug.onceWhy && rec.once.name === sug.once) lines.push(`We suggest ${rec.once.name} because ${sug.onceWhy}.`);
-    if (rec.monthly && sug.monthlyWhy && rec.monthly.name === sug.monthly) lines.push(`${rec.once ? "Afterwards, " : ""}we suggest ${rec.monthly.name} because ${sug.monthlyWhy}.`);
+    if (rec.monthly && sug.monthlyWhy && rec.monthly.name === sug.monthly) lines.push(`${rec.once ? "Afterwards, we" : "We"} suggest ${rec.monthly.name} because ${sug.monthlyWhy}.`);
   }
   for (const s of byService) lines.push(`${s.service}: ${s.titles.length} ${s.titles.length === 1 ? "finding" : "findings"} (${join(s.titles.slice(0, 3).map(lcFirst))}).`);
   return lines.join("\n");

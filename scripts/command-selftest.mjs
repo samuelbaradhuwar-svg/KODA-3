@@ -724,6 +724,8 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   assert.ok(r.manual.every((m) => m.status === "todo") && r.manual.length === MANUAL_CHECKLIST.length, "unreviewed manual items are shown as not reviewed");
   const errAudit = buildReport({ request: { business: "X", site_url: "https://x.co.za" }, audit: { ...audit, pagespeed: { mobile: { error: "Google's free speed quota is used up (add PAGESPEED_API_KEY in Vercel)" } } }, now: new Date() });
   assert.ok(errAudit.notChecked.some((n) => /speed check on a phone could not be completed/.test(n)) && !JSON.stringify(errAudit).includes("PAGESPEED_API_KEY"), "Google errors are reworded for the client");
+  const onlyMonthly = buildReport({ request: { business: "X", site_url: "https://x.co.za" }, audit: { ...audit, manual: { report: { once: "none" } } }, now: new Date() });
+  assert.match(onlyMonthly.plan.text, /\nWe suggest Presence because/, "a sentence starts with a capital");
   const none = buildReport({ request: { business: "X", site_url: "https://x.co.za" }, audit: { findings: [], crawl: null, manual: {} }, now: new Date() });
   assert.equal(none.plan.recommended.once, null);
   assert.match(none.summary, /did not find any problems/);
