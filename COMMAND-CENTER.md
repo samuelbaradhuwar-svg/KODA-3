@@ -56,8 +56,7 @@ Setup gotchas we hit:
 
 If you ever rotate the Supabase secret key, update `SUPABASE_SERVICE_ROLE_KEY` in koda-3 (and Autopilot's own project, which has its own copy) and redeploy. The page tells you if the saved key is the public one.
 
-Already set and reused: `RESEND_API_KEY`, `AUDIT_FROM`, `AUDIT_NOTIFY_TO`, `AUDIT_MODE`. Note these are currently
-Production only; for the sign-in and for requests to be saved on a preview link, the Supabase ones above need Preview too.
+Already set and reused: `RESEND_API_KEY` (Production and Preview), `AUDIT_FROM`, `AUDIT_NOTIFY_TO`, `AUDIT_MODE` (Production only). Requests submitted on a preview address are not emailed to you, because the audit variables are Production only; that is why the preview inbox is filled by hand during testing.
 
 ## The in-depth audit (step 2)
 **Run in-depth audit** on a request does, in order: crawl, Google speed on a phone, Google speed on a computer, then work out findings.
@@ -99,7 +98,7 @@ At the bottom of an audit, **Email to the client**:
 - **No double sends:** every click carries a one-time reference (also passed to Resend as an idempotency key), so a double click cannot send twice. A second real send of the same report needs you to tick "send it again".
 - **Preview addresses cannot email clients.** On a Vercel preview URL (`VERCEL_ENV=preview`) real client emails are blocked, because a client may not be able to open a preview link (and the link in the email would point at it). Tests to yourself work. To override on purpose, set `COMMAND_ALLOW_PREVIEW_CLIENT_SEND=1`.
 - **Log:** every attempt is stored in `cc_sends` (date, recipient, subject, the exact HTML, Resend's id, test or client, and the reason if it failed). The request page shows it under **Sent emails** with a **View** button. Failed sends are logged too, and can be retried.
-- If `RESEND_API_KEY` is missing in an environment, the screen says so and sending is disabled. It is currently set for **Production only**; adding it to Preview is a separate decision (see below).
+- If `RESEND_API_KEY` is missing in an environment, the screen says so and sending is disabled. It is set for Production and Preview. On a preview address you can send tests to yourself; real client emails stay blocked there.
 - The audit's original "request" email still arrives as before and is unrelated to this.
 
 ## Using it
