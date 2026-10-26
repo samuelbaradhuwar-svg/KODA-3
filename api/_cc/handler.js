@@ -7,6 +7,10 @@ import { crawlSite } from "./crawl.js";
 import { pageSpeed } from "./psi.js";
 import { technicalFindings, checkedSummary } from "./technical.js";
 import { SERVICE_KEYS, resolveService } from "./catalog.js";
+import { searchFindings, searchNotes } from "./search.js";
+import { conversionFindings } from "./conversion.js";
+import { MANUAL_CHECKLIST } from "./manual.js";
+import { sanitizeFindings, sanitizeManual } from "./audit-edit.js";
 
 export const STATUSES = ["new", "replied", "audit_drafted", "sent", "won", "lost"];
 
@@ -114,7 +118,7 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
       }
 
       if (a === "catalog" && method === "GET") {
-        return send(200, { ok: true, services: Object.fromEntries(SERVICE_KEYS.map((k) => [k, resolveService(k)])) });
+        return send(200, { ok: true, services: Object.fromEntries(SERVICE_KEYS.map((k) => [k, resolveService(k)])), checklist: MANUAL_CHECKLIST });
       }
 
       if (a === "requests" && isUuid(id) && b === "audits" && method === "POST") {
@@ -131,7 +135,28 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
         const body = typeof req.body === "object" && req.body ? req.body : {};
         const touch = { updated_at: now().toISOString() };
 
-        if (!b && method === "GET") return send(200, { ok: true, audit, notes: checkedSummary(audit.crawl, audit.pagespeed || {}) });
+        const notesFor = (a) => [...checkedSummary(a.crawl, a.pagespeed || {}), ...(a.crawl ? searchNotes(a.manual?.inputs) : [])];
+
+        if (!b && method === "GET") return send(200, { ok: true, audit, notes: notesFor(audit) });
+
+        if (!b && method === "PATCH") {
+          const patch = {};
+          if (body.findings !== undefined) {
+            const f = sanitizeFindings(body.findings, audit.findings || []);
+            if (!f) return send(400, { ok: false, error: "Findings must be a list." });
+            patch.findings = f;
+          }
+          if (body.manual !== undefined) {
+            const m = sanitizeManual(body.manual, audit.manual || {});
+            if (!m) return send(400, { ok: false, error: "Business details were not understood." });
+            patch.manual = m;
+          }
+          if (body.summary !== undefined) patch.summary = cut(body.summary, 4000);
+          if (body.plan !== undefined) patch.plan = cut(body.plan, 6000);
+          if (!Object.keys(patch).length) return send(400, { ok: false, error: "Nothing to change." });
+          const row = await d.updateById("cc_audits", id, { ...patch, ...touch });
+          return send(200, { ok: true, audit: row, notes: notesFor(row) });
+        }
 
         if (b === "crawl" && method === "POST") {
           if (audit.state === "running" && now() - new Date(audit.updated_at) < 120_000) return send(409, { ok: false, error: "A crawl is already running for this audit." });
@@ -161,9 +186,9 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
 
         if (b === "analyse" && method === "POST") {
           if (!audit.crawl) return send(400, { ok: false, error: "Run the crawl first." });
-          const fresh = technicalFindings(audit.crawl, audit.pagespeed || {});
+          const fresh = [...technicalFindings(audit.crawl, audit.pagespeed || {}), ...searchFindings(audit.crawl, audit.manual?.inputs || {}), ...conversionFindings(audit.crawl)];
           const row = await d.updateById("cc_audits", id, { findings: mergeFindings(audit.findings, fresh), state: "ready", ...touch });
-          return send(200, { ok: true, audit: row, notes: checkedSummary(row.crawl, row.pagespeed || {}) });
+          return send(200, { ok: true, audit: row, notes: notesFor(row) });
         }
       }
       return send(404, { ok: false, error: "Not found." });

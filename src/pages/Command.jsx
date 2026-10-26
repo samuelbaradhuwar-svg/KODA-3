@@ -2,29 +2,14 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Logo } from "../components/ui.jsx";
 import { EMAIL } from "../lib/utils.js";
+import { field, dark, light, danger, when, hostOf, STATUS, Badge, Card } from "./command-ui.jsx";
+import AuditPanel from "./CommandAudit.jsx";
 
 // KODA command centre (private, noindex). Signs in with an emailed link; the server (api/command) checks the signed-in
 // address on every request, so this page is a convenience and not the guard.
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
 // Supabase calls this the "anon" key or the newer "publishable" key. Either name works; both are public by design.
 const SB_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-const field = "w-full rounded-xl border border-ink/20 bg-paper px-3 py-2 text-[15px]";
-const btn = "rounded-full px-4 py-2 text-[14px] font-semibold transition-opacity disabled:opacity-40";
-const dark = `${btn} bg-ink text-paper`;
-const light = `${btn} border border-ink/30 bg-paper`;
-const danger = `${btn} bg-[#c0392b] text-white`;
-const when = (t) => (t ? new Date(t).toLocaleString("en-ZA", { dateStyle: "medium", timeStyle: "short" }) : "");
-
-export const STATUS = {
-  new: { label: "New", cls: "bg-[#FFC76B] text-[#101010]" },
-  replied: { label: "Replied", cls: "bg-paper2 text-ink" },
-  audit_drafted: { label: "Audit drafted", cls: "bg-paper2 text-ink" },
-  sent: { label: "Sent", cls: "bg-paper2 text-ink" },
-  won: { label: "Won", cls: "bg-[#BDF64F] text-[#101010]" },
-  lost: { label: "Lost", cls: "bg-[#FF9A8B] text-[#101010]" },
-};
-const Badge = ({ s }) => <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${STATUS[s]?.cls || "bg-paper2"}`}>{STATUS[s]?.label || s}</span>;
 
 const sb = SB_URL && SB_ANON ? createClient(SB_URL, SB_ANON, { auth: { persistSession: true, detectSessionInUrl: true } }) : null;
 
@@ -55,18 +40,6 @@ function Shell({ children, right }) {
       </header>
       {children}
     </div>
-  );
-}
-
-function Card({ title, children, right }) {
-  return (
-    <section className="mt-6 rounded-[20px] border border-ink/15 bg-paper p-5">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="xwide text-[1.05rem] tracking-[-0.02em]">{title}</h2>
-        {right}
-      </div>
-      <div className="mt-4">{children}</div>
-    </section>
   );
 }
 
@@ -136,129 +109,6 @@ function Inbox({ call, go }) {
         ))}
       </ul>
     </>
-  );
-}
-
-const hostOf = (u) => {
-  try {
-    return new URL(u).hostname;
-  } catch {
-    return u;
-  }
-};
-
-const SEV = {
-  high: { label: "High", cls: "bg-[#FF9A8B] text-[#101010]" },
-  medium: { label: "Medium", cls: "bg-[#FFC76B] text-[#101010]" },
-  low: { label: "Low", cls: "bg-paper2 text-ink" },
-  info: { label: "Info", cls: "bg-paper2 text-ink" },
-};
-const BUCKETS = [["fix_first", "Fix first"], ["next", "Next"], ["later", "Later"]];
-
-function Finding({ f, catalog }) {
-  const svc = f.service_key && catalog?.[f.service_key];
-  return (
-    <li className="rounded-2xl border border-ink/15 p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${SEV[f.severity]?.cls}`}>{SEV[f.severity]?.label}</span>
-        <h4 className="font-semibold">{f.title}</h4>
-      </div>
-      <dl className="mt-2 grid gap-x-4 gap-y-1 text-[14px] sm:grid-cols-[7rem_1fr]">
-        <dt className="text-muted">What we saw</dt><dd>{f.evidence}</dd>
-        <dt className="text-muted">Why it matters</dt><dd>{f.why}</dd>
-        <dt className="text-muted">The fix</dt><dd>{f.fix}</dd>
-        {svc && (
-          <>
-            <dt className="text-muted">KODA service</dt>
-            <dd>
-              {svc.service}
-              {svc.includedWithEveryPlan ? " (included with every plan)" : ""}
-              {svc.options.length > 0 && <span className="text-muted"> · {svc.options.map((o) => `${o.name} ${o.price} ${o.note} (${o.timeline})`).join(" or ")}</span>}
-            </dd>
-          </>
-        )}
-      </dl>
-    </li>
-  );
-}
-
-function AuditPanel({ requestId, call, existing, onChange }) {
-  const [audit, setAudit] = useState(null);
-  const [notes, setNotes] = useState([]);
-  const [catalog, setCatalog] = useState(null);
-  const [busy, setBusy] = useState("");
-  const [err, setErr] = useState("");
-
-  useEffect(() => {
-    call("catalog").then((c) => setCatalog(c.services)).catch(() => {});
-    if (existing) call(`audits/${existing}`).then((r) => { setAudit(r.audit); setNotes(r.notes); }).catch((e) => setErr(e.message));
-  }, [call, existing]);
-
-  async function run() {
-    setErr("");
-    try {
-      setBusy("Creating the audit…");
-      const { audit: a } = await call(`requests/${requestId}/audits`, { method: "POST" });
-      setBusy("Reading up to 10 pages, links, images and headers (up to a minute)…");
-      await call(`audits/${a.id}/crawl`, { method: "POST" });
-      setBusy("Asking Google about speed on a phone…");
-      await call(`audits/${a.id}/speed`, { method: "POST", body: { strategy: "mobile" } });
-      setBusy("Asking Google about speed on a computer…");
-      await call(`audits/${a.id}/speed`, { method: "POST", body: { strategy: "desktop" } });
-      setBusy("Working out the findings…");
-      const r = await call(`audits/${a.id}/analyse`, { method: "POST" });
-      setAudit(r.audit);
-      setNotes(r.notes);
-      onChange?.();
-    } catch (e) {
-      setErr(e.message);
-    } finally {
-      setBusy("");
-    }
-  }
-
-  const findings = audit?.findings || [];
-  const c = audit?.crawl;
-  const speed = audit?.pagespeed || {};
-  return (
-    <Card
-      title="In-depth audit"
-      right={<button className={dark} disabled={!!busy} onClick={run}>{busy ? "Running…" : audit ? "Run again" : "Run in-depth audit"}</button>}
-    >
-      {busy && <p role="status" className="text-[14px]">{busy}</p>}
-      {err && <p role="alert" className="text-[14px]">{err}</p>}
-      {!audit && !busy && !err && <p className="text-[14px] text-muted">Reads the home page and up to 9 key pages, checks links, images, security headers, redirects, sitemap and robots, and asks Google for Core Web Vitals and accessibility on a phone and a computer. Search, conversion and the manual-review checklist come in the next steps.</p>}
-      {audit && c && (
-        <>
-          <p className="text-[14px]">
-            Read <b>{c.pages?.filter((p) => p.status).length}</b> {c.pages?.filter((p) => p.status).length === 1 ? "page" : "pages"}{c.site?.links ? <>, checked <b>{c.site.links.checked}</b> of {c.site.links.total} links</> : null}
-            {["mobile", "desktop"].map((d) => (speed[d]?.scores ? <span key={d}> · Google {d}: speed <b>{speed[d].scores.speed}</b>, accessibility {speed[d].scores.accessibility}</span> : null))}.
-            {" "}Re-running keeps anything you edited.
-          </p>
-          {notes.length > 0 && (
-            <div className="mt-3 rounded-2xl bg-paper2 p-3 text-[14px]">
-              <b>Not checked yet</b>
-              <ul className="mt-1 list-disc pl-5">{notes.map((n, i) => <li key={i}>{n}</li>)}</ul>
-            </div>
-          )}
-          <details className="mt-3">
-            <summary className="cursor-pointer text-[14px] underline">Pages read ({c.pages?.length})</summary>
-            <ul className="mt-2 text-[14px]">{c.pages?.map((p, i) => <li key={i}>{p.status || "failed"} · {p.url}{p.error ? ` · ${p.error}` : ""}</li>)}</ul>
-          </details>
-          {findings.length === 0 && <p className="mt-4 text-[14px]">No technical problems found in what was checked.</p>}
-          {BUCKETS.map(([k, label]) => {
-            const items = findings.filter((f) => f.bucket === k && f.include !== false);
-            return items.length ? (
-              <div key={k} className="mt-5">
-                <h3 className="xwide text-[0.95rem]">{label} <span className="text-muted">({items.length})</span></h3>
-                <ul className="mt-2 grid gap-3">{items.map((f) => <Finding key={f.id} f={f} catalog={catalog} />)}</ul>
-              </div>
-            ) : null;
-          })}
-          <p className="mt-4 text-[13px] text-muted">Technical findings only so far. Editing, the search and conversion checks and the manual-review checklist are the next steps.</p>
-        </>
-      )}
-    </Card>
   );
 }
 

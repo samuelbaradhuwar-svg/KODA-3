@@ -6,6 +6,7 @@ the editable findings, the client report and the send flow. This file grows with
 **Built so far:**
 - Step 1: sign-in, the inbox, request detail (status, private notes, delete), saving each detailed audit request when it arrives.
 - Step 2: **Run in-depth audit** (crawler and technical checks, below).
+- Step 3: search and conversion checks, the "About this business" form, the manual-review checklist and a findings editor (below).
 
 ## How it is protected
 - Sign-in is an emailed link (Supabase). Only the address in `COMMAND_ADMIN_EMAIL` is accepted, and the **server checks
@@ -59,6 +60,16 @@ Production only; for the sign-in and for requests to be saved on a preview link,
 - Only structured facts and short evidence are stored. Raw page HTML is never stored.
 - **Not judged automatically:** the rendered phone layout (only the phone setting is checked), Google Business Profile, design and copy. These get a manual-review checklist in the next step.
 - Re-running replaces the automatic findings and keeps any you have edited or added.
+
+## Search and conversion checks, and editing (step 3)
+- **About this business:** enter the trade, town, areas served, phone, address and business name. A crawler cannot know these, so the keyword and local checks only run once you have entered them, and the audit says so when they have not run. Press **Save and check again** to re-run just the analysis (no new crawl).
+- **Search checks:** titles (missing, length, duplicates), descriptions, headings, thin pages, missing key pages (services, about, contact, blog, FAQ), whether the trade and town appear in the home page title, heading, description and text, phone numbers that disagree between pages, and whether your phone, address, business name and areas appear on the site.
+- **Conversion checks:** a clear headline, calls to action, ways to get in touch (tap-to-call, WhatsApp, form, email, contact page), booking, and trust signals (reviews, examples of work, guarantees and credentials). It reads the wording and structure of the pages; whether the offer is *good* is on the manual list.
+- **Trust signals are found on the pages read, not verified.** If a page was crawled before step 3, run the audit again so these signals exist; otherwise those checks stay silent rather than guess.
+- **Manual review (never guessed):** Google Business Profile (exists, complete, details match, reviews), where they show on Google, competitors, design first impression, the real phone layout, whether the offer is clear in 5 seconds, writing quality, photos and brand, social profiles. Each item starts as "Manual review needed". Set it to Looks fine, Problem or Not relevant, add notes, and use **Add as a finding** for any problem.
+- **Findings editor:** change the title, severity, group (fix first, next, later), the KODA service, and the three texts (what we saw, why it matters, the fix) on any finding. Untick **Include in the client report** to hide one (it moves to "Hidden from the report"). **Add a finding** writes your own, and your own findings can be deleted. Press **Save findings**; the page warns you when something is unsaved.
+- **Re-running** keeps anything you edited, hid or added. Automatic findings you have not touched are refreshed.
+- The service dropdown only lists services from `src/catalog.js`; prices and timelines come from there too.
 
 ## Using it
 - Open `/command`, enter your address, click the link in the email.

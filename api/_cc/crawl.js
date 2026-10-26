@@ -97,6 +97,13 @@ function analysePage(html, res) {
     whatsapp: /wa\.me|api\.whatsapp\.com|whatsapp:\/\//i.test(lower),
     ctas,
     mixedContent: mixed,
+    booking: /calendly|cal\.com|setmore|acuity|simplybook|booksy|fresha|youcanbook|book(ing)? (now|online|an? appointment|a (call|consultation))|schedule (a|an) /i.test(html),
+    signals: {
+      testimonials: /testimonial|customer reviews?|client reviews?|what (our )?(clients|customers) say|google reviews?|trustpilot|[★⭐]/i.test(text),
+      guarantee: /guarantee|warranty|money.?back|satisfaction/i.test(text),
+      credentials: /accredited|certified|registered|licen[sc]ed|insured|member of|award|years of experience|since (19|20)\d\d|established (in )?(19|20)\d\d/i.test(text),
+      proof: /case stud|portfolio|our work|before and after|recent (work|projects)|projects/i.test(text),
+    },
     words: text.split(" ").filter(Boolean).length,
     phones: saPhones(text),
     text: text.slice(0, 8000), // used for keyword and town checks in the analysis; not shown whole and never sent to AI

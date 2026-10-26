@@ -10,6 +10,10 @@ import http from "node:http";
 import { crawlSite, pickPages } from "../api/_cc/crawl.js";
 import { technicalFindings, checkedSummary } from "../api/_cc/technical.js";
 import { mergeFindings } from "../api/_cc/handler.js";
+import { searchFindings, searchNotes } from "../api/_cc/search.js";
+import { conversionFindings } from "../api/_cc/conversion.js";
+import { sanitizeFindings, sanitizeManual } from "../api/_cc/audit-edit.js";
+import { MANUAL_CHECKLIST, MANUAL_KEYS } from "../api/_cc/manual.js";
 import { SERVICE_MAP, SERVICE_KEYS, resolveService } from "../api/_cc/catalog.js";
 import { SERVICES, PLANS, MONTHLY_PLANS, INCLUDED } from "../src/catalog.js";
 
@@ -203,6 +207,65 @@ const merged = mergeFindings([{ id: "https", edited: true, source: "auto", title
 assert.deepEqual(merged.map((x) => x.id).sort(), ["extra", "fresh", "https"]);
 assert.equal(merged.find((x) => x.id === "https").title, "Mine");
 
+// ---- search and conversion findings (synthetic crawl: a weak local-trade site)
+{
+  const pg = (u, o = {}) => ({ url: `https://weak.co.za${u}`, status: 200, title: "Home", description: "", h1: [], headings: [], words: 80, phones: [], tel: [], mailto: [], forms: 0, whatsapp: false, ctas: [], links: [], text: "welcome to our site", signals: { testimonials: false, guarantee: false, credentials: false, proof: false }, booking: false, ...o });
+  const weak = { finalUrl: "https://weak.co.za/", site: {}, pages: [
+    pg("/", { title: "Home", h1: ["Welcome", "Hello"], links: ["https://weak.co.za/services"], phones: ["0315550123"], text: "call 031 555 0123 plumbing" }),
+    pg("/services", { title: "Home", headings: [{ l: 1, t: "x" }, { l: 4, t: "y" }], h1: ["Services"], phones: ["0825550000"], words: 90 }),
+  ] };
+  const inputs = { trade: "plumber, plumbing", town: "Durban", areas: "Umhlanga, Pinetown", phone: "031 555 9999", address: "12 Main Road, Berea", businessName: "Acme Plumbers" };
+  const sf = searchFindings(weak, inputs);
+  const sids = sf.map((x) => x.id);
+  for (const want of ["title-length", "title-duplicate", "desc-missing", "h1-many", "heading-order", "thin", "pages-missing", "kw-home", "kw-body-town", "phone-inconsistent", "phone-missing", "address-missing", "areas-missing", "name-missing"]) assert.ok(sids.includes(want), `search finding ${want}`);
+  assert.equal(sf.find((x) => x.id === "kw-home").severity, "high");
+  assert.ok(!searchFindings(weak, {}).some((x) => x.id.startsWith("kw-")), "keyword checks need the trade and town");
+  assert.ok(searchNotes({}).length === 2 && searchNotes(inputs).length === 0, "skipped checks are explained");
+  const cf = conversionFindings(weak);
+  const cids = cf.map((x) => x.id);
+  for (const want of ["offer-h1-length", "cta-none", "contact-none", "no-booking", "trust-reviews", "trust-proof", "trust-assurance"]) assert.ok(cids.includes(want), `conversion finding ${want}`);
+  const strong = { finalUrl: "https://ok.co.za/", site: {}, pages: [pg("/", { title: "Plumber in Durban | Acme", description: "x".repeat(130), h1: ["Plumber in Durban you can trust"], words: 400, ctas: ["Get a quote", "Call now"], tel: ["+27315550123"], phones: ["0315550123"], forms: 1, whatsapp: true, booking: true, signals: { testimonials: true, guarantee: true, credentials: true, proof: true }, links: ["https://ok.co.za/services", "https://ok.co.za/about", "https://ok.co.za/contact", "https://ok.co.za/blog", "https://ok.co.za/faq"], text: "plumber durban umhlanga pinetown 12 main road berea" }), pg("/services", { title: "Plumbing services in Durban | Acme", description: "y".repeat(130), h1: ["Services"], words: 300 })] };
+  assert.deepEqual(conversionFindings(strong), [], "a strong site raises no conversion findings");
+  assert.deepEqual(searchFindings(strong, { trade: "plumber", town: "durban", areas: "Umhlanga", phone: "031 555 0123", address: "12 Main Road", businessName: "Acme" }).map((x) => x.id), [], "a strong site raises no search findings");
+  assert.ok(sf.concat(cf).every((x) => x.evidence && x.why && x.fix && SERVICE_KEYS.includes(x.service_key) && x.source === "auto"));
+  // old crawls without the new signals do not produce false trust findings
+  const old = { finalUrl: "https://old.co.za/", site: {}, pages: [{ url: "https://old.co.za/", status: 200, h1: ["A good headline here"], ctas: ["Call us", "Get a quote"], tel: ["0315550123"], forms: 1, links: [] }] };
+  assert.ok(!conversionFindings(old).some((x) => x.id.startsWith("trust-") || x.id === "no-booking"));
+}
+
+// ---- editing: everything from the browser is checked
+{
+  const stored = [{ id: "a", area: "technical", severity: "low", title: "Old", evidence: "e", why: "w", fix: "f", service_key: "seo", bucket: "later", include: true, source: "auto" }];
+  const sf = sanitizeFindings([
+    { id: "a", area: "technical", severity: "high", title: "Changed", evidence: "e", why: "w", fix: "f", service_key: "seo", bucket: "fix_first", include: true, source: "manual" },
+    { id: "m 1!", area: "weird", severity: "huge", title: "<b>Mine</b>".repeat(40), evidence: "x".repeat(2000), service_key: "made-up", bucket: "soon", include: "no" },
+    { id: "b", title: "" },
+    { id: "a", title: "dup" },
+  ], stored);
+  assert.equal(sf.length, 2);
+  assert.equal(sf[0].edited, true, "a changed finding is marked edited");
+  assert.equal(sf[0].source, "auto", "the server decides where a finding came from");
+  const mine = sf[1];
+  assert.equal(mine.id, "m1");
+  assert.equal(mine.source, "manual");
+  assert.equal(mine.area, "manual");
+  assert.equal(mine.severity, "medium");
+  assert.equal(mine.service_key, null, "only real services can be attached");
+  assert.equal(mine.bucket, "next");
+  assert.equal(mine.evidence.length, 900);
+  assert.ok(mine.title.length <= 140);
+  assert.equal(sanitizeFindings("nope", []), null);
+  const m = sanitizeManual({ inputs: { trade: "plumber", town: "x".repeat(500), evil: "no" }, checklist: { gbp_exists: { status: "issue", notes: "n".repeat(3000) }, bogus: { status: "ok" } } }, { inputs: { phone: "1" } });
+  assert.equal(m.inputs.phone, "1");
+  assert.equal(m.inputs.town.length, 160);
+  assert.ok(!("evil" in m.inputs));
+  assert.equal(m.checklist.gbp_exists.notes.length, 2000);
+  assert.ok(!("bogus" in m.checklist));
+  assert.equal(m.checklist.gbp_exists.status, "issue");
+  assert.ok(MANUAL_CHECKLIST.every((c) => c.title && c.check && c.group) && new Set(MANUAL_KEYS).size === MANUAL_KEYS.length);
+  assert.ok(MANUAL_CHECKLIST.some((c) => /Google Business Profile/.test(c.group)), "Google Business Profile is on the manual list");
+}
+
 // ---- audit routes with fake crawl and speed
 {
   const db2 = memDb();
@@ -236,6 +299,24 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   assert.ok(x.body.notes.some((n) => /mobile speed check has not been run/.test(n)));
   x = await call(h3, { url: "/api/command/catalog", ip: "3.3.3.3" });
   assert.ok(x.body.services.seo.options.length > 0);
+  assert.ok(x.body.checklist.length >= 10);
+  // editing: business details, a changed finding, a hidden finding and one of your own
+  x = await call(h3, { method: "PATCH", url: `/api/command/audits/${aid}`, body: { manual: { inputs: { trade: "plumber", town: "Durban" }, checklist: { gbp_exists: { status: "ok", notes: "Verified" } } } }, ip: "3.3.3.3" });
+  assert.equal(x.body.audit.manual.inputs.town, "Durban");
+  assert.ok(!x.body.notes.some((n) => /Keyword checks were skipped/.test(n)));
+  const before = x.body.audit.findings;
+  const edited = before.map((f2) => (f2.id === "noindex" ? { ...f2, title: "My wording", severity: "low" } : f2.id === "viewport" ? { ...f2, include: false } : f2));
+  edited.push({ id: "mine-1", area: "manual", severity: "high", title: "GBP is not verified", evidence: "Checked on Google", why: "w", fix: "f", service_key: "gbp", bucket: "fix_first", include: true });
+  x = await call(h3, { method: "PATCH", url: `/api/command/audits/${aid}`, body: { findings: edited, summary: "Hello" }, ip: "3.3.3.3" });
+  assert.equal(x.body.audit.findings.find((f2) => f2.id === "noindex").edited, true);
+  assert.equal(x.body.audit.summary, "Hello");
+  x = await call(h3, { method: "PATCH", url: `/api/command/audits/${aid}`, body: {}, ip: "3.3.3.3" });
+  assert.equal(x.code, 400);
+  x = await call(h3, { method: "POST", url: `/api/command/audits/${aid}/analyse`, ip: "3.3.3.3" });
+  const after = x.body.audit.findings;
+  assert.equal(after.find((f2) => f2.id === "noindex").title, "My wording", "re-analysing keeps your wording");
+  assert.ok(after.some((f2) => f2.id === "mine-1"), "re-analysing keeps your own findings");
+  assert.equal(after.filter((f2) => f2.id === "noindex").length, 1);
   x = await call(h3, { url: `/api/command/audits/00000000-0000-4000-8000-0000000000ff`, ip: "3.3.3.3" });
   assert.equal(x.code, 404);
 }
