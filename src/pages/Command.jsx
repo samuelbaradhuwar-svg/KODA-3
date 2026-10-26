@@ -77,7 +77,13 @@ function SignIn() {
     e.preventDefault();
     setMsg("");
     const { error } = await sb.auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/command` } });
-    setMsg(error ? "That did not work. Check the address." : "If that address is allowed, a sign-in link is on its way.");
+    setMsg(
+      !error
+        ? "If that address is allowed, a sign-in link is on its way. Check spam too."
+        : error.status === 429
+          ? "Too many sign-in emails were requested just now. Check your inbox and spam for the earlier link, or wait about an hour and try again."
+          : "That did not work. Check the address and try again."
+    );
   }
   return (
     <form onSubmit={go} className="mx-auto mt-24 max-w-sm px-4">
