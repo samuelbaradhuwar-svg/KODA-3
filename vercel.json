@@ -78,6 +78,23 @@
           "value": "no-referrer"
         }
       ]
+    },
+    {
+      "source": "/command/:id/preview",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -91,6 +108,10 @@
     },
     {
       "source": "/report/:token",
+      "destination": "/command.html"
+    },
+    {
+      "source": "/command/:id/preview",
       "destination": "/command.html"
     }
   ]

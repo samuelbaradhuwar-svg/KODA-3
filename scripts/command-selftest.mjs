@@ -11,6 +11,7 @@ import http from "node:http";
 import { crawlSite, pickPages } from "../api/_cc/crawl.js";
 import { technicalFindings, checkedSummary } from "../api/_cc/technical.js";
 import { mergeFindings } from "../api/_cc/handler.js";
+import { buildReport, suggestPlan, DISCLAIMER } from "../api/_cc/report.js";
 import { searchFindings, searchNotes } from "../api/_cc/search.js";
 import { conversionFindings } from "../api/_cc/conversion.js";
 import { sanitizeFindings, sanitizeManual } from "../api/_cc/audit-edit.js";
@@ -303,7 +304,8 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
     if (table === "cc_audits") {
       const rid = (q.match(/request_id=eq\.([0-9a-f-]+)/) || [])[1];
       const aid = (q.match(/[?&]id=eq\.([0-9a-f-]+)/) || [])[1];
-      return db2.t.cc_audits.filter((a) => (!rid || a.request_id === rid) && (!aid || a.id === aid));
+      const tok = (q.match(/report_token=eq\.([A-Za-z0-9_-]+)/) || [])[1];
+      return db2.t.cc_audits.filter((a) => (!rid || a.request_id === rid) && (!aid || a.id === aid) && (!tok || a.report_token === tok));
     }
     return base2(table, q);
   };
@@ -348,6 +350,86 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   assert.equal(after.filter((f2) => f2.id === "noindex").length, 1);
   x = await call(h3, { url: `/api/command/audits/00000000-0000-4000-8000-0000000000ff`, ip: "3.3.3.3" });
   assert.equal(x.code, 404);
+
+  // ---- the client report and its private link
+  x = await call(h3, { method: "PATCH", url: `/api/command/audits/${aid}`, body: { manual: { report: { winIds: ["noindex", "mine-1", "x", "y"], once: "Business", monthly: "Nonsense" } }, plan: "Custom plan text" }, ip: "3.3.3.3" });
+  assert.deepEqual(x.body.audit.manual.report, { winIds: ["noindex", "mine-1", "x"], once: "Business", monthly: "auto" });
+  x = await call(h3, { url: `/api/command/audits/${aid}/report`, ip: "3.3.3.3" });
+  assert.equal(x.body.report.plan.text, "Custom plan text");
+  assert.equal(x.body.report.plan.recommended.once.name, "Business");
+  assert.equal(x.body.report.plan.recommended.once.price, PLANS.find((p2) => p2.name === "Business").price, "prices come from the catalog");
+  assert.deepEqual(x.body.report.wins.map((w) => w.id), ["noindex", "mine-1"], "chosen wins that exist, in order");
+  assert.ok(x.body.report.defaults.summary.includes("client.co.za") && x.body.link === null);
+  // no link: the public route says no
+  x = await call(h3, { url: "/api/command/report/" + "A".repeat(43), token: "", ip: "4.4.4.4" });
+  assert.equal(x.code, 404);
+  x = await call(h3, { url: "/api/command/report/short", token: "", ip: "4.4.4.4" });
+  assert.equal(x.code, 404);
+  // create a link, open it without signing in
+  x = await call(h3, { method: "POST", url: `/api/command/audits/${aid}/link`, body: { days: 7 }, ip: "3.3.3.3" });
+  const tok = x.body.link.token;
+  assert.match(tok, /^[A-Za-z0-9_-]{43}$/);
+  assert.equal(Math.round((new Date(x.body.link.expires) - new Date("2026-10-25T10:00:00Z")) / 86_400_000), 7);
+  x = await call(h3, { url: `/api/command/report/${tok}`, token: "", ip: "4.4.4.4" });
+  assert.equal(x.code, 200);
+  assert.equal(x.headers["x-robots-tag"], "noindex, nofollow");
+  assert.deepEqual(x.body.report.disclaimer, DISCLAIMER);
+  const text = JSON.stringify(x.body);
+  for (const secret of ["admin_notes", "c@c.co", "defaults", "suggested", "report_token", "request_id"]) assert.ok(!text.includes(secret), `public report must not contain ${secret}`);
+  assert.ok(x.body.report.groups.length === 3 && x.body.report.groups.flatMap((g) => g.findings).every((f2) => f2.evidence && f2.fix));
+  assert.ok(!x.body.report.groups.flatMap((g) => g.findings).some((f2) => f2.id === "viewport"), "hidden findings are not in the report");
+  // expiry and revoking
+  db2.t.cc_audits[0].token_expires_at = "2026-10-01T00:00:00Z";
+  x = await call(h3, { url: `/api/command/report/${tok}`, token: "", ip: "4.4.4.4" });
+  assert.equal(x.code, 404, "an expired link stops working");
+  x = await call(h3, { method: "POST", url: `/api/command/audits/${aid}/link`, body: { days: 30 }, ip: "3.3.3.3" });
+  const tok2 = x.body.link.token;
+  assert.notEqual(tok2, tok, "each link is new");
+  x = await call(h3, { method: "POST", url: `/api/command/audits/${aid}/link`, body: { action: "revoke" }, ip: "3.3.3.3" });
+  x = await call(h3, { url: `/api/command/report/${tok2}`, token: "", ip: "4.4.4.4" });
+  assert.equal(x.code, 404, "a revoked link stops working");
+  // reading by link is rate limited
+  let last;
+  for (let i = 0; i < 125; i++) last = await call(h3, { url: `/api/command/report/${"B".repeat(43)}`, token: "", ip: "6.6.6.6" });
+  assert.equal(last.code, 429);
+}
+
+// ---- report content rules
+{
+  const F = (id, severity, bucket, service_key, extra = {}) => ({ id, area: "technical", severity, bucket, include: true, source: "auto", title: `Title ${id}`, evidence: "e", why: "w", fix: "f", service_key, ...extra });
+  assert.deepEqual(suggestPlan([]), { once: null, monthly: null, onceWhy: "", monthlyWhy: "" });
+  assert.equal(suggestPlan([F("a", "low", "later", "booking")]).once, "Custom");
+  assert.equal(suggestPlan([F("a", "high", "fix_first", "redesign")]).once, "Business");
+  assert.equal(suggestPlan([F("a", "low", "later", "redesign"), F("b", "low", "later", "design")]).once, "Business");
+  assert.equal(suggestPlan([F("a", "low", "later", "redesign")]).once, null);
+  assert.equal(suggestPlan([F("a", "low", "later", "gbp")]).monthly, "Presence");
+  assert.equal(suggestPlan([1, 2, 3, 4].map((n) => F(`s${n}`, "low", "later", "seo"))).monthly, "Growth");
+  const audit = { findings: [F("a", "low", "later", "seo"), F("b", "high", "fix_first", "redesign"), F("c", "medium", "next", "seo"), F("d", "high", "fix_first", "seo", { include: false }), F("e", "medium", "fix_first", "seo")], crawl: { finalUrl: "https://www.acme.co.za/", pages: [{ url: "https://www.acme.co.za/", status: 200, viewport: "w", tel: ["0315550123"], schema: ["LocalBusiness"] }], site: { sitemap: { found: true }, links: { checked: 12, broken: [] } } }, pagespeed: { mobile: { scores: { speed: 95, accessibility: 80 } } }, manual: {}, summary: null, plan: null };
+  const r = buildReport({ request: { business: "Acme Plumbers", site_url: "https://www.acme.co.za/" }, audit, now: new Date("2026-10-25T10:00:00Z"), admin: true });
+  assert.equal(r.site, "acme.co.za");
+  assert.deepEqual(r.counts, { fix_first: 2, next: 1, later: 1 }, "hidden findings are not counted");
+  assert.deepEqual(r.wins.map((w) => w.id), ["b", "e", "c"], "three biggest wins: fix first, then severity");
+  assert.ok(r.strengths.length >= 4 && r.strengths.every((x) => typeof x === "string"));
+  assert.match(r.summary, /Acme Plumbers/);
+  assert.match(r.summary, /2 things to fix first, 1 to do next and 1 that can wait/);
+  assert.ok(!/guarantee|rank #|first page of google/i.test(r.summary + r.defaults.plan), "no promises in the default wording");
+  assert.equal(r.plan.recommended.once.name, "Business");
+  assert.equal(r.plan.recommended.monthly.name, "Presence");
+  assert.ok(r.plan.recommended.once.features.length > 0);
+  assert.match(r.plan.text, /Our recommendation: Business \(R7,999 once off\), with Presence/);
+  const clientText = JSON.stringify(r.notChecked);
+  assert.ok(!/PAGESPEED|Vercel|About this business|enter the/i.test(clientText), "the client never sees owner instructions");
+  assert.ok(r.notChecked.some((n) => /speed check on a computer was not run/.test(n)));
+  assert.ok(r.manual.every((m) => m.status === "todo") && r.manual.length === MANUAL_CHECKLIST.length, "unreviewed manual items are shown as not reviewed");
+  const errAudit = buildReport({ request: { business: "X", site_url: "https://x.co.za" }, audit: { ...audit, pagespeed: { mobile: { error: "Google's free speed quota is used up (add PAGESPEED_API_KEY in Vercel)" } } }, now: new Date() });
+  assert.ok(errAudit.notChecked.some((n) => /speed check on a phone could not be completed/.test(n)) && !JSON.stringify(errAudit).includes("PAGESPEED_API_KEY"), "Google errors are reworded for the client");
+  const none = buildReport({ request: { business: "X", site_url: "https://x.co.za" }, audit: { findings: [], crawl: null, manual: {} }, now: new Date() });
+  assert.equal(none.plan.recommended.once, null);
+  assert.match(none.summary, /did not find any problems/);
+  const override = buildReport({ request: { business: "X", site_url: "https://x.co.za" }, audit: { ...audit, manual: { report: { once: "none", monthly: "Performance" } } }, now: new Date() });
+  assert.equal(override.plan.recommended.once, null);
+  assert.equal(override.plan.recommended.monthly.name, "Performance");
+  assert.ok(DISCLAIMER.join(" ").includes("not guaranteed"));
 }
 
 // ---- the database migration applies and rolls back, and nothing is readable by the browser roles

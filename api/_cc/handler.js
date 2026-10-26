@@ -11,6 +11,8 @@ import { searchFindings, searchNotes } from "./search.js";
 import { conversionFindings } from "./conversion.js";
 import { MANUAL_CHECKLIST } from "./manual.js";
 import { sanitizeFindings, sanitizeManual } from "./audit-edit.js";
+import { buildReport } from "./report.js";
+import { randomBytes } from "node:crypto";
 
 export const STATUSES = ["new", "replied", "audit_drafted", "sent", "won", "lost"];
 
@@ -22,6 +24,17 @@ function tooManyFails(ip) {
   if (fails.size > 2000) fails.clear();
   return list.length >= 20;
 }
+// The client report link is public but unguessable (256 bits). Reads are still limited per visitor.
+const views = new Map();
+function viewLimited(ip) {
+  const now = Date.now();
+  const list = (views.get(ip) || []).filter((t) => now - t < 3_600_000);
+  list.push(now);
+  views.set(ip, list);
+  if (views.size > 2000) views.clear();
+  return list.length > 120;
+}
+const TOKEN = /^[A-Za-z0-9_-]{43}$/;
 const noteFail = (ip) => fails.set(ip, [...(fails.get(ip) || []), Date.now()]);
 
 function routeOf(req) {
@@ -60,6 +73,24 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
 
     const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "").split(",")[0].trim();
     if (tooManyFails(ip)) return send(429, { ok: false, error: "Too many attempts. Try again in a few minutes." });
+
+    // The one public route: a client opening their report by its private link. Nothing but the report is returned.
+    const route0 = routeOf(req);
+    if (route0[0] === "report" && route0.length === 2 && req.method === "GET") {
+      if (viewLimited(ip)) return send(429, { ok: false, error: "Too many requests. Please try again later." });
+      if (!TOKEN.test(route0[1])) return send(404, { ok: false, error: "This report link is not valid." });
+      let dd;
+      try {
+        dd = getDb();
+        const [au] = await dd.select("cc_audits", `select=*&report_token=eq.${route0[1]}&limit=1`);
+        if (!au || !au.token_expires_at || new Date(au.token_expires_at) <= now()) return send(404, { ok: false, error: "This report link has expired or was withdrawn. Please ask us for a new one." });
+        const [rq] = await dd.select("cc_requests", `select=business,site_url&id=eq.${au.request_id}`);
+        if (!rq) return send(404, { ok: false, error: "This report link has expired or was withdrawn. Please ask us for a new one." });
+        return send(200, { ok: true, report: buildReport({ request: { business: rq.business, site_url: rq.site_url }, audit: au, now: now() }), expires: au.token_expires_at });
+      } catch {
+        return send(502, { ok: false, error: "We could not load the report. Please try again." });
+      }
+    }
 
     const auth = String(req.headers.authorization || "");
     const user = await verify(auth.startsWith("Bearer ") ? auth.slice(7) : "");
@@ -157,6 +188,23 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
           if (!Object.keys(patch).length) return send(400, { ok: false, error: "Nothing to change." });
           const row = await d.updateById("cc_audits", id, { ...patch, ...touch });
           return send(200, { ok: true, audit: row, notes: notesFor(row) });
+        }
+
+        if (b === "report" && method === "GET") {
+          const [r] = await d.select("cc_requests", `select=business,site_url&id=eq.${audit.request_id}`);
+          return send(200, { ok: true, report: buildReport({ request: r, audit, now: now(), admin: true }), link: audit.report_token ? { token: audit.report_token, expires: audit.token_expires_at, active: new Date(audit.token_expires_at) > now() } : null });
+        }
+
+        if (b === "link" && method === "POST") {
+          if (body.action === "revoke") {
+            const row = await d.updateById("cc_audits", id, { report_token: null, token_expires_at: null, ...touch });
+            return send(200, { ok: true, link: null, audit: row });
+          }
+          const days = Math.min(180, Math.max(1, Math.round(Number(body.days) || 30)));
+          const token = randomBytes(32).toString("base64url");
+          const expires = new Date(now().getTime() + days * 86_400_000).toISOString();
+          await d.updateById("cc_audits", id, { report_token: token, token_expires_at: expires, ...touch });
+          return send(200, { ok: true, link: { token, expires, active: true } });
         }
 
         if (b === "crawl" && method === "POST") {

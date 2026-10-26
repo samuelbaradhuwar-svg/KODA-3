@@ -4,6 +4,7 @@ import { Logo } from "../components/ui.jsx";
 import { EMAIL } from "../lib/utils.js";
 import { field, dark, light, danger, when, hostOf, STATUS, Badge, Card } from "./command-ui.jsx";
 import AuditPanel from "./CommandAudit.jsx";
+import { Report } from "./Report.jsx";
 
 // KODA email authenticator (private, noindex; the code and routes still say "command"). Signs in with an emailed link; the server (api/command) checks the signed-in
 // address on every request, so this page is a convenience and not the guard.
@@ -212,6 +213,17 @@ function Detail({ id, call, go, retentionDays }) {
   );
 }
 
+function Preview({ id, call, go }) {
+  const [data, setData] = useState(null);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    call(`audits/${id}/report`).then((r) => setData(r.report)).catch((e) => setErr(e.message));
+  }, [call, id]);
+  if (err) return <p role="alert" className="p-10">{err}</p>;
+  if (!data) return <p className="p-10 text-muted">Loading…</p>;
+  return <Report data={data} preview />;
+}
+
 export default function Command() {
   const [session, setSession] = useState(undefined);
   const [me, setMe] = useState(null);
@@ -253,6 +265,8 @@ export default function Command() {
     </Shell>;
   if (!me) return <p className="p-10 text-muted">Loading…</p>;
 
+  const pv = path.match(/^\/command\/([0-9a-f-]{36})\/preview$/i);
+  if (pv) return <Preview id={pv[1]} call={call} go={go} />;
   const m = path.match(/^\/command\/([0-9a-f-]{36})$/i);
   return (
     <Shell right={out}>

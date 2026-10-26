@@ -46,6 +46,16 @@ export function sanitizeManual(input, stored = {}) {
     const caps = { businessName: 120, trade: 160, town: 160, areas: 300, address: 200, phone: 40 };
     for (const [k, n] of Object.entries(caps)) if (input.inputs[k] !== undefined) out.inputs[k] = cut(input.inputs[k], n);
   }
+  if (input.report && typeof input.report === "object") {
+    const onceOk = ["auto", "none", "Starter", "Business", "Custom"];
+    const monthlyOk = ["auto", "none", "Presence", "Growth", "Performance"];
+    const r = input.report;
+    out.report = { ...(stored.report || {}) };
+    if (r.winIds !== undefined) out.report.winIds = (Array.isArray(r.winIds) ? r.winIds : []).map((x) => cut(x, 60).replace(/[^a-zA-Z0-9_-]/g, "")).filter(Boolean).slice(0, 3);
+    if (r.once !== undefined) out.report.once = onceOk.includes(r.once) ? r.once : "auto";
+    if (r.monthly !== undefined) out.report.monthly = monthlyOk.includes(r.monthly) ? r.monthly : "auto";
+  }
+  if (stored.report && !out.report) out.report = stored.report;
   if (input.checklist && typeof input.checklist === "object") {
     for (const key of MANUAL_KEYS) {
       const c = input.checklist[key];

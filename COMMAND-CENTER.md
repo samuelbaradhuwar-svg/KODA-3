@@ -8,6 +8,7 @@ the editable findings, the client report and the send flow. This file grows with
 **Built so far:**
 - Step 1: sign-in, the inbox, request detail (status, private notes, delete), saving each detailed audit request when it arrives.
 - Step 2: **Run in-depth audit** (crawler and technical checks, below).
+- Step 4: the client report (preview, private link, save as PDF).
 - Step 3: search and conversion checks, the "About this business" form, the manual-review checklist and a findings editor (below).
 
 ## How it is protected
@@ -74,6 +75,17 @@ Production only; for the sign-in and for requests to be saved on a preview link,
 - **Findings editor:** change the title, severity, group (fix first, next, later), the KODA service, and the three texts (what we saw, why it matters, the fix) on any finding. Untick **Include in the client report** to hide one (it moves to "Hidden from the report"). **Add a finding** writes your own, and your own findings can be deleted. Press **Save findings**; the page warns you when something is unsaved.
 - **Re-running** keeps anything you edited, hid or added. Automatic findings you have not touched are refreshed.
 - The service dropdown only lists services from `src/catalog.js`; prices and timelines come from there too.
+
+## The client report (step 4)
+At the bottom of an audit, **Client report**:
+- **Contents:** summary, at a glance, your three biggest wins, what is already working, every included finding (fix first, next, later) with evidence, why it matters, the fix and the KODA service with its prices, the manual review (with anything "not yet reviewed" shown honestly), a proposed plan with a recommendation, what could not be checked, and a short honest note that results are not guaranteed.
+- **Edit before it goes anywhere:** the summary and plan text start as defaults written from the findings (counts, scores and strengths come from the audit, never invented); change any of it, or press "Use the automatic text again". Pick up to three wins (or leave it on automatic: fix first, then severity). Override the recommended one-off plan (Starter, Business, Custom, none) and monthly plan (Presence, Growth, Performance, none). The automatic suggestion: booking or online store findings suggest Custom; two or more rebuild findings (or one high one) suggest Business; SEO, maintenance or Google Business Profile findings suggest Presence, or Growth when there are four or more SEO findings.
+- **Prices, timelines and plan features come from `src/catalog.js`**, the same data as the website. The report says prices are the ones published on the website and that the timeline is agreed first.
+- **Manual-review notes appear in the report**, so write them for the client. Your private notes on the request page never do.
+- **Preview report** opens the saved report in a new tab (sign-in required) with a banner saying nothing has been sent. Save first.
+- **Private link:** **Create private link** (valid for 7, 30 or 90 days) makes a 43-character random link at `/report/<token>`. It needs no sign-in, so anyone with it can read the report until it expires or you press **Withdraw link**. Creating a new link replaces the old one. Reads are rate limited, the page is noindex, and the report contains nothing but the report (no email, phone, your notes or raw crawl data).
+- **Save as PDF** uses the browser's print (the report is laid out for A4). A server-made PDF is not included.
+- Sending the link by email is the next step; until then you copy the link yourself.
 
 ## Using it
 - Open `/command`, enter your address, click the link in the email.

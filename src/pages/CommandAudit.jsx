@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { field, dark, light, danger, Card } from "./command-ui.jsx";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { field, dark, light, danger, when, Card } from "./command-ui.jsx";
 
 // The audit workspace on a request: run the checks, describe the business, edit every finding, and fill in the
 // things a machine cannot judge. Nothing here is sent to the client; that happens in a later step.
@@ -86,6 +86,164 @@ function FindingCard({ f, services, onChange, onDelete, startOpen }) {
         </div>
       )}
     </li>
+  );
+}
+
+function ReportPanel({ audit, call, unsaved, onAudit }) {
+  const touched = useRef(false); // once you start typing, a background reload must not overwrite it
+  const [rep, setRep] = useState(null);
+  const [link, setLink] = useState(null);
+  const [sum, setSum] = useState("");
+  const [plan, setPlan] = useState("");
+  const [wins, setWins] = useState([]);
+  const [once, setOnce] = useState("auto");
+  const [monthly, setMonthly] = useState("auto");
+  const [days, setDays] = useState(30);
+  const [busy, setBusy] = useState("");
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const load = useCallback(async (force = false) => {
+    try {
+      const r = await call(`audits/${audit.id}/report`);
+      setRep(r.report);
+      setLink(r.link);
+      if (force || !touched.current) {
+        setSum(r.report.summary);
+        setPlan(r.report.plan.text);
+        setWins(r.report.choice.winIds);
+        setOnce(r.report.choice.once);
+        setMonthly(r.report.choice.monthly);
+        touched.current = false;
+      }
+    } catch (e) {
+      setErr(e.message);
+    }
+  }, [call, audit.id]);
+  useEffect(() => { load(); }, [load, audit.updated_at]);
+
+  async function save() {
+    setErr(""); setMsg(""); setBusy("Saving…");
+    try {
+      const r = await call(`audits/${audit.id}`, { method: "PATCH", body: { summary: sum === rep.defaults.summary ? "" : sum, plan: plan === rep.defaults.plan ? "" : plan, manual: { report: { winIds: wins, once, monthly } } } });
+      touched.current = false;
+      onAudit(r.audit);
+      await load(true);
+      setMsg("Report settings saved.");
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy("");
+    }
+  }
+  async function makeLink(action) {
+    setErr(""); setMsg(""); setBusy(action === "revoke" ? "Withdrawing…" : "Creating…");
+    try {
+      const r = await call(`audits/${audit.id}/link`, { method: "POST", body: { action, days } });
+      setLink(r.link);
+      setCopied(false);
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy("");
+    }
+  }
+  const url = link?.token ? `${window.location.origin}/report/${link.token}` : "";
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+    } catch {
+      setErr("Could not copy. Select the link and copy it by hand.");
+    }
+  }
+  if (!rep) return <Card title="Client report"><p className="text-[14px] text-muted">{err || "Loading…"}</p></Card>;
+  const included = rep.groups.flatMap((g) => g.findings);
+  const toggleWin = (id) => { touched.current = true; setWins((w) => (w.includes(id) ? w.filter((x) => x !== id) : w.length >= 3 ? w : [...w, id])); };
+  const sugOnce = rep.suggested.once || "no one-off plan";
+  const sugMonthly = rep.suggested.monthly || "no monthly plan";
+  return (
+    <Card title="Client report" right={<a className={light} href={`/command/${audit.id}/preview`} target="_blank" rel="noopener noreferrer">Preview report</a>}>
+      <p className="text-[14px] text-muted">A plain-English page for the client with a summary, the three biggest wins, every finding, your manual review, a proposed KODA plan and an honest note that results are not guaranteed. Everything below is editable. Nothing is sent from here; the link only works once you create it.</p>
+      {unsaved && <p role="status" className="mt-3 rounded-2xl bg-[#FFC76B] p-3 text-[14px] font-semibold text-[#101010]">You have unsaved changes to the findings. Save them first, or the report will not show them.</p>}
+
+      <div className="mt-4">
+        <label className={lbl} htmlFor="rp-sum">Summary (the default is written from the findings; change anything)</label>
+        <textarea id="rp-sum" className={`${field} min-h-[8rem]`} maxLength={4000} value={sum} onChange={(e) => { touched.current = true; setSum(e.target.value); }} />
+        {sum !== rep.defaults.summary && <button className="mt-1 text-[13px] underline" onClick={() => { touched.current = true; setSum(rep.defaults.summary); }}>Use the automatic summary again</button>}
+      </div>
+
+      <fieldset className="mt-4">
+        <legend className={lbl}>The three biggest wins (pick up to 3; leave empty to use the top three automatically)</legend>
+        <ul className="mt-1 grid gap-1">
+          {included.map((f) => (
+            <li key={f.id}><label className="flex items-start gap-2 text-[14px]"><input className="mt-1" type="checkbox" checked={wins.includes(f.id)} disabled={!wins.includes(f.id) && wins.length >= 3} onChange={() => toggleWin(f.id)} /><span>{f.title} <span className="text-muted">({SEV[f.severity]?.label})</span>{!wins.length && rep.suggested.winIds.includes(f.id) ? <span className="text-muted"> · automatic pick</span> : null}</span></label></li>
+          ))}
+        </ul>
+      </fieldset>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className={lbl} htmlFor="rp-once">Recommended one-off plan</label>
+          <select id="rp-once" className={field} value={once} onChange={(e) => { touched.current = true; setOnce(e.target.value); }}>
+            <option value="auto">Automatic: {sugOnce}</option>
+            <option value="none">None</option>
+            {["Starter", "Business", "Custom"].map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className={lbl} htmlFor="rp-monthly">Recommended monthly plan</label>
+          <select id="rp-monthly" className={field} value={monthly} onChange={(e) => { touched.current = true; setMonthly(e.target.value); }}>
+            <option value="auto">Automatic: {sugMonthly}</option>
+            <option value="none">None</option>
+            {["Presence", "Growth", "Performance"].map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+        </div>
+      </div>
+      <p className="mt-1 text-[13px] text-muted">Plan names, prices and timelines come from the website's pricing, so they can never disagree with it.</p>
+
+      <div className="mt-4">
+        <label className={lbl} htmlFor="rp-plan">How KODA would fix it (the default is built from the findings; change anything)</label>
+        <textarea id="rp-plan" className={`${field} min-h-[8rem]`} maxLength={6000} value={plan} onChange={(e) => { touched.current = true; setPlan(e.target.value); }} />
+        {plan !== rep.defaults.plan && <button className="mt-1 text-[13px] underline" onClick={() => { touched.current = true; setPlan(rep.defaults.plan); }}>Use the automatic text again</button>}
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <button className={dark} disabled={!!busy} onClick={save}>Save report settings</button>
+        <a className={light} href={`/command/${audit.id}/preview`} target="_blank" rel="noopener noreferrer">Preview report</a>
+        {busy && <span role="status" className="text-[14px]">{busy}</span>}
+        {msg && !busy && <span role="status" className="text-[14px]">{msg}</span>}
+      </div>
+      {err && <p role="alert" className="mt-2 text-[14px]">{err}</p>}
+      <p className="mt-1 text-[13px] text-muted">The preview shows what is saved. Save first.</p>
+
+      <div className="mt-6 rounded-2xl border border-ink/15 p-4">
+        <h3 className="xwide text-[0.95rem]">Private link</h3>
+        {link?.active ? (
+          <>
+            <p className="mt-2 break-all rounded-xl bg-paper2 p-3 text-[14px]">{url}</p>
+            <p className="mt-1 text-[13px] text-muted">Expires {when(link.expires)}. Anyone with this link can read the report until then or until you withdraw it.</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button className={dark} onClick={copy}>{copied ? "Copied" : "Copy link"}</button>
+              <a className={light} href={url} target="_blank" rel="noopener noreferrer">Open as the client</a>
+              <button className={danger} disabled={!!busy} onClick={() => makeLink("revoke")}>Withdraw link</button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="mt-2 text-[14px] text-muted">{link ? "The last link has expired." : "No link yet."} The client only sees the report once you create a link and send it to them.</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <label className="text-[14px]" htmlFor="rp-days">Valid for</label>
+              <select id="rp-days" className={`${field} max-w-[9rem]`} value={days} onChange={(e) => setDays(Number(e.target.value))}>
+                {[7, 30, 90].map((d) => <option key={d} value={d}>{d} days</option>)}
+              </select>
+              <button className={dark} disabled={!!busy || unsaved} onClick={() => makeLink("create")}>Create private link</button>
+            </div>
+          </>
+        )}
+      </div>
+    </Card>
   );
 }
 
@@ -319,7 +477,7 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
                           <label key={v} className="flex items-center gap-1.5 text-[14px]"><input type="radio" name={`m-${it.key}`} checked={cur.status === v} onChange={() => setCheck({ ...check, [it.key]: { ...cur, status: v } })} /> {l}</label>
                         ))}
                       </div>
-                      <label className={`${lbl} mt-2`} htmlFor={`n-${it.key}`}>Your notes</label>
+                      <label className={`${lbl} mt-2`} htmlFor={`n-${it.key}`}>Notes (these appear in the client report)</label>
                       <textarea id={`n-${it.key}`} className={`${field} min-h-[3.5rem]`} maxLength={2000} value={cur.notes} onChange={(e) => setCheck({ ...check, [it.key]: { ...cur, notes: e.target.value } })} />
                       {cur.status === "issue" && <button className={`${light} mt-2`} disabled={findings.some((f) => f.id === `manual-${it.key}`)} onClick={() => fromChecklist(it)}>{findings.some((f) => f.id === `manual-${it.key}`) ? "Added to findings" : "Add as a finding"}</button>}
                     </li>
@@ -332,6 +490,8 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
           <p className="mt-2 text-[13px] text-muted">If you add a finding from here, remember to save the findings too.</p>
         </Card>
       )}
+
+      {audit && audit.crawl && <ReportPanel audit={audit} call={call} unsaved={dirty} onAudit={(a) => take(a, null, dirty)} />}
     </>
   );
 }
