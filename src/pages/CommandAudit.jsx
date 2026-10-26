@@ -104,12 +104,16 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
   const [copied, setCopied] = useState(false);
+  const [aiOn, setAiOn] = useState(false);
+  const [aiBusy, setAiBusy] = useState("");
+  const [undo, setUndo] = useState({});
 
   const load = useCallback(async (force = false) => {
     try {
       const r = await call(`audits/${audit.id}/report`);
       setRep(r.report);
       setLink(r.link);
+      setAiOn(Boolean(r.aiConfigured));
       onLink?.(r.link?.active ? r.link.token : "");
       if (force || !touched.current) {
         setSum(r.report.summary);
@@ -139,6 +143,29 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
       setBusy("");
     }
   }
+  async function draftAi(target) {
+    setErr(""); setMsg(""); setAiBusy(target);
+    try {
+      const r = await call(`audits/${audit.id}/ai`, { method: "POST", body: { target } });
+      touched.current = true;
+      if (target === "summary") { setUndo((u) => ({ ...u, summary: sum })); setSum(r.text); }
+      else { setUndo((u) => ({ ...u, plan: plan })); setPlan(r.text); }
+      setMsg("AI draft added to the box. Read it, correct anything, then press Save report settings. Nothing is saved or sent until you do.");
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setAiBusy("");
+    }
+  }
+  const AiRow = ({ target, current, set }) => (
+    <div className="mt-1 flex flex-wrap items-center gap-2">
+      <button className={light} disabled={!aiOn || !!aiBusy || unsaved} onClick={() => draftAi(target)} title={!aiOn ? "AI drafting is not set up" : unsaved ? "Save your findings first" : ""}>{aiBusy === target ? "Drafting…" : "Draft with AI"}</button>
+      {undo[target] !== undefined && undo[target] !== current && <button className="text-[13px] underline" onClick={() => { touched.current = true; set(undo[target]); setUndo((u) => { const n = { ...u }; delete n[target]; return n; }); }}>Undo the AI draft</button>}
+      {!aiOn && <span className="text-[13px] text-muted">AI drafting is off (it needs an Anthropic key in Vercel). You can write everything by hand.</span>}
+      {aiOn && <span className="text-[13px] text-muted">It only sees the findings, not the business name or site text, and may not invent figures or promise results.</span>}
+    </div>
+  );
+
   async function makeLink(action) {
     setErr(""); setMsg(""); setBusy(action === "revoke" ? "Withdrawing…" : "Creating…");
     try {
@@ -174,6 +201,7 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
       <div className="mt-4">
         <label className={lbl} htmlFor="rp-sum">Summary (the default is written from the findings; change anything)</label>
         <textarea id="rp-sum" className={`${field} min-h-[8rem]`} maxLength={4000} value={sum} onChange={(e) => { touched.current = true; setSum(e.target.value); }} />
+        <AiRow target="summary" current={sum} set={setSum} />
         {sum !== rep.defaults.summary && <button className="mt-1 text-[13px] underline" onClick={() => { touched.current = true; setSum(rep.defaults.summary); }}>Use the automatic summary again</button>}
       </div>
 
@@ -209,6 +237,7 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
       <div className="mt-4">
         <label className={lbl} htmlFor="rp-plan">How KODA would fix it (the default is built from the findings; change anything)</label>
         <textarea id="rp-plan" className={`${field} min-h-[8rem]`} maxLength={6000} value={plan} onChange={(e) => { touched.current = true; setPlan(e.target.value); }} />
+        <AiRow target="plan" current={plan} set={setPlan} />
         {plan !== rep.defaults.plan && <button className="mt-1 text-[13px] underline" onClick={() => { touched.current = true; setPlan(rep.defaults.plan); }}>Use the automatic text again</button>}
       </div>
 

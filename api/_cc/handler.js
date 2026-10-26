@@ -14,6 +14,7 @@ import { sanitizeFindings, sanitizeManual } from "./audit-edit.js";
 import { buildReport } from "./report.js";
 import { defaultEmail, previewHtml, renderEmailHtml, cleanBody, cleanSubject, validEmail, safeBase, sendViaResend, FROM, REPLY_TO } from "./email.js";
 import { randomBytes } from "node:crypto";
+import { draft as aiDraft } from "./ai.js";
 
 export const STATUSES = ["new", "replied", "audit_drafted", "sent", "won", "lost"];
 
@@ -56,6 +57,16 @@ function crawlLimited(now) {
   return false;
 }
 
+// AI drafts cost a little each time, so they are limited.
+const aiRuns = [];
+function aiLimited(now) {
+  const t = now().getTime();
+  while (aiRuns.length && t - aiRuns[0] > 3_600_000) aiRuns.shift();
+  if (aiRuns.length >= 30) return true;
+  aiRuns.push(t);
+  return false;
+}
+
 // Re-running the analysis replaces the automatic findings, but never touches ones you edited or added yourself.
 export function mergeFindings(existing = [], fresh = []) {
   const keep = existing.filter((f) => f.edited || f.source !== "auto");
@@ -63,7 +74,7 @@ export function mergeFindings(existing = [], fresh = []) {
   return [...keep, ...fresh.filter((f) => !taken.has(f.id))];
 }
 
-export function createHandler({ db, verify = verifyAdmin, now = () => new Date(), crawl = crawlSite, speed = pageSpeed, mail = sendViaResend } = {}) {
+export function createHandler({ db, verify = verifyAdmin, now = () => new Date(), crawl = crawlSite, speed = pageSpeed, mail = sendViaResend, ai = aiDraft } = {}) {
   let store = db;
   const getDb = () => (store ??= createDb());
 
@@ -255,9 +266,19 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
           }
         }
 
+        if (b === "ai" && method === "POST") {
+          if (!process.env.ANTHROPIC_API_KEY) return send(503, { ok: false, error: "AI drafting is not set up in this environment (ANTHROPIC_API_KEY). You can still write everything by hand." });
+          if (aiLimited(now)) return send(429, { ok: false, error: "AI draft limit reached for now (30 an hour). Try again later." });
+          const [rq] = await d.select("cc_requests", `select=business,site_url&id=eq.${audit.request_id}`);
+          const report = buildReport({ request: rq, audit, now: now() });
+          const r = await ai(body.target, report, audit);
+          if (!r.ok) return send(r.status || 502, { ok: false, error: r.error });
+          return send(200, { ok: true, text: r.text, model: r.model });
+        }
+
         if (b === "report" && method === "GET") {
           const [r] = await d.select("cc_requests", `select=business,site_url&id=eq.${audit.request_id}`);
-          return send(200, { ok: true, report: buildReport({ request: r, audit, now: now(), admin: true }), link: audit.report_token ? { token: audit.report_token, expires: audit.token_expires_at, active: new Date(audit.token_expires_at) > now() } : null });
+          return send(200, { ok: true, report: buildReport({ request: r, audit, now: now(), admin: true }), link: audit.report_token ? { token: audit.report_token, expires: audit.token_expires_at, active: new Date(audit.token_expires_at) > now() } : null, aiConfigured: Boolean(process.env.ANTHROPIC_API_KEY) });
         }
 
         if (b === "link" && method === "POST") {

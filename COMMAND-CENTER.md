@@ -8,6 +8,7 @@ the editable findings, the client report and the send flow. This file grows with
 **Built so far:**
 - Step 1: sign-in, the inbox, request detail (status, private notes, delete), saving each detailed audit request when it arrives.
 - Step 2: **Run in-depth audit** (crawler and technical checks, below).
+- Step 6: optional AI drafting of the report summary and plan text.
 - Step 5: the send flow (draft, preview, test, send, log).
 - Step 4: the client report (preview, private link, save as PDF).
 - Step 3: search and conversion checks, the "About this business" form, the manual-review checklist and a findings editor (below).
@@ -47,6 +48,7 @@ the Supabase dashboard (or move to the paid plan).
 | `COMMAND_ADMIN_EMAIL` | `hello@heykoda.co.za` | Optional; this is the default |
 | `COMMAND_FROM` | `KODA <hello@heykoda.co.za>` | Optional; the sender shown on emails to clients |
 | `COMMAND_RETENTION_DAYS` | `180` | Optional; days before a request deletes itself |
+| `ANTHROPIC_API_KEY` | Anthropic API key | Optional: turns on "Draft with AI". Costs a few cents per draft. Secret, Production and Preview. |
 | `PAGESPEED_API_KEY` | free Google key | Optional but recommended: without it Google's shared speed quota often runs out |
 
 Setup gotchas we hit:
@@ -100,6 +102,15 @@ At the bottom of an audit, **Email to the client**:
 - **Log:** every attempt is stored in `cc_sends` (date, recipient, subject, the exact HTML, Resend's id, test or client, and the reason if it failed). The request page shows it under **Sent emails** with a **View** button. Failed sends are logged too, and can be retried.
 - If `RESEND_API_KEY` is missing in an environment, the screen says so and sending is disabled. It is set for Production and Preview. On a preview address you can send tests to yourself; real client emails stay blocked there.
 - The audit's original "request" email still arrives as before and is unrelated to this.
+
+## Optional AI drafting (step 6)
+Off until an Anthropic key is added. In **Client report**, **Draft with AI** (one next to the summary, one next to "How KODA would fix it") fills the box with a draft. **Undo the AI draft** puts your text back. The draft is only text in a box: nothing is saved until you press **Save report settings**, and nothing is sent.
+- **What the model sees:** only structured data: counts, the findings' severity, group, wording and service, the recommended plans with their catalog prices, Google's phone scores, the manual-review statuses with your own notes, and what was not checked. Text that came from the client's website is stripped of tags, any quoted passage is replaced with "…", and it is shortened. The business name, site address, email and phone are **never** sent. It is told to treat everything in the facts as data, never as instructions.
+- **What it is told:** plain English, South African spelling, only the supplied facts, no invented numbers, no promises or rankings, say that anything "not reviewed" is still to be reviewed, no mention of AI.
+- **What is checked before you see it:** the draft is discarded (with a plain message) if it contains a number that is not in the facts (counts, scores, catalog prices and timelines are allowed), if it promises an outcome (guarantee, promise, first page, top of Google, number one, will rank, double or triple), or if it is empty, too long or unreadable. "We cannot promise rankings" is allowed. Tags and markdown are stripped.
+- **Limits and cost:** 30 drafts an hour, 25 seconds each. Each draft is one small request, a few cents at most with the default fast model; set a monthly spend limit in the Anthropic console.
+- **Settings (Vercel, Production and Preview, koda-3 project):** `ANTHROPIC_API_KEY` (Secret). Optional `COMMAND_AI_MODEL` (default `claude-haiku-5-5`, or `AUDIT_AI_MODEL` if set).
+- Everything still works by hand without it.
 
 ## Using it
 - Open `/command`, enter your address, click the link in the email.
