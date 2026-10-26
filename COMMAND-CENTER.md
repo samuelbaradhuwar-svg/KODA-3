@@ -1,4 +1,6 @@
-# KODA command centre: setup and use
+# KODA email authenticator: setup and use
+
+> The name on screen is **Email authenticator**, to tell it apart from the separate Autopilot app (growth-command-center). The code, routes (`/command`, `/api/command`), tables (`cc_`) and this file keep the older name "command centre".
 
 A private page for the owner only, at `/command`. Audit requests land in an inbox; later steps add the in-depth audit,
 the editable findings, the client report and the send flow. This file grows with each step.

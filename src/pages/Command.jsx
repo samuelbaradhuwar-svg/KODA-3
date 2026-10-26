@@ -5,7 +5,7 @@ import { EMAIL } from "../lib/utils.js";
 import { field, dark, light, danger, when, hostOf, STATUS, Badge, Card } from "./command-ui.jsx";
 import AuditPanel from "./CommandAudit.jsx";
 
-// KODA command centre (private, noindex). Signs in with an emailed link; the server (api/command) checks the signed-in
+// KODA email authenticator (private, noindex; the code and routes still say "command"). Signs in with an emailed link; the server (api/command) checks the signed-in
 // address on every request, so this page is a convenience and not the guard.
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
 // Supabase calls this the "anon" key or the newer "publishable" key. Either name works; both are public by design.
@@ -34,7 +34,7 @@ function Shell({ children, right }) {
       <header className="flex items-center justify-between gap-4 border-b border-ink/15 pb-4">
         <div className="flex items-center gap-4">
           <Logo />
-          <span className="xwide text-[0.95rem] tracking-[-0.02em]">Command centre</span>
+          <span className="xwide text-[0.95rem] tracking-[-0.02em]">Email authenticator</span>
         </div>
         {right}
       </header>
@@ -61,7 +61,7 @@ function SignIn() {
   return (
     <form onSubmit={go} className="mx-auto mt-24 max-w-sm px-4">
       <Logo />
-      <h1 className="xwide mt-6 text-[1.4rem]">Command centre</h1>
+      <h1 className="xwide mt-6 text-[1.4rem]">Email authenticator</h1>
       <p className="mt-3 text-muted">Private. Sign in with your email and we send you a link.</p>
       <input className={`${field} mt-5`} type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder={EMAIL} autoComplete="email" />
       <button className={`${dark} mt-3 w-full`} type="submit">Send link</button>
