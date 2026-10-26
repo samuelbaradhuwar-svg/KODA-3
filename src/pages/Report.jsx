@@ -32,9 +32,9 @@ function Finding({ f }) {
         <h4 className="min-w-0 flex-1 font-semibold">{f.title}</h4>
       </div>
       <dl className="mt-2 grid gap-x-4 gap-y-1.5 text-[14.5px] sm:grid-cols-[8rem_1fr]">
-        <dt className="text-muted">What we saw</dt><dd className="whitespace-pre-wrap">{f.evidence}</dd>
-        <dt className="text-muted">Why it matters</dt><dd className="whitespace-pre-wrap">{f.why}</dd>
-        <dt className="text-muted">How to fix it</dt><dd className="whitespace-pre-wrap">{f.fix}</dd>
+        {f.evidence && <><dt className="text-muted">What we saw</dt><dd className="whitespace-pre-wrap">{f.evidence}</dd></>}
+        {f.why && <><dt className="text-muted">Why it matters</dt><dd className="whitespace-pre-wrap">{f.why}</dd></>}
+        {f.fix && <><dt className="text-muted">How to fix it</dt><dd className="whitespace-pre-wrap">{f.fix}</dd></>}
         {f.service && (
           <>
             <dt className="text-muted">Who does it</dt>
@@ -105,8 +105,8 @@ export function Report({ data, expires, preview }) {
                 <li key={w.id} className="break-inside-avoid rounded-2xl border border-ink/20 p-4">
                   <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-muted">Win {i + 1}</p>
                   <h3 className="mt-0.5 font-semibold">{w.title}</h3>
-                  <p className="mt-1 text-[14.5px]">{w.why}</p>
-                  <p className="mt-1 text-[14.5px]"><b>What to do:</b> {w.fix}</p>
+                  {w.why && <p className="mt-1 text-[14.5px]">{w.why}</p>}
+                  {w.fix && <p className="mt-1 text-[14.5px]"><b>What to do:</b> {w.fix}</p>}
                 </li>
               ))}
             </ol>

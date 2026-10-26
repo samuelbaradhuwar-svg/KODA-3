@@ -695,6 +695,27 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   delete process.env.ANTHROPIC_API_KEY;
 }
 
+// ---- findings made from the manual checklist are real findings, and never an unexplained "win"
+{
+  const items = MANUAL_CHECKLIST;
+  assert.ok(items.every((m) => m.finding?.title && m.finding.why && m.finding.fix && SERVICE_KEYS.includes(m.finding.service)), "every checklist item has real finding wording and a real service");
+  assert.ok(items.every((m) => m.finding.title !== m.title && !m.finding.title.endsWith("?")), "the finding is a statement, not the checklist question");
+  assert.ok(!/guarantee|first page|rank/i.test(JSON.stringify(items.map((m) => m.finding)).replace(/We cannot promise a position/, "")), "the wording promises nothing");
+  const sk = (key, title) => ({ id: `manual-${key}`, area: "manual", severity: "medium", bucket: "next", include: true, source: "manual", title, evidence: "Checked by hand: not verified.", why: "", fix: "", service_key: null });
+  const good = { id: "g1", area: "technical", severity: "low", bucket: "later", include: true, source: "auto", title: "A real finding", evidence: "e", why: "w", fix: "f", service_key: "seo" };
+  const blank = { id: "x1", area: "manual", severity: "high", bucket: "fix_first", include: true, source: "manual", title: "Hand-made but empty", evidence: "", why: "", fix: "", service_key: null };
+  const rep = buildReport({ request: { business: "X", site_url: "https://x.co.za" }, audit: { findings: [sk("search_visible", "Where do they appear on Google?"), sk("photos", "Photos and brand"), blank, good], crawl: null, manual: {} }, now: new Date(), admin: true });
+  const all = rep.groups.flatMap((g) => g.findings);
+  const sv = all.find((f) => f.id === "manual-search_visible");
+  assert.equal(sv.title, "Your business is hard to find on Google", "an old skeleton finding is repaired from the checklist");
+  assert.ok(sv.why && sv.fix && sv.service?.name === "SEO Optimisation");
+  assert.equal(sv.evidence, "From our hands-on review: not verified.");
+  assert.ok(rep.wins.every((w) => w.why && w.fix), "a win always has an explanation and a fix");
+  assert.ok(!rep.wins.some((w) => w.id === "x1"), "an empty finding is never a win");
+  assert.deepEqual(rep.incomplete.map((f) => f.id), ["x1"], "the owner is told which findings are still blank");
+  assert.ok(!/Checked by hand/.test(JSON.stringify(rep)), "client wording says hands-on review");
+}
+
 // ---- the client-facing voice: no talk of tools, and no claims about staff
 {
   const F = (id, severity, bucket, service_key) => ({ id, area: "technical", severity, bucket, include: true, source: "auto", title: `Title ${id}`, evidence: "e", why: "w", fix: "f", service_key });

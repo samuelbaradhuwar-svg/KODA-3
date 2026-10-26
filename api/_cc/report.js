@@ -11,6 +11,22 @@ export const DISCLAIMER = [
   "This is a snapshot of the site on the date above. Our audit reads up to 10 pages and can miss things. Your Google Business Profile, the design and the writing are assessed in a hands-on review, and anything still marked \"not yet reviewed\" has not been assessed yet.",
 ];
 
+// Findings made from the manual checklist before they carried an explanation are completed from the checklist wording.
+function repairManual(f) {
+  if (!String(f.id).startsWith("manual-")) return f;
+  const item = MANUAL_CHECKLIST.find((m) => `manual-${m.key}` === f.id);
+  if (!item?.finding) return f;
+  const ev = String(f.evidence || "");
+  return {
+    ...f,
+    title: f.title === item.title ? item.finding.title : f.title,
+    why: f.why || item.finding.why,
+    fix: f.fix || item.finding.fix,
+    service_key: f.service_key || item.finding.service,
+    evidence: /^Checked by hand\.?$/.test(ev) ? "From our hands-on review." : ev.replace(/^Checked by hand: /, "From our hands-on review: "),
+  };
+}
+
 const SEV = { high: 0, medium: 1, low: 2, info: 3 };
 const BUCKET = { fix_first: 0, next: 1, later: 2 };
 const BUCKET_LABEL = { fix_first: "Fix first", next: "Next", later: "Later" };
@@ -120,7 +136,7 @@ function defaultPlanText({ rec, sug, byService }) {
 
 // The full report. `admin` adds the defaults and suggestions the editor needs; the public copy never has them.
 export function buildReport({ request, audit, now = new Date(), admin = false }) {
-  const all = (audit.findings || []).filter((f) => f.include !== false);
+  const all = (audit.findings || []).filter((f) => f.include !== false).map(repairManual);
   const findings = sort(all);
   const crawl = audit.crawl;
   const speed = audit.pagespeed || {};
@@ -131,7 +147,7 @@ export function buildReport({ request, audit, now = new Date(), admin = false })
   for (const f of findings) counts[f.bucket] = (counts[f.bucket] || 0) + 1;
 
   const winIds = (choice.winIds || []).filter((id) => findings.some((f) => f.id === id)).slice(0, 3);
-  const auto = findings.filter((f) => f.severity !== "info").slice(0, 3);
+  const auto = findings.filter((f) => f.severity !== "info" && f.why && f.fix).slice(0, 3);
   const wins = (winIds.length ? winIds.map((id) => findings.find((f) => f.id === id)) : auto).map((f) => ({ id: f.id, title: f.title, why: f.why, fix: f.fix, severity: f.severity }));
 
   const sug = suggestPlan(findings);
@@ -180,6 +196,7 @@ export function buildReport({ request, audit, now = new Date(), admin = false })
     disclaimer: DISCLAIMER,
   };
   if (admin) {
+    report.incomplete = findings.filter((f) => !f.why || !f.fix).map((f) => ({ id: f.id, title: f.title }));
     report.defaults = { summary: summaryDefault, plan: planDefault };
     report.suggested = { once: sug.once, monthly: sug.monthly, winIds: auto.map((f) => f.id) };
     report.choice = { winIds, once: choice.once || "auto", monthly: choice.monthly || "auto" };

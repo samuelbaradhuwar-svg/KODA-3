@@ -196,6 +196,7 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
   return (
     <Card title="Client report" right={<a className={light} href={`/command/${audit.id}/preview`} target="_blank" rel="noopener noreferrer">Preview report</a>}>
       <p className="text-[14px] text-muted">A plain-English page for the client with a summary, the three biggest wins, every finding, your manual review, a proposed KODA plan and an honest note that results are not guaranteed. Everything below is editable. Nothing is sent from here; the link only works once you create it.</p>
+      {rep.incomplete?.length > 0 && <p role="status" className="mt-3 rounded-2xl bg-[#FFC76B] p-3 text-[14px] text-[#101010]"><b>{rep.incomplete.length} {rep.incomplete.length === 1 ? "finding has" : "findings have"} no explanation or fix yet:</b> {rep.incomplete.map((f) => f.title).join("; ")}. Fill them in under Findings, or tick "Include in the client report" off, before you send.</p>}
       {unsaved && <p role="status" className="mt-3 rounded-2xl bg-[#FFC76B] p-3 text-[14px] font-semibold text-[#101010]">You have unsaved changes to the findings. Save them first, or the report will not show them.</p>}
 
       <div className="mt-4">
@@ -399,7 +400,8 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
     const id = `manual-${item.key}`;
     if (findings.some((f) => f.id === id)) return;
     const n = check[item.key]?.notes || "";
-    addFinding({ id, title: item.title, evidence: n ? `Checked by hand: ${n}` : "Checked by hand.", severity: "medium", bucket: "next", service_key: item.group === "Google Business Profile" ? "gbp" : item.group === "Design" || item.group === "Copy" ? "redesign" : "seo" });
+    const f = item.finding || {};
+    addFinding({ id, title: f.title || item.title, evidence: n ? `From our hands-on review: ${n}` : "From our hands-on review.", why: f.why || "", fix: f.fix || "", severity: "medium", bucket: "next", service_key: f.service || null });
   }
 
   const visible = useMemo(() => findings.filter((f) => f.include !== false), [findings]);
