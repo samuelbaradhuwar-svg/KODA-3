@@ -240,14 +240,17 @@ export default function Command() {
   );
 
   useEffect(() => {
-    if (token) call("me").then(setMe).catch(() => setMe({ denied: true }));
+    if (token) call("me").then(setMe).catch((e) => setMe({ denied: true, message: e.message }));
   }, [token, call]);
 
   if (!sb) return <Shell><p className="mt-10">Sign-in is not set up yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY) in Vercel (see COMMAND-CENTER.md).</p></Shell>;
   if (session === undefined) return <p className="p-10 text-muted">Loading…</p>;
   if (!session) return <SignIn />;
   const out = <button className={light} onClick={() => sb.auth.signOut()}>Sign out</button>;
-  if (me?.denied) return <Shell right={out}><p className="mt-10">This account is not allowed here. Sign out and use {EMAIL}.</p></Shell>;
+  if (me?.denied) return <Shell right={out}>
+      <p role="alert" className="mt-10">{me.message || "Something went wrong."}</p>
+      {/not allowed/i.test(me.message || "") && <p className="mt-2 text-muted">Sign out and use {EMAIL}.</p>}
+    </Shell>;
   if (!me) return <p className="p-10 text-muted">Loading…</p>;
 
   const m = path.match(/^\/command\/([0-9a-f-]{36})$/i);
