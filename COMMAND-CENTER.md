@@ -51,6 +51,8 @@ Setup gotchas we hit:
 - Tick **Production and Preview** for every variable, including the secret service key; a preview build cannot see a Production-only variable.
 - Variables only reach a build that starts after they are saved, so redeploy after adding them.
 
+If you ever rotate the Supabase secret key, update `SUPABASE_SERVICE_ROLE_KEY` in koda-3 (and Autopilot's own project, which has its own copy) and redeploy. The page tells you if the saved key is the public one.
+
 Already set and reused: `RESEND_API_KEY`, `AUDIT_FROM`, `AUDIT_NOTIFY_TO`, `AUDIT_MODE`. Note these are currently
 Production only; for the sign-in and for requests to be saved on a preview link, the Supabase ones above need Preview too.
 
