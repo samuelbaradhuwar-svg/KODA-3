@@ -39,7 +39,7 @@ the Supabase dashboard (or move to the paid plan).
 | Name | Value | Notes |
 |---|---|---|
 | `SUPABASE_URL` | Project URL | Server |
-| `SUPABASE_SERVICE_ROLE_KEY` | `service_role` secret | Server only. Never prefix with `VITE_`. Never paste it in chat or commit it. |
+| `SUPABASE_SERVICE_ROLE_KEY` | the **secret** key: either the old `service_role` key (long, starts `eyJ`) or the newer `sb_secret_…` key | Server only. Never the anon / publishable key (the server refuses it and says so). Never prefix with `VITE_`. Never paste it in chat or commit it. |
 | `VITE_SUPABASE_URL` | Project URL | Browser sign-in |
 | `VITE_SUPABASE_ANON_KEY` | `anon` or `publishable` public key | Browser sign-in (public by design). If Vercel says the name already exists, use `VITE_SUPABASE_PUBLISHABLE_KEY` instead; the page accepts either. |
 | `COMMAND_ADMIN_EMAIL` | `hello@heykoda.co.za` | Optional; this is the default |

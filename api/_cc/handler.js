@@ -71,7 +71,8 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
     let d;
     try {
       d = getDb();
-    } catch {
+    } catch (e) {
+      if (e?.code === "public_key") return send(503, { ok: false, error: "SUPABASE_SERVICE_ROLE_KEY in Vercel holds the public (anon or publishable) key. Replace it with the service_role or secret key, then redeploy." });
       return send(503, { ok: false, error: "The database is not set up yet. See COMMAND-CENTER.md." });
     }
 
@@ -192,8 +193,10 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
         }
       }
       return send(404, { ok: false, error: "Not found." });
-    } catch {
-      return send(502, { ok: false, error: "Something went wrong talking to the database. Try again." });
+    } catch (e) {
+      console.error("command api:", String(e?.message || e).slice(0, 200)); // path and status only, never a key or a row
+      const status = String(e?.message || "").match(/\((\d{3})\)/)?.[1];
+      return send(502, { ok: false, error: status === "401" || status === "403" ? "The database refused the request (the server key in Vercel is probably the wrong one or the wrong style). See COMMAND-CENTER.md." : "Something went wrong talking to the database. Try again." });
     }
   };
 }

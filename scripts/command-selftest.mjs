@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { createHandler } from "../api/_cc/handler.js";
+import { keyKind, createDb } from "../api/_cc/db.js";
 import { saveRequest, trimFindings, retentionDays } from "../api/_cc/requests.js";
 import { isPrivateIp, assertPublic } from "../api/_safe.js";
 import { verifyAdmin } from "../api/_cc/auth.js";
@@ -108,6 +109,34 @@ delete process.env.SUPABASE_URL; delete process.env.SUPABASE_SERVICE_ROLE_KEY;
 r = await call(h2, { url: "/api/command/requests" });
 assert.equal(r.code, 503);
 Object.assign(process.env, Object.fromEntries(Object.entries({ SUPABASE_URL: keep.u, SUPABASE_SERVICE_ROLE_KEY: keep.k }).filter(([, v]) => v)));
+
+// ---- key styles: new secret keys go in apikey only, public keys are refused
+{
+  const jwt = (role) => `h.${Buffer.from(JSON.stringify({ role })).toString("base64url")}.s`;
+  assert.equal(keyKind("sb_secret_abc"), "secret");
+  assert.equal(keyKind("sb_publishable_abc"), "public");
+  assert.equal(keyKind(jwt("service_role")), "service");
+  assert.equal(keyKind(jwt("anon")), "public");
+  assert.equal(keyKind("whatever"), "unknown");
+  assert.throws(() => createDb({ url: "https://x.supabase.co", key: "sb_publishable_abc" }), (e) => e.code === "public_key");
+  assert.throws(() => createDb({ url: "https://x.supabase.co", key: jwt("anon") }), (e) => e.code === "public_key");
+  const seen = [];
+  const f = globalThis.fetch;
+  globalThis.fetch = async (u, o) => { seen.push(o.headers); return { ok: true, text: async () => "[]" }; };
+  await createDb({ url: "https://x.supabase.co", key: "sb_secret_abc" }).select("cc_requests", "select=id");
+  await createDb({ url: "https://x.supabase.co", key: jwt("service_role") }).select("cc_requests", "select=id");
+  globalThis.fetch = f;
+  assert.equal(seen[0].apikey, "sb_secret_abc");
+  assert.ok(!("authorization" in seen[0]), "a new-style secret key is not sent as a bearer token");
+  assert.ok(seen[1].authorization?.startsWith("Bearer "), "an old-style service key is sent as both");
+  const hp = createHandler({ verify, db: undefined });
+  const keep2 = { u: process.env.SUPABASE_URL, k: process.env.SUPABASE_SERVICE_ROLE_KEY };
+  process.env.SUPABASE_URL = "https://x.supabase.co"; process.env.SUPABASE_SERVICE_ROLE_KEY = "sb_publishable_abc";
+  const rp = await call(hp, { url: "/api/command/requests", ip: "5.5.5.5" });
+  assert.equal(rp.code, 503);
+  assert.match(rp.body.error, /public/);
+  for (const [k2, v] of Object.entries({ SUPABASE_URL: keep2.u, SUPABASE_SERVICE_ROLE_KEY: keep2.k })) { if (v) process.env[k2] = v; else delete process.env[k2]; }
+}
 
 // ---- admin check against a fake Supabase: wrong person, unconfirmed email and bad tokens are all refused
 const realFetch = globalThis.fetch;
