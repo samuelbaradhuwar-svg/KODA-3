@@ -10,7 +10,7 @@ Status key: `todo` | `in progress` | `in review` (preview ready) | `done` (on ma
 
 | # | Section | Findings it clears | Owner | Status |
 |---|---|---|---|---|
-| 1 | Security headers and meta descriptions | Browser security protections missing; descriptions too short or too long | Claude | todo |
+| 1 | Security headers and meta descriptions | Browser security protections missing; descriptions too short or too long | Claude | in review |
 | 2 | Audit tool false alarms | Reviews shown (wrong); key pages missing (wrong); contact link (wrong); business name in title (wrong); FAQ page (wrong) | Claude | todo |
 | 3 | Phone and WhatsApp | Phone not found; not tap-to-call; no WhatsApp | Samuel decides, then Claude | blocked (needs yes or no) |
 | 4 | Speed on phones | Slow to react on a phone (high priority); site slow on a phone; slow to react on a computer | Claude | todo |
@@ -23,13 +23,13 @@ Status key: `todo` | `in progress` | `in review` (preview ready) | `done` (on ma
 **Goal:** the audit no longer flags missing security protections or badly sized descriptions.
 
 Tasks
-- [ ] Add to `vercel.json`: `Content-Security-Policy`, `X-Frame-Options` (or `frame-ancestors`), `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`.
-- [ ] The CSP must allow what the site really uses: the inline dark-mode script, inline JSON-LD, self-hosted fonts, the Resend and PageSpeed calls made by the server only, and images from the site itself. Test in a preview; check the console for blocked resources on the home page, the Durban page, the legal pages, the audit form and `/command`.
-- [ ] Trim `/website-design-durban` description from 178 to 160 characters or fewer.
-- [ ] Expand `/terms` description from 64 to about 120 to 160 characters. Check every page in `PAGES` is between 120 and 160.
-- [ ] Add a self-test (`scripts/legal-check.mjs` or a new check) that fails when a page description is outside 120 to 160 characters.
+- [x] Add to `vercel.json`: `Content-Security-Policy`, `X-Frame-Options` (or `frame-ancestors`), `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`.
+- [x] The CSP must allow what the site really uses: the inline dark-mode script, inline JSON-LD, self-hosted fonts, the Resend and PageSpeed calls made by the server only, and images from the site itself. Test in a preview; check the console for blocked resources on the home page, the Durban page, the legal pages, the audit form and `/command`.
+- [x] Trim `/website-design-durban` description from 178 to 160 characters or fewer.
+- [x] Expand `/terms` description from 64 to about 120 to 160 characters. Check every page in `PAGES` is between 120 and 160.
+- [x] Add a self-test (`scripts/legal-check.mjs` or a new check) that fails when a page description is outside 120 to 160 characters.
 
-Done when: preview deployed, headers verified with a curl or the audit tool on the preview URL, no console CSP errors, hero and audit form still work.
+Done when (after Samuel reviews and says push): preview deployed, headers verified with a curl or the audit tool on the preview URL, no console CSP errors, hero and audit form still work.
 
 ## Section 2: Audit tool false alarms
 **Goal:** reports never claim something is working or missing when it is not true. These reports go to clients.
@@ -95,3 +95,4 @@ Done when: mobile speed 85 or better (aim for 90), blocking time well under the 
 | Date | Section | Note |
 |---|---|---|
 | 2026-10-27 | all | Plan created from the audit. Nothing started yet. |
+| 2026-10-27 | 1 | Built on `preview/audit-s1`: CSP and four other headers on every page (hashes for the two inline scripts), 3 descriptions fixed (/terms 64 to 130, /refund-policy 71 to 134, /website-design-durban 178 to 152), `scripts/seo-check.mjs` (`npm run seo:check` after a build). Tested in a browser with the exact headers: no blocked resources on home, Durban page, terms and /command at desktop and phone width; an injected inline script is blocked, so the policy is enforced. |

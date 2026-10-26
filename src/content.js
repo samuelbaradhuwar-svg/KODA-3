@@ -143,8 +143,8 @@ export const SOCIALS = [
 
 export const PAGES = {
   "/privacy-policy": { title: "Privacy Policy | KODA", description: "How KODA collects, uses and protects personal information, in line with South Africa's Protection of Personal Information Act (POPIA)." },
-  "/terms": { title: "Terms and Conditions | KODA", description: "The terms for using the KODA website and our free website check." },
-  "/refund-policy": { title: "Refund Policy | KODA", description: "When and how KODA refunds payments for web design and related services." },
+  "/terms": { title: "Terms and Conditions | KODA", description: "The terms that apply when you use the KODA website, request our free website check or ask us about a web design project in Durban." },
+  "/refund-policy": { title: "Refund Policy | KODA", description: "When and how KODA refunds payments for web design and related services in South Africa, in plain English, and how to ask for a refund." },
   "/cookie-policy": { title: "Cookie Policy | KODA", description: "KODA does not use tracking or advertising cookies. This page explains what the site does and does not store on your device." },
   "/": {
     title: "Website Design Durban | Small Business Websites | KODA",
@@ -153,7 +153,7 @@ export const PAGES = {
   "/website-design-durban": {
     title: "Website Design in Durban for Small Businesses | KODA",
     description:
-      "Website design in Durban for small and medium businesses: websites, ecommerce, booking systems, logos, Google Business Profile and SEO. Prices from R3,499. Free homepage mock-up.",
+      "Website design in Durban for small businesses: websites, ecommerce, booking, logos, Google Business Profile and SEO. From R3,499. Free homepage mock-up.",
   },
 };
 

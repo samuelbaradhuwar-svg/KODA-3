@@ -8,6 +8,7 @@
     "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "legal:check": "node scripts/legal-check.mjs",
+    "seo:check": "node scripts/seo-check.mjs",
     "test": "node scripts/audit-selftest.mjs && node scripts/command-selftest.mjs"
   },
   "dependencies": {
