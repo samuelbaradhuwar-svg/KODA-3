@@ -113,6 +113,41 @@ function Inbox({ call, go }) {
   );
 }
 
+function SentLog({ sends, call }) {
+  const [open, setOpen] = useState(null);
+  const [html, setHtml] = useState("");
+  async function view(id) {
+    if (open === id) return setOpen(null);
+    setOpen(id);
+    setHtml("");
+    try {
+      const r = await call(`sends/${id}`);
+      setHtml(r.send.body_html);
+    } catch {
+      setHtml("<p>Could not load this email.</p>");
+    }
+  }
+  return (
+    <Card title="Sent emails">
+      <ul className="grid gap-2 text-[14px]">
+        {sends.map((s) => (
+          <li key={s.id} className="rounded-xl border border-ink/15 p-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${s.ok ? "bg-[#BDF64F] text-[#101010]" : "bg-[#FF9A8B] text-[#101010]"}`}>{s.ok ? "Sent" : "Failed"}</span>
+              <span className="rounded-full border border-ink/20 px-2 py-0.5 text-[12px] text-muted">{s.kind === "test" ? "Test to you" : "To the client"}</span>
+              <span className="text-muted">{when(s.sent_at)}</span>
+              <button className="ml-auto text-[13px] underline" onClick={() => view(s.id)} aria-expanded={open === s.id}>{open === s.id ? "Hide" : "View"}</button>
+            </div>
+            <p className="mt-1">{s.to_email} · {s.subject}</p>
+            {!s.ok && s.error && <p className="mt-1 text-muted">{s.error}</p>}
+            {open === s.id && (html ? <iframe title="Sent email" sandbox="" srcDoc={html} className="mt-2 h-[28rem] w-full rounded-xl border border-ink/20 bg-white" /> : <p className="mt-2 text-muted">Loading…</p>)}
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
 function Detail({ id, call, go, retentionDays }) {
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
@@ -204,11 +239,7 @@ function Detail({ id, call, go, retentionDays }) {
         <button className={`${danger} mt-3`} onClick={remove}>Delete this request</button>
       </Card>
 
-      {data.sends.length > 0 && (
-        <Card title="Sent emails">
-          <ul className="text-[14px]">{data.sends.map((s) => <li key={s.id}>{when(s.sent_at)} · {s.to_email} · {s.subject} · {s.ok ? "sent" : "failed"}</li>)}</ul>
-        </Card>
-      )}
+      {data.sends.length > 0 && <SentLog sends={data.sends} call={call} />}
     </>
   );
 }

@@ -11,6 +11,7 @@ import http from "node:http";
 import { crawlSite, pickPages } from "../api/_cc/crawl.js";
 import { technicalFindings, checkedSummary } from "../api/_cc/technical.js";
 import { mergeFindings } from "../api/_cc/handler.js";
+import { renderEmailHtml, previewHtml, cleanSubject, safeBase, defaultEmail, sendViaResend, validEmail, PUBLIC_BASE, REPLY_TO } from "../api/_cc/email.js";
 import { buildReport, suggestPlan, DISCLAIMER } from "../api/_cc/report.js";
 import { searchFindings, searchNotes } from "../api/_cc/search.js";
 import { conversionFindings } from "../api/_cc/conversion.js";
@@ -394,6 +395,184 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   assert.equal(last.code, 429);
 }
 
+// ---- the email: text in, safe branded HTML out
+{
+  const html = renderEmailHtml("Hi <b>there</b>,\n\nhttps://www.heykoda.co.za/report/abc\n\n- one & two\n- <script>alert(1)</script>\n\nSee https://example.com/x, thanks.");
+  assert.ok(!/<script|<b>there/.test(html), "markup in the draft is escaped");
+  assert.ok(html.includes("&lt;script&gt;") && html.includes("one &amp; two"));
+  assert.ok(html.includes('View your audit report') && html.includes('href="https://www.heykoda.co.za/report/abc"'), "a lone link becomes a button");
+  assert.ok(html.includes("<ul") && html.includes('src="cid:kodalogo"'), "bullets and the inline logo");
+  assert.ok(html.includes('href="https://example.com/x"') && html.includes("</a>, thanks"), "trailing punctuation stays outside the link");
+  assert.ok(!/href="(javascript|http:)/i.test(renderEmailHtml("javascript:alert(1) http://x.co")), "only https links are made clickable");
+  assert.ok(previewHtml("hi").includes("data:image/png;base64,"), "the preview shows the logo without needing the mail client");
+  assert.equal(cleanSubject("Hello\r\nBcc: evil@x.com"), "Hello Bcc: evil@x.com", "no header injection through the subject");
+  assert.equal(safeBase("https://evil.com"), PUBLIC_BASE);
+  assert.equal(safeBase("https://koda-3-abc123-koda12.vercel.app"), "https://koda-3-abc123-koda12.vercel.app");
+  assert.equal(safeBase("https://koda-3-abc-koda12.vercel.app.evil.com"), PUBLIC_BASE);
+  assert.ok(validEmail("a@b.co") && !validEmail("a@b.co, c@d.co") && !validEmail("nope"));
+  const rep = buildReport({ request: { business: "Acme", site_url: "https://www.acme.co.za/" }, audit: { findings: [{ id: "a", area: "search", severity: "high", bucket: "fix_first", include: true, title: "Home page does not say what you do.", evidence: "e", why: "w", fix: "f", service_key: "seo" }], crawl: null, manual: {} }, now: new Date() });
+  const d = defaultEmail({ request: {}, report: rep, url: "https://www.heykoda.co.za/report/xyz", expires: "2026-11-25T00:00:00Z" });
+  assert.equal(d.subject, "Your website audit for acme.co.za");
+  assert.ok(d.body.includes("https://www.heykoda.co.za/report/xyz") && d.body.includes("- Home page does not say what you do") && d.body.includes("1 thing to fix first") && d.body.includes("25 November 2026"));
+  assert.ok(!/guarantee(d)? (rank|result)|first page/i.test(d.body) && /cannot promise rankings/.test(d.body), "the draft promises nothing");
+  assert.ok(!/KODA/.test(d.subject + d.body), "the brand name is only ever the logo image in the email");
+  // the Resend call
+  const calls = [];
+  const fetcher = (status, json) => async (u, o) => { calls.push({ u, o: { ...o, parsed: JSON.parse(o.body) } }); return { ok: status < 300, status, json: async () => json }; };
+  let r = await sendViaResend({ to: "c@c.co", subject: "S\nX", body: "Hi", bcc: "hello@heykoda.co.za", idem: "idem-12345678" }, { fetcher: fetcher(200, { id: "em_1" }), key: "re_secret", from: "KODA <hello@heykoda.co.za>" });
+  assert.deepEqual(r, { ok: true, id: "em_1" });
+  const c0 = calls[0];
+  assert.equal(c0.u, "https://api.resend.com/emails");
+  assert.equal(c0.o.headers.authorization, "Bearer re_secret");
+  assert.equal(c0.o.headers["idempotency-key"], "idem-12345678");
+  assert.deepEqual(c0.o.parsed.to, ["c@c.co"]);
+  assert.equal(c0.o.parsed.reply_to, REPLY_TO);
+  assert.equal(c0.o.parsed.from, "KODA <hello@heykoda.co.za>");
+  assert.deepEqual(c0.o.parsed.bcc, ["hello@heykoda.co.za"]);
+  assert.equal(c0.o.parsed.subject, "S X");
+  assert.equal(c0.o.parsed.attachments[0].content_id, "kodalogo");
+  r = await sendViaResend({ to: "c@c.co", subject: "S", body: "Hi" }, { fetcher: fetcher(403, { message: "The key re_secret_abc cannot send from this domain" }), key: "re_secret" });
+  assert.equal(r.ok, false);
+  assert.ok(r.error.includes("403") && !r.error.includes("re_secret"), "a Resend error never repeats a key");
+  r = await sendViaResend({ to: "c@c.co", subject: "S", body: "Hi" }, { fetcher: async () => { throw Object.assign(new Error("x"), { name: "TimeoutError" }); }, key: "k" });
+  assert.match(r.error, /too long/);
+  r = await sendViaResend({ to: "c@c.co", subject: "S", body: "Hi" }, { key: "" });
+  assert.match(r.error, /RESEND_API_KEY/);
+}
+
+// ---- the send flow
+{
+  const db5 = memDb();
+  const base5 = db5.select;
+  const ins5 = db5.insert;
+  db5.insert = async (table, row) => ins5(table, table === "cc_sends" ? { sent_at: new Date().toISOString(), ...row } : row);
+  db5.select = async (table, q) => {
+    const g = (k) => (q.match(new RegExp(`(?:^|[?&])${k}=eq\\.([A-Za-z0-9_-]+)`)) || [])[1];
+    if (table === "cc_audits") return db5.t.cc_audits.filter((a) => (!g("request_id") || a.request_id === g("request_id")) && (!g("id") || a.id === g("id")));
+    if (table === "cc_sends") return db5.t.cc_sends.filter((r) => (!g("audit_id") || r.audit_id === g("audit_id")) && (!g("kind") || r.kind === g("kind")) && (!g("idem") || r.idem === g("idem")) && (!g("id") || r.id === g("id")) && (!/ok=is\.true/.test(q) || r.ok === true));
+    return base5(table, q);
+  };
+  const sent = [];
+  let failNext = false;
+  const mail = async (m) => { sent.push(m); if (failNext) { failNext = false; return { ok: false, error: "Resend answered 422: invalid sender" }; } return { ok: true, id: `em_${sent.length}` }; };
+  const h5 = createHandler({ db: db5, verify, now: () => new Date("2026-10-25T10:00:00Z"), crawl: async (u) => ({ finalUrl: u, pages: [{ url: u, status: 200 }], site: {}, incomplete: [] }), speed: async () => ({ error: "x" }), mail });
+  process.env.RESEND_API_KEY = "re_test";
+  const ip = "8.8.8.8";
+  const rid = await saveRequest({ url: "https://client.co.za/", email: "client@acme.co.za", business: "Acme" }, { db: db5, now: fixed });
+  let x = await call(h5, { method: "POST", url: `/api/command/requests/${rid}/audits`, ip });
+  const aid = x.body.audit.id;
+  await call(h5, { method: "POST", url: `/api/command/audits/${aid}/crawl`, ip });
+  const send5 = (b, kind = "client") => call(h5, { method: "POST", url: `/api/command/audits/${aid}/email/send`, body: { kind, subject: "Your audit", body: "Hi\n\nhttps://www.heykoda.co.za/report/x", confirm: true, idem: `idem-${Math.random().toString(36).slice(2, 12)}`, ...b }, ip });
+
+  x = await call(h5, { url: `/api/command/audits/${aid}/email`, ip });
+  assert.equal(x.body.linkActive, false);
+  assert.equal(x.body.to, "client@acme.co.za");
+  assert.equal(x.body.replyTo, "hello@heykoda.co.za");
+  assert.equal(x.body.from, "KODA <hello@heykoda.co.za>");
+  assert.match(x.body.body, /create the private link first/);
+  x = await send5({});
+  assert.equal(x.code, 400, "no client email without the report link");
+  assert.match(x.body.error, /private report link/);
+  assert.equal(sent.length, 0);
+
+  x = await call(h5, { method: "POST", url: `/api/command/audits/${aid}/link`, body: { days: 30 }, ip });
+  const token = x.body.link.token;
+  x = await call(h5, { url: `/api/command/audits/${aid}/email?base=${encodeURIComponent("https://evil.example")}`, ip });
+  assert.ok(x.body.body.includes(`${PUBLIC_BASE}/report/${token}`), "an unknown base falls back to the live site");
+  x = await call(h5, { url: `/api/command/audits/${aid}/email?base=${encodeURIComponent("https://koda-3-git-preview-command-center-koda12.vercel.app")}`, ip });
+  assert.ok(x.body.body.includes("koda-3-git-preview-command-center-koda12.vercel.app/report/"), "the owner's own preview address is allowed");
+  assert.equal(x.body.linkActive, true);
+  assert.equal(x.body.alreadySent, null);
+
+  x = await call(h5, { method: "POST", url: `/api/command/audits/${aid}/email/preview`, body: { subject: "S", body: "<script>alert(1)</script>" }, ip });
+  assert.ok(x.body.html.includes("&lt;script&gt;") && !x.body.html.includes("<script>"));
+  x = await call(h5, { method: "POST", url: `/api/command/audits/${aid}/email/preview`, body: { body: "   " }, ip });
+  assert.equal(x.code, 400);
+
+  // guards: explicit confirm, a send reference, content, no recipient override
+  x = await send5({ confirm: false });
+  assert.equal(x.code, 400);
+  x = await send5({ idem: "x" });
+  assert.equal(x.code, 400);
+  x = await send5({ subject: "  ", body: "  " });
+  assert.equal(x.code, 400);
+  assert.equal(sent.length, 0, "nothing was sent by any refused call");
+
+  x = await send5({ idem: "idem-first-0001", to: "attacker@evil.com", bcc: true });
+  assert.equal(x.code, 200);
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].to, "client@acme.co.za", "the recipient is always the address on the request");
+  assert.equal(sent[0].bcc, "hello@heykoda.co.za");
+  assert.equal(sent[0].subject, "Your audit");
+  assert.equal(db5.t.cc_requests[0].status, "sent");
+  assert.equal(db5.t.cc_audits[0].state, "sent");
+  const row = db5.t.cc_sends[0];
+  assert.equal(row.kind, "client"); assert.equal(row.ok, true); assert.equal(row.to_email, "client@acme.co.za"); assert.equal(row.resend_id, "em_1"); assert.equal(row.idem, "idem-first-0001");
+  assert.ok(row.body_html.includes("View your audit report"));
+  // a double click (same reference) does not send again
+  x = await send5({ idem: "idem-first-0001" });
+  assert.equal(x.body.duplicate, true);
+  assert.equal(sent.length, 1);
+  // a second real send needs a deliberate "send again"
+  x = await send5({});
+  assert.equal(x.code, 409);
+  assert.equal(sent.length, 1);
+  x = await send5({ sendAgain: true });
+  assert.equal(x.code, 200);
+  assert.equal(sent.length, 2);
+  x = await call(h5, { url: `/api/command/audits/${aid}/email`, ip });
+  assert.ok(x.body.alreadySent);
+
+  // a test goes to the owner only, is marked, and changes no status
+  db5.t.cc_requests[0].status = "audit_drafted";
+  x = await send5({ kind: "test", to: "attacker@evil.com" });
+  assert.equal(x.code, 200);
+  assert.equal(sent[2].to, "hello@heykoda.co.za");
+  assert.equal(sent[2].subject, "[TEST] Your audit");
+  assert.equal(db5.t.cc_requests[0].status, "audit_drafted");
+  assert.equal(db5.t.cc_sends.at(-1).kind, "test");
+  // a failed send is logged with the reason, stores no send reference and changes no status
+  failNext = true;
+  x = await send5({ kind: "test", idem: "idem-fail-0001" });
+  assert.equal(x.code, 502);
+  assert.match(x.body.error, /not sent/);
+  const failed = db5.t.cc_sends.at(-1);
+  assert.equal(failed.ok, false); assert.equal(failed.idem, null); assert.match(failed.error, /422/);
+  x = await send5({ kind: "test", idem: "idem-fail-0001" });
+  assert.equal(x.code, 200, "after a failure the same reference can be retried");
+  // reading a logged email back
+  x = await call(h5, { url: `/api/command/sends/${db5.t.cc_sends[0].id}`, ip });
+  assert.ok(x.body.send.body_html.includes("View your audit report"));
+  x = await call(h5, { url: `/api/command/requests/${rid}`, ip });
+  assert.ok(x.body.sends.length >= 4 && x.body.sends.every((r) => r.kind));
+
+  // preview addresses cannot send real client emails
+  process.env.VERCEL_ENV = "preview";
+  x = await send5({ sendAgain: true });
+  assert.equal(x.code, 403);
+  x = await call(h5, { url: `/api/command/audits/${aid}/email`, ip });
+  assert.equal(x.body.clientSendAllowed, false);
+  x = await send5({ kind: "test" });
+  assert.equal(x.code, 200, "tests to yourself still work on a preview");
+  process.env.COMMAND_ALLOW_PREVIEW_CLIENT_SEND = "1";
+  x = await send5({ sendAgain: true });
+  assert.equal(x.code, 200, "the override switch exists for deliberate use");
+  delete process.env.COMMAND_ALLOW_PREVIEW_CLIENT_SEND; delete process.env.VERCEL_ENV;
+
+  // no Resend key: a clear message, nothing sent
+  const before = sent.length;
+  delete process.env.RESEND_API_KEY;
+  x = await send5({ kind: "test" });
+  assert.equal(x.code, 503);
+  assert.equal(sent.length, before);
+  // a client address that is not an address
+  process.env.RESEND_API_KEY = "re_test";
+  db5.t.cc_requests[0].email = "not an email";
+  x = await send5({ sendAgain: true });
+  assert.equal(x.code, 400);
+  delete process.env.RESEND_API_KEY;
+}
+
 // ---- report content rules
 {
   const F = (id, severity, bucket, service_key, extra = {}) => ({ id, area: "technical", severity, bucket, include: true, source: "auto", title: `Title ${id}`, evidence: "e", why: "w", fix: "f", service_key, ...extra });
@@ -442,11 +621,17 @@ assert.equal(rls.rows.length, 3);
 assert.ok(rls.rows.every((x) => x.relrowsecurity), "row level security on every table");
 const pol = await pg.query("select count(*)::int as n from pg_policies where tablename like 'cc\\_%'");
 assert.equal(pol.rows[0].n, 0, "no policies, so the browser can read nothing");
+await pg.exec(fs.readFileSync("command-center/db/0002_cc_sends_log.sql", "utf8"));
 await pg.exec("insert into cc_requests(site_url,email) values ('https://a.co.za','a@b.co')");
+await pg.exec("insert into cc_sends(request_id,to_email,subject,body_html,ok,idem) select id,'a@b.co','s','<p>',true,'once-12345678' from cc_requests");
+await assert.rejects(pg.exec("insert into cc_sends(request_id,to_email,subject,body_html,ok,idem) select id,'a@b.co','s','<p>',true,'once-12345678' from cc_requests"), undefined, "the same send reference cannot be used twice");
+await assert.rejects(pg.exec("insert into cc_sends(request_id,to_email,subject,body_html,ok,kind) select id,'a@b.co','s','<p>',true,'weird' from cc_requests"));
+assert.equal((await pg.query("select kind from cc_sends limit 1")).rows[0].kind, "client");
 await assert.rejects(pg.exec("insert into cc_requests(site_url,email,status) values ('https://a.co.za','a@b.co','weird')"));
 await pg.exec("insert into cc_audits(request_id) select id from cc_requests");
 await pg.exec("delete from cc_requests");
 assert.equal((await pg.query("select count(*)::int as n from cc_audits")).rows[0].n, 0, "deleting a request deletes its audit");
+await pg.exec(fs.readFileSync("command-center/db/0002_cc_sends_log.down.sql", "utf8"));
 await pg.exec(fs.readFileSync("command-center/db/0001_cc_init.down.sql", "utf8"));
 
 console.log("command centre self-test: all checks passed");

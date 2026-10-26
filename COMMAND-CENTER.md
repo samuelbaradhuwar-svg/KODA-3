@@ -8,6 +8,7 @@ the editable findings, the client report and the send flow. This file grows with
 **Built so far:**
 - Step 1: sign-in, the inbox, request detail (status, private notes, delete), saving each detailed audit request when it arrives.
 - Step 2: **Run in-depth audit** (crawler and technical checks, below).
+- Step 5: the send flow (draft, preview, test, send, log).
 - Step 4: the client report (preview, private link, save as PDF).
 - Step 3: search and conversion checks, the "About this business" form, the manual-review checklist and a findings editor (below).
 
@@ -44,6 +45,7 @@ the Supabase dashboard (or move to the paid plan).
 | `VITE_SUPABASE_URL` | Project URL | Browser sign-in |
 | `VITE_SUPABASE_ANON_KEY` | `anon` or `publishable` public key | Browser sign-in (public by design). If Vercel says the name already exists, use `VITE_SUPABASE_PUBLISHABLE_KEY` instead; the page accepts either. |
 | `COMMAND_ADMIN_EMAIL` | `hello@heykoda.co.za` | Optional; this is the default |
+| `COMMAND_FROM` | `KODA <hello@heykoda.co.za>` | Optional; the sender shown on emails to clients |
 | `COMMAND_RETENTION_DAYS` | `180` | Optional; days before a request deletes itself |
 | `PAGESPEED_API_KEY` | free Google key | Optional but recommended: without it Google's shared speed quota often runs out |
 
@@ -85,7 +87,20 @@ At the bottom of an audit, **Client report**:
 - **Preview report** opens the saved report in a new tab (sign-in required) with a banner saying nothing has been sent. Save first.
 - **Private link:** **Create private link** (valid for 7, 30 or 90 days) makes a 43-character random link at `/report/<token>`. It needs no sign-in, so anyone with it can read the report until it expires or you press **Withdraw link**. Creating a new link replaces the old one. Reads are rate limited, the page is noindex, and the report contains nothing but the report (no email, phone, your notes or raw crawl data).
 - **Save as PDF** uses the browser's print (the report is laid out for A4). A server-made PDF is not included.
-- Sending the link by email is the next step; until then you copy the link yourself.
+- The link can also be emailed from here (next section).
+
+## Emailing the report (step 5)
+At the bottom of an audit, **Email to the client**:
+- **Draft:** a plain-English email is written from the report (greeting, the private link as a button, the counts and the three wins, the honest "we cannot promise rankings or sales" line, when the link expires, "reply to this email"). Edit the subject and text freely. The text is plain: a line that is only a link becomes a button, and lines starting with "- " become bullets. Create the private link first, then use **Reset to the default text** so the link is filled in.
+- **Always from hello@heykoda.co.za, reply-to hello@heykoda.co.za** (through Resend, using `RESEND_API_KEY`; the sender can be changed with `COMMAND_FROM`). The recipient is **always the address on the request**; the server refuses anything else. The logo is attached to the email as an inline image, because the name must always appear in the logo lettering.
+- **Preview first:** **Send a test** and **Send to the client…** stay locked until you press **Preview email** for the current text; changing a letter locks them again. The preview is the same HTML that is sent (the server rebuilds it from your text).
+- **Test:** **Send a test to hello@…** sends the same email to you only, with "[TEST]" in the subject. It changes nothing on the request.
+- **Send:** **Send to the client…** opens a confirmation ("Send this email to … now? It cannot be unsent."). Only **Yes, send now** sends. You can tick **Send me a copy** (BCC). The request becomes **Sent**.
+- **No double sends:** every click carries a one-time reference (also passed to Resend as an idempotency key), so a double click cannot send twice. A second real send of the same report needs you to tick "send it again".
+- **Preview addresses cannot email clients.** On a Vercel preview URL (`VERCEL_ENV=preview`) real client emails are blocked, because a client may not be able to open a preview link (and the link in the email would point at it). Tests to yourself work. To override on purpose, set `COMMAND_ALLOW_PREVIEW_CLIENT_SEND=1`.
+- **Log:** every attempt is stored in `cc_sends` (date, recipient, subject, the exact HTML, Resend's id, test or client, and the reason if it failed). The request page shows it under **Sent emails** with a **View** button. Failed sends are logged too, and can be retried.
+- If `RESEND_API_KEY` is missing in an environment, the screen says so and sending is disabled. It is currently set for **Production only**; adding it to Preview is a separate decision (see below).
+- The audit's original "request" email still arrives as before and is unrelated to this.
 
 ## Using it
 - Open `/command`, enter your address, click the link in the email.

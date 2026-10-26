@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { field, dark, light, danger, when, Card } from "./command-ui.jsx";
+import EmailPanel from "./CommandEmail.jsx";
 
 // The audit workspace on a request: run the checks, describe the business, edit every finding, and fill in the
 // things a machine cannot judge. Nothing here is sent to the client; that happens in a later step.
@@ -89,7 +90,7 @@ function FindingCard({ f, services, onChange, onDelete, startOpen }) {
   );
 }
 
-function ReportPanel({ audit, call, unsaved, onAudit }) {
+function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
   const touched = useRef(false); // once you start typing, a background reload must not overwrite it
   const [rep, setRep] = useState(null);
   const [link, setLink] = useState(null);
@@ -109,6 +110,7 @@ function ReportPanel({ audit, call, unsaved, onAudit }) {
       const r = await call(`audits/${audit.id}/report`);
       setRep(r.report);
       setLink(r.link);
+      onLink?.(r.link?.active ? r.link.token : "");
       if (force || !touched.current) {
         setSum(r.report.summary);
         setPlan(r.report.plan.text);
@@ -120,7 +122,7 @@ function ReportPanel({ audit, call, unsaved, onAudit }) {
     } catch (e) {
       setErr(e.message);
     }
-  }, [call, audit.id]);
+  }, [call, audit.id, onLink]);
   useEffect(() => { load(); }, [load, audit.updated_at]);
 
   async function save() {
@@ -142,6 +144,7 @@ function ReportPanel({ audit, call, unsaved, onAudit }) {
     try {
       const r = await call(`audits/${audit.id}/link`, { method: "POST", body: { action, days } });
       setLink(r.link);
+      onLink?.(r.link?.active ? r.link.token : "");
       setCopied(false);
     } catch (e) {
       setErr(e.message);
@@ -259,6 +262,7 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
   const [opened, setOpened] = useState(null);
+  const [linkKey, setLinkKey] = useState("");
 
   // keepEdits: leave the findings on screen alone (they have unsaved changes the server has not seen)
   const take = useCallback((a, n, keepEdits = false) => {
@@ -491,7 +495,8 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
         </Card>
       )}
 
-      {audit && audit.crawl && <ReportPanel audit={audit} call={call} unsaved={dirty} onAudit={(a) => take(a, null, dirty)} />}
+      {audit && audit.crawl && <ReportPanel audit={audit} call={call} unsaved={dirty} onAudit={(a) => take(a, null, dirty)} onLink={setLinkKey} />}
+      {audit && audit.crawl && <EmailPanel audit={audit} call={call} linkKey={linkKey} onSent={onChange} />}
     </>
   );
 }

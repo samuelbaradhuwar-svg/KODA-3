@@ -12,6 +12,7 @@ import { conversionFindings } from "./conversion.js";
 import { MANUAL_CHECKLIST } from "./manual.js";
 import { sanitizeFindings, sanitizeManual } from "./audit-edit.js";
 import { buildReport } from "./report.js";
+import { defaultEmail, previewHtml, renderEmailHtml, cleanBody, cleanSubject, validEmail, safeBase, sendViaResend, FROM, REPLY_TO } from "./email.js";
 import { randomBytes } from "node:crypto";
 
 export const STATUSES = ["new", "replied", "audit_drafted", "sent", "won", "lost"];
@@ -62,7 +63,7 @@ export function mergeFindings(existing = [], fresh = []) {
   return [...keep, ...fresh.filter((f) => !taken.has(f.id))];
 }
 
-export function createHandler({ db, verify = verifyAdmin, now = () => new Date(), crawl = crawlSite, speed = pageSpeed } = {}) {
+export function createHandler({ db, verify = verifyAdmin, now = () => new Date(), crawl = crawlSite, speed = pageSpeed, mail = sendViaResend } = {}) {
   let store = db;
   const getDb = () => (store ??= createDb());
 
@@ -107,7 +108,7 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
       return send(503, { ok: false, error: "The database is not set up yet. See COMMAND-CENTER.md." });
     }
 
-    const [a, id, b] = routeOf(req);
+    const [a, id, b, c] = routeOf(req);
     const method = req.method;
     try {
       if (a === "me" && method === "GET") {
@@ -126,7 +127,7 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
           const [row] = await d.select("cc_requests", `select=*&id=eq.${id}`);
           if (!row) return send(404, { ok: false, error: "Not found." });
           const audits = await d.select("cc_audits", `select=id,state,created_at,updated_at&request_id=eq.${id}&order=created_at.desc`);
-          const sends = await d.select("cc_sends", `select=id,sent_at,to_email,subject,ok&request_id=eq.${id}&order=sent_at.desc`);
+          const sends = await d.select("cc_sends", `select=id,sent_at,to_email,subject,ok,kind,error&request_id=eq.${id}&order=sent_at.desc`);
           return send(200, { ok: true, request: row, audits, sends });
         }
         if (method === "PATCH") {
@@ -161,6 +162,12 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
         return send(200, { ok: true, audit });
       }
 
+
+      if (a === "sends" && isUuid(id) && method === "GET") {
+        const [row] = await d.select("cc_sends", `select=id,sent_at,to_email,subject,ok,kind,error,body_html&id=eq.${id}`);
+        return row ? send(200, { ok: true, send: row }) : send(404, { ok: false, error: "Not found." });
+      }
+
       if (a === "audits" && isUuid(id)) {
         const [audit] = await d.select("cc_audits", `select=*&id=eq.${id}`);
         if (!audit) return send(404, { ok: false, error: "Not found." });
@@ -188,6 +195,64 @@ export function createHandler({ db, verify = verifyAdmin, now = () => new Date()
           if (!Object.keys(patch).length) return send(400, { ok: false, error: "Nothing to change." });
           const row = await d.updateById("cc_audits", id, { ...patch, ...touch });
           return send(200, { ok: true, audit: row, notes: notesFor(row) });
+        }
+
+
+        // ---- the email to the client: draft, preview, send. Nothing leaves without the explicit send call.
+        if (b === "email") {
+          const [rq] = await d.select("cc_requests", `select=id,email,business,site_url,status&id=eq.${audit.request_id}`);
+          const active = Boolean(audit.report_token && audit.token_expires_at && new Date(audit.token_expires_at) > now());
+          const previewEnv = process.env.VERCEL_ENV === "preview";
+          const clientSendAllowed = !previewEnv || process.env.COMMAND_ALLOW_PREVIEW_CLIENT_SEND === "1";
+
+          if (!c && method === "GET") {
+            const base = safeBase(new URL(req.url, "http://x").searchParams.get("base"));
+            const url = active ? `${base}/report/${audit.report_token}` : "";
+            const report = buildReport({ request: rq, audit, now: now() });
+            const [prev] = await d.select("cc_sends", `select=id,sent_at&audit_id=eq.${id}&kind=eq.client&ok=is.true&order=sent_at.desc&limit=1`);
+            return send(200, { ok: true, ...defaultEmail({ request: rq, report, url, expires: audit.token_expires_at }), to: rq.email, from: FROM(), replyTo: REPLY_TO, adminEmail: adminEmail(), linkActive: active, url, previewEnv, clientSendAllowed, emailConfigured: Boolean(process.env.RESEND_API_KEY), alreadySent: prev?.sent_at || null });
+          }
+
+          if (c === "preview" && method === "POST") {
+            const text = cleanBody(body.body);
+            if (!text) return send(400, { ok: false, error: "Write the email first." });
+            return send(200, { ok: true, subject: cleanSubject(body.subject), html: previewHtml(text) });
+          }
+
+          if (c === "send" && method === "POST") {
+            const kind = body.kind === "test" ? "test" : "client";
+            const subject = cleanSubject(body.subject);
+            const text = cleanBody(body.body);
+            const idem = String(body.idem || "");
+            if (body.confirm !== true) return send(400, { ok: false, error: "Sending needs an explicit confirmation." });
+            if (!/^[A-Za-z0-9_-]{8,70}$/.test(idem)) return send(400, { ok: false, error: "Missing send reference. Reload and try again." });
+            if (!subject || !text) return send(400, { ok: false, error: "The subject and the email cannot be empty." });
+            const [dup] = await d.select("cc_sends", `select=id,sent_at,to_email&idem=eq.${idem}&limit=1`);
+            if (dup) return send(200, { ok: true, duplicate: true, send: dup });
+            if (!process.env.RESEND_API_KEY) return send(503, { ok: false, error: "Email sending is not set up in this environment (RESEND_API_KEY). See COMMAND-CENTER.md." });
+            if (kind === "client") {
+              if (!clientSendAllowed) return send(403, { ok: false, error: "Real client emails are blocked on preview addresses, because clients cannot open preview links. Send a test to yourself here, and send to the client from the live site." });
+              if (!validEmail(rq.email)) return send(400, { ok: false, error: "The client's email address on the request does not look valid." });
+              if (!active) return send(400, { ok: false, error: "Create the private report link first (Client report), then send." });
+              const [prev] = await d.select("cc_sends", `select=id&audit_id=eq.${id}&kind=eq.client&ok=is.true&limit=1`);
+              if (prev && body.sendAgain !== true) return send(409, { ok: false, error: "This report was already emailed to the client. Tick \"send again\" if you really want to send another." });
+            }
+            const to = kind === "test" ? adminEmail() : rq.email;
+            const finalSubject = kind === "test" ? `[TEST] ${subject}` : subject;
+            const result = await mail({ to, subject: finalSubject, body: text, bcc: kind === "client" && body.bcc === true ? adminEmail() : undefined, idem });
+            let logged = null;
+            try {
+              logged = await d.insert("cc_sends", { request_id: audit.request_id, audit_id: id, to_email: to, subject: finalSubject, body_html: renderEmailHtml(text), resend_id: result.id || null, ok: result.ok, kind, error: result.ok ? null : cut(result.error, 300), idem: result.ok ? idem : null });
+            } catch {
+              logged = null;
+            }
+            if (!result.ok) return send(502, { ok: false, error: `The email was not sent. ${result.error}` });
+            if (kind === "client") {
+              await d.updateById("cc_requests", audit.request_id, { status: "sent" });
+              await d.updateById("cc_audits", id, { state: "sent", ...touch });
+            }
+            return send(200, { ok: true, to, kind, send: logged, warning: logged ? undefined : "The email was sent but could not be written to the log." });
+          }
         }
 
         if (b === "report" && method === "GET") {
