@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { field, dark, light, danger, when, Card } from "./command-ui.jsx";
+import { field, dark, light, danger, check, when, Card } from "./command-ui.jsx";
 import EmailPanel from "./CommandEmail.jsx";
 
 // The audit workspace on a request: run the checks, describe the business, edit every finding, and fill in the
@@ -39,9 +39,9 @@ function FindingCard({ f, services, onChange, onDelete, startOpen }) {
         <span className="rounded-full border border-ink/20 px-2 py-0.5 text-[12px] text-muted">{AREA[f.area] || f.area}</span>
         {f.edited && <span className="text-[12px] text-muted">edited</span>}
         {f.source === "manual" && <span className="text-[12px] text-muted">added by you</span>}
-        <h4 className="min-w-0 flex-1 font-semibold">{f.title || "(no title)"}</h4>
-        <button className={light} onClick={() => setEdit(!edit)} aria-expanded={edit}>{edit ? "Done" : "Edit"}</button>
+        <button className={`${light} ml-auto`} onClick={() => setEdit(!edit)} aria-expanded={edit}>{edit ? "Done" : "Edit"}</button>
       </div>
+      <h4 className="mt-1 font-semibold [overflow-wrap:anywhere]">{f.title || "(no title)"}</h4>
 
       {!edit ? (
         <dl className="mt-2 grid gap-x-4 gap-y-1 text-[14px] sm:grid-cols-[7rem_1fr]">
@@ -81,7 +81,7 @@ function FindingCard({ f, services, onChange, onDelete, startOpen }) {
           <Field id={id("w")} label="Why it matters (plain English)"><textarea id={id("w")} className={`${field} min-h-[4.5rem]`} maxLength={600} value={f.why} onChange={(e) => set("why", e.target.value)} /></Field>
           <Field id={id("f")} label="The fix"><textarea id={id("f")} className={`${field} min-h-[4.5rem]`} maxLength={700} value={f.fix} onChange={(e) => set("fix", e.target.value)} /></Field>
           <div className="flex flex-wrap items-center gap-3">
-            <label className="flex items-center gap-2 text-[14px]"><input type="checkbox" checked={f.include !== false} onChange={(e) => set("include", e.target.checked)} /> Include in the client report</label>
+            <label className="flex min-h-[44px] items-center gap-3 text-[14px]"><input className={check} type="checkbox" checked={f.include !== false} onChange={(e) => set("include", e.target.checked)} /> Include in the client report</label>
             {f.source === "manual" && <button className={danger} onClick={onDelete}>Delete this finding</button>}
           </div>
         </div>
@@ -160,7 +160,7 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
   const AiRow = ({ target, current, set }) => (
     <div className="mt-1 flex flex-wrap items-center gap-2">
       <button className={light} disabled={!aiOn || !!aiBusy || unsaved} onClick={() => draftAi(target)} title={!aiOn ? "AI drafting is not set up" : unsaved ? "Save your findings first" : ""}>{aiBusy === target ? "Drafting…" : "Draft with AI"}</button>
-      {undo[target] !== undefined && undo[target] !== current && <button className="text-[13px] underline" onClick={() => { touched.current = true; set(undo[target]); setUndo((u) => { const n = { ...u }; delete n[target]; return n; }); }}>Undo the AI draft</button>}
+      {undo[target] !== undefined && undo[target] !== current && <button className="inline-flex min-h-[44px] items-center text-[14px] underline" onClick={() => { touched.current = true; set(undo[target]); setUndo((u) => { const n = { ...u }; delete n[target]; return n; }); }}>Undo the AI draft</button>}
       {!aiOn && <span className="text-[13px] text-muted">AI drafting is off (it needs an Anthropic key in Vercel). You can write everything by hand.</span>}
       {aiOn && <span className="text-[13px] text-muted">It only sees the findings, not the business name or site text, and may not invent figures or promise results.</span>}
     </div>
@@ -194,7 +194,7 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
   const sugOnce = rep.suggested.once || "no one-off plan";
   const sugMonthly = rep.suggested.monthly || "no monthly plan";
   return (
-    <Card title="Client report" right={<a className={light} href={`/command/${audit.id}/preview`} target="_blank" rel="noopener noreferrer">Preview report</a>}>
+    <Card title="Client report" id="sec-report" right={<a className={light} href={`/command/${audit.id}/preview`} target="_blank" rel="noopener noreferrer">Preview report</a>}>
       <p className="text-[14px] text-muted">A plain-English page for the client with a summary, the three biggest wins, every finding, your manual review, a proposed KODA plan and an honest note that results are not guaranteed. Everything below is editable. Nothing is sent from here; the link only works once you create it.</p>
       {rep.incomplete?.length > 0 && <p role="status" className="mt-3 rounded-2xl bg-[#FFC76B] p-3 text-[14px] text-[#101010]"><b>{rep.incomplete.length} {rep.incomplete.length === 1 ? "finding has" : "findings have"} no explanation or fix yet:</b> {rep.incomplete.map((f) => f.title).join("; ")}. Fill them in under Findings, or tick "Include in the client report" off, before you send.</p>}
       {unsaved && <p role="status" className="mt-3 rounded-2xl bg-[#FFC76B] p-3 text-[14px] font-semibold text-[#101010]">You have unsaved changes to the findings. Save them first, or the report will not show them.</p>}
@@ -203,14 +203,14 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
         <label className={lbl} htmlFor="rp-sum">Summary (the default is written from the findings; change anything)</label>
         <textarea id="rp-sum" className={`${field} min-h-[8rem]`} maxLength={4000} value={sum} onChange={(e) => { touched.current = true; setSum(e.target.value); }} />
         <AiRow target="summary" current={sum} set={setSum} />
-        {sum !== rep.defaults.summary && <button className="mt-1 text-[13px] underline" onClick={() => { touched.current = true; setSum(rep.defaults.summary); }}>Use the automatic summary again</button>}
+        {sum !== rep.defaults.summary && <button className="inline-flex min-h-[44px] items-center text-[14px] underline" onClick={() => { touched.current = true; setSum(rep.defaults.summary); }}>Use the automatic summary again</button>}
       </div>
 
       <fieldset className="mt-4">
         <legend className={lbl}>The three biggest wins (pick up to 3; leave empty to use the top three automatically)</legend>
         <ul className="mt-1 grid gap-1">
           {included.map((f) => (
-            <li key={f.id}><label className="flex items-start gap-2 text-[14px]"><input className="mt-1" type="checkbox" checked={wins.includes(f.id)} disabled={!wins.includes(f.id) && wins.length >= 3} onChange={() => toggleWin(f.id)} /><span>{f.title} <span className="text-muted">({SEV[f.severity]?.label})</span>{!wins.length && rep.suggested.winIds.includes(f.id) ? <span className="text-muted"> · automatic pick</span> : null}</span></label></li>
+            <li key={f.id}><label className="flex min-h-[44px] items-center gap-3 text-[14px]"><input className={check} type="checkbox" checked={wins.includes(f.id)} disabled={!wins.includes(f.id) && wins.length >= 3} onChange={() => toggleWin(f.id)} /><span>{f.title} <span className="text-muted">({SEV[f.severity]?.label})</span>{!wins.length && rep.suggested.winIds.includes(f.id) ? <span className="text-muted"> · automatic pick</span> : null}</span></label></li>
           ))}
         </ul>
       </fieldset>
@@ -239,7 +239,7 @@ function ReportPanel({ audit, call, unsaved, onAudit, onLink }) {
         <label className={lbl} htmlFor="rp-plan">How KODA would fix it (the default is built from the findings; change anything)</label>
         <textarea id="rp-plan" className={`${field} min-h-[8rem]`} maxLength={6000} value={plan} onChange={(e) => { touched.current = true; setPlan(e.target.value); }} />
         <AiRow target="plan" current={plan} set={setPlan} />
-        {plan !== rep.defaults.plan && <button className="mt-1 text-[13px] underline" onClick={() => { touched.current = true; setPlan(rep.defaults.plan); }}>Use the automatic text again</button>}
+        {plan !== rep.defaults.plan && <button className="inline-flex min-h-[44px] items-center text-[14px] underline" onClick={() => { touched.current = true; setPlan(rep.defaults.plan); }}>Use the automatic text again</button>}
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -419,6 +419,7 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
     <>
       <Card
         title="In-depth audit"
+        id="sec-audit"
         right={<button className={dark} disabled={!!busy} onClick={run}>{busy ? "Working…" : audit ? "Run again" : "Run in-depth audit"}</button>}
       >
         {busy && <p role="status" className="text-[14px]">{busy}</p>}
@@ -439,7 +440,7 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
               </div>
             )}
             <details className="mt-3">
-              <summary className="cursor-pointer text-[14px] underline">Pages read ({c.pages?.length})</summary>
+              <summary className="flex min-h-[44px] cursor-pointer items-center text-[14px] underline">Pages read ({c.pages?.length})</summary>
               <ul className="mt-2 text-[14px]">{c.pages?.map((p, i) => <li key={i}>{p.status || "failed"} · {p.url}{p.error ? ` · ${p.error}` : ""}</li>)}</ul>
             </details>
           </>
@@ -447,7 +448,7 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
       </Card>
 
       {audit && (
-        <Card title="About this business">
+        <Card title="About this business" id="sec-about" fold="auto">
           <p className="text-[14px] text-muted">A crawler cannot know these, so tell it. They switch on the keyword and local checks (is the trade and town where Google looks, are the phone, address and areas on the site). Separate several with commas.</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <Field id="in-name" label="Business name"><input id="in-name" className={field} value={inputs.businessName || ""} onChange={(e) => setInputs({ ...inputs, businessName: e.target.value })} /></Field>
@@ -467,10 +468,11 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
       {audit && (
         <Card
           title={`Findings (${visible.length})`}
+          id="sec-findings"
           right={<button className={light} onClick={() => addFinding()}>Add a finding</button>}
         >
           {dirty && (
-            <div className="sticky top-2 z-10 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-ink/30 bg-paper p-3 text-[14px] shadow">
+            <div className="sticky bottom-24 z-10 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-ink/30 bg-paper p-3 text-[14px] shadow sm:bottom-auto sm:top-2">
               <span>You have unsaved changes.</span>
               <button className={dark} disabled={!!busy} onClick={saveAll}>Save findings</button>
             </div>
@@ -487,7 +489,7 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
           })}
           {hidden.length > 0 && (
             <details className="mt-5">
-              <summary className="cursor-pointer text-[14px] underline">Hidden from the report ({hidden.length})</summary>
+              <summary className="flex min-h-[44px] cursor-pointer items-center text-[14px] underline">Hidden from the report ({hidden.length})</summary>
               <ul className="mt-2 grid gap-3">{hidden.map((f) => <FindingCard key={f.id} f={f} services={services} onChange={upd} onDelete={() => { setFindings((all) => all.filter((x) => x.id !== f.id)); setDirty(true); }} />)}</ul>
             </details>
           )}
@@ -495,7 +497,7 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
       )}
 
       {audit && catalog?.checklist && (
-        <Card title="Manual review" right={<span className="text-[13px] text-muted">{todo === 0 ? "All reviewed" : `${todo} of ${catalog.checklist.length} still to review`}</span>}>
+        <Card title="Manual review" id="sec-review" fold="auto" right={<span className="text-[13px] text-muted">{todo === 0 ? "All reviewed" : `${todo} of ${catalog.checklist.length} still to review`}</span>}>
           <p className="text-[14px] text-muted">Things the automatic audit cannot judge. Nothing here is guessed: each item stays "Not reviewed" until you check it yourself, and the report says so if you leave it.</p>
           {Object.entries(groups).map(([g, items]) => (
             <div key={g} className="mt-5">
@@ -509,7 +511,7 @@ export default function AuditPanel({ requestId, call, existing, onChange }) {
                       <p className="mt-1 text-[14px] text-muted">{it.check}</p>
                       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1" role="radiogroup" aria-label={it.title}>
                         {MSTATUS.map(([v, l]) => (
-                          <label key={v} className="flex items-center gap-1.5 text-[14px]"><input type="radio" name={`m-${it.key}`} checked={cur.status === v} onChange={() => setCheck({ ...check, [it.key]: { ...cur, status: v } })} /> {l}</label>
+                          <label key={v} className="flex min-h-[44px] items-center gap-2 pr-3 text-[14px]"><input className={check} type="radio" name={`m-${it.key}`} checked={cur.status === v} onChange={() => setCheck({ ...check, [it.key]: { ...cur, status: v } })} /> {l}</label>
                         ))}
                       </div>
                       <label className={`${lbl} mt-2`} htmlFor={`n-${it.key}`}>Notes (these appear in the client report)</label>

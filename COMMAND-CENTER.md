@@ -112,6 +112,17 @@ Off until an Anthropic key is added. In **Client report**, **Draft with AI** (on
 - **Settings (Vercel, Production and Preview, koda-3 project):** `ANTHROPIC_API_KEY` (Secret). Optional `COMMAND_AI_MODEL` (default `claude-haiku-5-5`, or `AUDIT_AI_MODEL` if set).
 - Everything still works by hand without it.
 
+## On your phone
+The tool is built phone-first, so you can review an audit and get back to a customer while you are out.
+- **Quick actions bar** (phones only) stays at the bottom of a request: **Call** and **WhatsApp** (shown when the visitor gave a South African phone number; the WhatsApp message is pre-filled and only goes to a number that looks like a South African number), **Email** (opens your mail app with their address encoded and a subject) and **Report** (jumps to the email panel).
+- **Section chips** at the top (Request, Status, Audit, Findings, Review, Report, Email) jump to a section and open it if it is folded.
+- **Folded sections:** About this business, Manual review, What the automatic check found and Their data start folded on a phone (open on a laptop) and open with a tap. The request page is about 40% shorter than before.
+- **Status and notes** sit directly under the request, so changing status after a call takes two taps.
+- **Thumb-sized controls:** every button, link, checkbox and radio is at least 44 px, and every text box uses 16 px text so an iPhone does not zoom when you tap it.
+- **Add to your home screen** for an app-like icon that opens full screen: on iPhone, open `www.heykoda.co.za/command` in Safari, tap Share, then **Add to Home Screen**; on Android, in Chrome, tap the menu, then **Install app** or **Add to Home screen**. You still sign in with the emailed link (Supabase keeps you signed in for a while).
+- The client report was already readable on a phone; its buttons and links are now thumb-sized too.
+- Checked at 390 px and 360 px wide: no sideways scrolling, no tap target under 44 px, no text box under 16 px.
+
 ## Using it
 - Open `/command`, enter your address, click the link in the email.
 - Each detailed audit request appears in the inbox (the email to you still arrives as before).

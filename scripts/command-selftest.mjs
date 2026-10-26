@@ -12,6 +12,7 @@ import { crawlSite, pickPages } from "../api/_cc/crawl.js";
 import { technicalFindings, checkedSummary } from "../api/_cc/technical.js";
 import { mergeFindings } from "../api/_cc/handler.js";
 import { aiFacts, checkDraft, askModel, draft as aiDraft, PROMPTS } from "../api/_cc/ai.js";
+import { telHref, waNumber } from "../src/lib/phone.js";
 import { renderEmailHtml, previewHtml, cleanSubject, safeBase, defaultEmail, sendViaResend, validEmail, PUBLIC_BASE, REPLY_TO } from "../api/_cc/email.js";
 import { buildReport, suggestPlan, DISCLAIMER } from "../api/_cc/report.js";
 import { searchFindings, searchNotes } from "../api/_cc/search.js";
@@ -714,6 +715,21 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   assert.ok(!rep.wins.some((w) => w.id === "x1"), "an empty finding is never a win");
   assert.deepEqual(rep.incomplete.map((f) => f.id), ["x1"], "the owner is told which findings are still blank");
   assert.ok(!/Checked by hand/.test(JSON.stringify(rep)), "client wording says hands-on review");
+}
+
+// ---- phone links for Call and WhatsApp
+{
+  assert.equal(waNumber("031 555 0123"), "27315550123");
+  assert.equal(waNumber("+27 31 555 0123"), "27315550123");
+  assert.equal(waNumber("0027315550123"), "27315550123");
+  assert.equal(waNumber("082-555-0123"), "27825550123");
+  assert.equal(waNumber("(031) 555 0123"), "27315550123");
+  for (const bad of ["", "0", "12345", "+1 202 555 0123", "+44 20 7946 0958", "not a number", "031 555 0123 4567 89"]) assert.equal(waNumber(bad), "", `${JSON.stringify(bad)} gets no WhatsApp link`);
+  assert.equal(telHref("031 555 0123"), "tel:0315550123");
+  assert.equal(telHref("+27 31 555 0123"), "tel:+27315550123");
+  assert.equal(telHref("12"), "");
+  assert.equal(telHref(null), "");
+  assert.ok(!/[<>"'\s]/.test(telHref("031 555 0123<script>")), "nothing but digits and + reaches the link");
 }
 
 // ---- the client-facing voice: no talk of tools, and no claims about staff

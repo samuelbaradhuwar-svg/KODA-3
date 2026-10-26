@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { field, dark, light, danger, when, Card } from "./command-ui.jsx";
+import { field, dark, light, danger, check, when, Card } from "./command-ui.jsx";
 
 // Email to the client: edit the text, preview the exact email, then send. The server builds the HTML from this text and
 // only ever sends to the address on the request, so nothing here can send to anyone else. Sending needs a preview of
@@ -79,7 +79,7 @@ export default function EmailPanel({ audit, call, linkKey, onSent }) {
   const canTest = ready && meta.emailConfigured && !busy;
 
   return (
-    <Card title="Email to the client">
+    <Card title="Email to the client" id="sec-email">
       <p className="text-[14px] text-muted">Nothing is sent until you press Send and confirm. It goes from {meta.from} with replies to {meta.replyTo}, and only ever to the address on this request.</p>
       {!meta.emailConfigured && <p role="alert" className="mt-3 rounded-2xl bg-[#FFC76B] p-3 text-[14px] font-semibold text-[#101010]">Email sending is not set up in this environment (RESEND_API_KEY is missing), so you can draft and preview but not send.</p>}
       {meta.previewEnv && <p role="status" className="mt-3 rounded-2xl bg-[#FFC76B] p-3 text-[14px] text-[#101010]"><b>You are on a preview address.</b> You can send tests to yourself here, but real client emails are blocked, because a client may not be able to open a preview link. Send to the client from the live site.</p>}
@@ -100,9 +100,9 @@ export default function EmailPanel({ audit, call, linkKey, onSent }) {
         <textarea id="em-body" className={`${field} min-h-[16rem]`} maxLength={8000} value={body} onChange={(e) => { touched.current = true; setBody(e.target.value); }} />
       </div>
       {missingLink && <p role="status" className="mt-2 text-[14px] font-semibold">This text does not contain the report link. The client would get an email with nothing to open.</p>}
-      <button className="mt-1 text-[13px] underline" onClick={() => load(true)}>Reset to the default text</button>
+      <button className="inline-flex min-h-[44px] items-center text-[14px] underline" onClick={() => load(true)}>Reset to the default text</button>
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         <button className={dark} disabled={!!busy || !body.trim()} onClick={preview}>Preview email</button>
         <button className={light} disabled={!canTest} onClick={() => doSend("test", newKey())} title={ready ? "" : "Preview the current text first"}>Send a test to {meta.adminEmail}</button>
         <button className={dark} disabled={!canClient} onClick={() => setConfirm({ kind: "client", idem: newKey() })} title={ready ? "" : "Preview the current text first"}>Send to the client…</button>
@@ -117,9 +117,9 @@ export default function EmailPanel({ audit, call, linkKey, onSent }) {
           <p className="font-semibold">Send this email to {meta.to} now?</p>
           <p className="mt-1 text-[14px]">Subject: {subject}</p>
           <p className="mt-1 text-[14px] text-muted">It cannot be unsent. It will be logged below.</p>
-          <label className="mt-3 flex items-center gap-2 text-[14px]"><input type="checkbox" checked={bcc} onChange={(e) => setBcc(e.target.checked)} /> Send me a copy ({meta.adminEmail})</label>
-          {meta.alreadySent && <label className="mt-2 flex items-center gap-2 text-[14px] font-semibold"><input type="checkbox" checked={again} onChange={(e) => setAgain(e.target.checked)} /> This report was already emailed on {when(meta.alreadySent)}. Send it again.</label>}
-          <div className="mt-3 flex gap-2">
+          <label className="mt-3 flex min-h-[44px] items-center gap-3 text-[14px]"><input className={check} type="checkbox" checked={bcc} onChange={(e) => setBcc(e.target.checked)} /> Send me a copy ({meta.adminEmail})</label>
+          {meta.alreadySent && <label className="mt-2 flex min-h-[44px] items-center gap-3 text-[14px] font-semibold"><input className={check} type="checkbox" checked={again} onChange={(e) => setAgain(e.target.checked)} /> This report was already emailed on {when(meta.alreadySent)}. Send it again.</label>}
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
             <button className={danger} disabled={!!busy || (meta.alreadySent && !again)} onClick={() => doSend(confirm.kind, confirm.idem)}>Yes, send now</button>
             <button className={light} onClick={() => setConfirm(null)}>Cancel</button>
           </div>
@@ -129,7 +129,7 @@ export default function EmailPanel({ audit, call, linkKey, onSent }) {
       {html && (
         <div className="mt-4">
           <p className={lbl}>Preview of exactly what will be sent (the logo is attached to the real email)</p>
-          <iframe title="Email preview" sandbox="" srcDoc={html} className="mt-1 h-[34rem] w-full rounded-2xl border border-ink/20 bg-white" />
+          <iframe title="Email preview" sandbox="" srcDoc={html} className="mt-1 h-[60vh] min-h-[22rem] w-full rounded-2xl border border-ink/20 bg-white" />
         </div>
       )}
       {meta.alreadySent && <p className="mt-3 text-[13px] text-muted">Already emailed to the client on {when(meta.alreadySent)}. The report link stays live, so changes you make to the report show to the client.</p>}

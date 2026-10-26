@@ -76,7 +76,7 @@ export function Report({ data, expires, preview }) {
           <Logo />
           <div className="flex items-center gap-3 text-[13px] text-muted">
             <span>{dateOf(data.date)}</span>
-            <button className="rounded-full border border-ink/30 px-3 py-1.5 font-semibold text-ink print:hidden" onClick={() => window.print()}>Save as PDF</button>
+            <button className="inline-flex min-h-[44px] items-center rounded-full border border-ink/30 px-4 font-semibold text-ink print:hidden" onClick={() => window.print()}>Save as PDF</button>
           </div>
         </header>
 
@@ -155,7 +155,7 @@ export function Report({ data, expires, preview }) {
           )}
           <Paras text={data.plan.text} className="text-[15.5px]" />
           <p className="mt-3 text-[14px] text-muted">Prices are the ones published on our website today. We agree the timeline with you first.</p>
-          <p className="mt-4 text-[15.5px]">Want to talk it through? Reply to the email we sent you, or write to <a className="underline" href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+          <p className="mt-4 text-[15.5px]">Want to talk it through? Reply to the email we sent you, or write to <a className="inline-block py-3 underline" href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
         </Section>
 
         {data.notChecked.length > 0 && (

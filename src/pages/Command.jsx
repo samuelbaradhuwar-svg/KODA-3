@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Logo } from "../components/ui.jsx";
 import { EMAIL } from "../lib/utils.js";
-import { field, dark, light, danger, when, hostOf, STATUS, Badge, Card } from "./command-ui.jsx";
+import { field, dark, light, danger, when, hostOf, STATUS, Badge, Card, SectionNav, jump, telHref, waNumber } from "./command-ui.jsx";
 import AuditPanel from "./CommandAudit.jsx";
 import { Report } from "./Report.jsx";
 
@@ -29,15 +29,15 @@ function usePath() {
   return [path, go];
 }
 
-function Shell({ children, right }) {
+function Shell({ children, right, bar }) {
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-20 pt-6 sm:px-6">
-      <header className="flex items-center justify-between gap-4 border-b border-ink/15 pb-4">
-        <div className="flex items-center gap-4">
+    <div className={`mx-auto max-w-5xl px-4 pt-5 sm:px-6 sm:pt-6 ${bar ? "pb-32 sm:pb-20" : "pb-20"}`}>
+      <header className="flex items-center justify-between gap-3 border-b border-ink/15 pb-3 sm:pb-4">
+        <div className="flex min-w-0 items-center gap-4">
           <Logo />
-          <span className="xwide text-[0.95rem] tracking-[-0.02em]">Email authenticator</span>
+          <span className="xwide hidden text-[0.95rem] tracking-[-0.02em] sm:inline">Email authenticator</span>
         </div>
-        {right}
+        <div className="shrink-0">{right}</div>
       </header>
       {children}
     </div>
@@ -83,9 +83,9 @@ function Inbox({ call, go }) {
   return (
     <>
       <h1 className="xwide mt-8 text-[1.4rem]">Audit requests</h1>
-      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by status">
+      <div className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0" role="group" aria-label="Filter by status">
         {["all", ...Object.keys(STATUS)].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} aria-pressed={filter === s} className={`rounded-full border px-3 py-1 text-[13px] ${filter === s ? "border-ink bg-ink text-paper" : "border-ink/25"}`}>
+          <button key={s} onClick={() => setFilter(s)} aria-pressed={filter === s} className={`inline-flex min-h-[44px] shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-[14px] ${filter === s ? "border-ink bg-ink text-paper" : "border-ink/25"}`}>
             {s === "all" ? `All (${rows?.length ?? 0})` : `${STATUS[s].label} (${count(s)})`}
           </button>
         ))}
@@ -96,7 +96,7 @@ function Inbox({ call, go }) {
       <ul className="mt-4 divide-y divide-ink/10 rounded-[20px] border border-ink/15">
         {shown.map((r) => (
           <li key={r.id}>
-            <a href={`/command/${r.id}`} onClick={(e) => { e.preventDefault(); go(`/command/${r.id}`); }} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-paper2">
+            <a href={`/command/${r.id}`} onClick={(e) => { e.preventDefault(); go(`/command/${r.id}`); }} className="flex min-h-[64px] flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 py-3 hover:bg-paper2">
               <span className="min-w-0">
                 <span className="block truncate font-semibold">{r.business || hostOf(r.site_url)}</span>
                 <span className="block truncate text-[13px] text-muted">{hostOf(r.site_url)} · {r.email}</span>
@@ -128,7 +128,7 @@ function SentLog({ sends, call }) {
     }
   }
   return (
-    <Card title="Sent emails">
+    <Card title="Sent emails" id="sec-sent">
       <ul className="grid gap-2 text-[14px]">
         {sends.map((s) => (
           <li key={s.id} className="rounded-xl border border-ink/15 p-3">
@@ -136,11 +136,11 @@ function SentLog({ sends, call }) {
               <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${s.ok ? "bg-[#BDF64F] text-[#101010]" : "bg-[#FF9A8B] text-[#101010]"}`}>{s.ok ? "Sent" : "Failed"}</span>
               <span className="rounded-full border border-ink/20 px-2 py-0.5 text-[12px] text-muted">{s.kind === "test" ? "Test to you" : "To the client"}</span>
               <span className="text-muted">{when(s.sent_at)}</span>
-              <button className="ml-auto text-[13px] underline" onClick={() => view(s.id)} aria-expanded={open === s.id}>{open === s.id ? "Hide" : "View"}</button>
+              <button className="ml-auto inline-flex min-h-[44px] items-center px-3 text-[14px] underline" onClick={() => view(s.id)} aria-expanded={open === s.id}>{open === s.id ? "Hide" : "View"}</button>
             </div>
             <p className="mt-1">{s.to_email} · {s.subject}</p>
             {!s.ok && s.error && <p className="mt-1 text-muted">{s.error}</p>}
-            {open === s.id && (html ? <iframe title="Sent email" sandbox="" srcDoc={html} className="mt-2 h-[28rem] w-full rounded-xl border border-ink/20 bg-white" /> : <p className="mt-2 text-muted">Loading…</p>)}
+            {open === s.id && (html ? <iframe title="Sent email" sandbox="" srcDoc={html} className="mt-2 h-[60vh] min-h-[20rem] w-full rounded-xl border border-ink/20 bg-white" /> : <p className="mt-2 text-muted">Loading…</p>)}
           </li>
         ))}
       </ul>
@@ -183,33 +183,41 @@ function Detail({ id, call, go, retentionDays }) {
   const r = data.request;
   const f = r.auto_findings;
   const replySubject = `Your detailed website audit: ${hostOf(r.site_url)}`;
+  const mailto = `mailto:${encodeURIComponent(r.email)}?subject=${encodeURIComponent(replySubject)}`;
+  const tel = telHref(r.phone);
+  const wa = waNumber(r.phone) ? `https://wa.me/${waNumber(r.phone)}?text=${encodeURIComponent(`Hi, thanks for asking us for a website audit of ${hostOf(r.site_url)}.`)}` : "";
+  const hasAudit = data.audits.length > 0;
+  const dt = "mt-3 text-[12px] uppercase tracking-wide text-muted first:mt-0 sm:mt-0 sm:text-[15px] sm:normal-case sm:tracking-normal";
+  const dd = "[overflow-wrap:anywhere]";
+  const bar = "inline-flex min-h-[44px] items-center justify-center whitespace-nowrap rounded-full border px-2 text-[14px] font-semibold";
   return (
     <>
-      <p className="mt-6"><a href="/command" onClick={(e) => { e.preventDefault(); go("/command"); }} className="text-[14px] underline">← All requests</a></p>
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="xwide text-[1.4rem]">{r.business || hostOf(r.site_url)}</h1>
+      <p className="mt-4 sm:mt-6"><a href="/command" onClick={(e) => { e.preventDefault(); go("/command"); }} className="inline-flex min-h-[44px] items-center text-[15px] underline sm:text-[14px]">← All requests</a></p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="xwide min-w-0 text-[1.3rem] [overflow-wrap:anywhere] sm:text-[1.4rem]">{r.business || hostOf(r.site_url)}</h1>
         <Badge s={r.status} />
       </div>
+      <SectionNav items={[["sec-request", "Request"], ["sec-notes", "Status"], ...(hasAudit ? [["sec-audit", "Audit"], ["sec-findings", "Findings"], ["sec-review", "Review"], ["sec-report", "Report"], ["sec-email", "Email"]] : [])]} />
 
-      <Card title="Request">
-        <dl className="grid gap-x-6 gap-y-2 text-[15px] sm:grid-cols-[8rem_1fr]">
-          <dt className="text-muted">Website</dt><dd>{/^https?:\/\//i.test(r.site_url) ? <a className="underline" href={r.site_url} target="_blank" rel="noopener noreferrer">{r.site_url}</a> : r.site_url}</dd>
-          <dt className="text-muted">Email</dt><dd>{r.email}</dd>
-          <dt className="text-muted">Business</dt><dd>{r.business || "–"}</dd>
-          <dt className="text-muted">Phone</dt><dd>{r.phone || "–"}</dd>
-          <dt className="text-muted">Their note</dt><dd className="whitespace-pre-wrap">{r.note || "–"}</dd>
-          <dt className="text-muted">Received</dt><dd>{when(r.created_at)}</dd>
+      <Card title="Request" id="sec-request">
+        <dl className="text-[15px] sm:grid sm:grid-cols-[8rem_1fr] sm:gap-x-6 sm:gap-y-2">
+          <dt className={dt}>Website</dt><dd className={dd}>{/^https?:\/\//i.test(r.site_url) ? <a className="inline-flex min-h-[44px] items-center underline sm:min-h-0" href={r.site_url} target="_blank" rel="noopener noreferrer">{r.site_url}</a> : r.site_url}</dd>
+          <dt className={dt}>Email</dt><dd className={dd}>{r.email}</dd>
+          <dt className={dt}>Business</dt><dd className={dd}>{r.business || "–"}</dd>
+          <dt className={dt}>Phone</dt><dd className={dd}>{r.phone || "–"}</dd>
+          <dt className={dt}>Their note</dt><dd className={`${dd} whitespace-pre-wrap`}>{r.note || "–"}</dd>
+          <dt className={dt}>Received</dt><dd>{when(r.created_at)}</dd>
         </dl>
         <div className="mt-4 flex flex-wrap gap-2">
-          <a className={dark} href={`mailto:${encodeURIComponent(r.email)}?subject=${encodeURIComponent(replySubject)}`}>Reply by email</a>
+          {tel && <a className={dark} href={tel}>Call</a>}
+          {wa && <a className={light} href={wa} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
+          <a className={tel ? light : dark} href={mailto}>Reply by email</a>
         </div>
       </Card>
 
-      <AuditPanel requestId={id} call={call} existing={data.audits[0]?.id} onChange={load} />
-
-      <Card title="Status and notes">
+      <Card title="Status and notes" id="sec-notes">
         <label className="text-[14px] text-muted" htmlFor="st">Status</label>
-        <select id="st" className={`${field} mt-1 max-w-xs`} value={r.status} onChange={(e) => patch({ status: e.target.value }, "Status saved.")}>
+        <select id="st" className={`${field} mt-1 sm:max-w-xs`} value={r.status} onChange={(e) => patch({ status: e.target.value }, "Status saved.")}>
           {Object.entries(STATUS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
         </select>
         <label className="mt-4 block text-[14px] text-muted" htmlFor="nt">Your notes (private)</label>
@@ -218,7 +226,9 @@ function Detail({ id, call, go, retentionDays }) {
         {msg && <p role="status" className="mt-3 text-[14px]">{msg}</p>}
       </Card>
 
-      <Card title="What the automatic check found">
+      <AuditPanel requestId={id} call={call} existing={data.audits[0]?.id} onChange={load} />
+
+      <Card title="What the automatic check found" id="sec-auto" fold="auto">
         <p className="mb-3 text-[13px] text-muted">This came back from the visitor's browser with their request, so treat it as a starting point. The in-depth audit checks the site again itself.</p>
         {!f ? <p className="text-muted">No automatic findings were attached.</p> : (
           <>
@@ -226,7 +236,7 @@ function Detail({ id, call, go, retentionDays }) {
             {f.fixes?.length > 0 && <ol className="mt-3 list-decimal pl-5 text-[15px]">{f.fixes.map((x, i) => <li key={i} className="mt-1"><b>{x.title}.</b> {x.body}</li>)}</ol>}
             {f.checks?.length > 0 && (
               <details className="mt-3">
-                <summary className="cursor-pointer text-[14px] underline">All {f.checks.length} checks</summary>
+                <summary className="flex min-h-[44px] cursor-pointer items-center text-[14px] underline">All {f.checks.length} checks</summary>
                 <ul className="mt-2 text-[14px]">{f.checks.map((c, i) => <li key={i} className="mt-1"><b>{c.status.toUpperCase()}</b> · {c.label}{c.detail ? <span className="text-muted"> · {c.detail}</span> : null}</li>)}</ul>
               </details>
             )}
@@ -234,12 +244,21 @@ function Detail({ id, call, go, retentionDays }) {
         )}
       </Card>
 
-      <Card title="Their data">
+      {data.sends.length > 0 && <SentLog sends={data.sends} call={call} />}
+
+      <Card title="Their data" id="sec-data" fold="auto">
         <p className="text-[14px] text-muted">We keep only what they submitted. This request deletes itself on {when(r.delete_after)} (about {retentionDays} days after it arrived). You can delete it sooner.</p>
         <button className={`${danger} mt-3`} onClick={remove}>Delete this request</button>
       </Card>
 
-      {data.sends.length > 0 && <SentLog sends={data.sends} call={call} />}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/15 bg-paper/95 px-3 pt-2 backdrop-blur pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:hidden">
+        <div className="mx-auto grid max-w-5xl grid-flow-col auto-cols-fr gap-2" role="group" aria-label="Quick actions">
+          {tel && <a className={`${bar} border-ink/30`} href={tel}>Call</a>}
+          {wa && <a className={`${bar} border-ink/30`} href={wa} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
+          <a className={`${bar} border-ink/30`} href={mailto}>Email</a>
+          {hasAudit && <button className={`${bar} border-ink bg-ink text-paper`} onClick={() => jump("sec-email")}>Report</button>}
+        </div>
+      </div>
     </>
   );
 }
@@ -300,7 +319,7 @@ export default function Command() {
   if (pv) return <Preview id={pv[1]} call={call} go={go} />;
   const m = path.match(/^\/command\/([0-9a-f-]{36})$/i);
   return (
-    <Shell right={out}>
+    <Shell right={out} bar={Boolean(m)}>
       {m ? <Detail id={m[1]} call={call} go={go} retentionDays={me.retentionDays} /> : <Inbox call={call} go={go} />}
       <p className="mt-10 text-[12px] text-muted">Private page. Nothing here is public or listed in search.</p>
     </Shell>
