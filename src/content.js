@@ -97,7 +97,7 @@ export const MOCKUP_OFFER = true;
 
 // The four steps of the free mock-up offer. Nothing here promises a number of days.
 export const MOCKUP_STEPS = [
-  { title: "Tell us about your business", desc: "A short form or a WhatsApp message is enough." },
+  { title: "Tell us about your business", desc: "A short form or a phone call is enough." },
   { title: "We design your homepage", desc: "A free mock-up, on a link you can open on your phone." },
   { title: "You decide", desc: "Like it and we build the rest. If not, you owe nothing." },
   { title: "We build and launch", desc: "Your full website, with Google set-up if you want it." },

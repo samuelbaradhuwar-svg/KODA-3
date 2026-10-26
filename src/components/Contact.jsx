@@ -115,7 +115,7 @@ export default function Contact() {
             ))}
           </ol>
 
-          {PHONE.digits && (
+          {PHONE.whatsapp && PHONE.digits && (
             <a
               href={`https://wa.me/${PHONE.digits}?text=${encodeURIComponent("Hi, I would like to talk about a website for my business.")}`}
               target="_blank"

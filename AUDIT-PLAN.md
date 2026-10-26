@@ -12,7 +12,7 @@ Status key: `todo` | `in progress` | `in review` (preview ready) | `done` (on ma
 |---|---|---|---|---|
 | 1 | Security headers and meta descriptions | Browser security protections missing; descriptions too short or too long | Claude | in review |
 | 2 | Audit tool false alarms | Reviews shown (wrong); key pages missing (wrong); contact link (wrong); business name in title (wrong); FAQ page (wrong) | Claude | in review |
-| 3 | Phone and WhatsApp | Phone not found; not tap-to-call; no WhatsApp | Samuel decides, then Claude | blocked (needs yes or no) |
+| 3 | Phone and WhatsApp | Phone not found; not tap-to-call; no WhatsApp | Samuel decided yes (phone only, no WhatsApp for now); Claude built | in review |
 | 4 | Speed on phones | Slow to react on a phone (high priority); site slow on a phone; slow to react on a computer | Claude | todo |
 | 5 | Off-site work | Social profiles; Google Business Profile; reviews; photos and brand; findable on search | Samuel (Claude assists) | todo |
 | 6 | Content and long term | No blog; no FAQ page; business name; keyword pages | Claude and Samuel | later |
@@ -45,16 +45,16 @@ Tasks
 Done when: a fresh audit of heykoda.co.za no longer shows these five and shows testimonials correctly as missing.
 
 ## Section 3: Phone and WhatsApp (blocked on a decision)
-**Decision needed from Samuel:** put 061 244 0166 on the site and add a WhatsApp button, yes or no.
+**Decision (27 Oct):** Samuel said yes to the phone number on the site, but no WhatsApp integration for now. WhatsApp stays off behind `PHONE.whatsapp = false` in `src/lib/utils.js`.
 
 Tasks (after yes)
-- [ ] Set `PHONE` in `src/lib/utils.js` (digits and display).
-- [ ] Visible number in the footer and contact section, as a `tel:` link.
-- [ ] WhatsApp button with a pre-filled message ("Hi KODA, I would like help with a website").
-- [ ] Add the phone to the business markup in `index.html` (`telephone`).
-- [ ] Check the Business Profile phone matches exactly.
+- [x] Set `PHONE` in `src/lib/utils.js` (digits and display).
+- [x] Visible number in the footer (every page) and contact section, as a `tel:` link.
+- [ ] WhatsApp button: deliberately NOT done. To switch on later set `PHONE.whatsapp = true` (turns on the floating button and the Contact link).
+- [x] Add the phone to the business markup in `index.html` (`telephone`), `public/llms.txt` and the privacy policy contact table.
+- [ ] Samuel: check the Business Profile phone matches exactly (061 244 0166).
 
-Done when: the audit shows the phone found, tap-to-call present and WhatsApp present.
+Done when: the audit shows the phone found and tap-to-call present. The 'No WhatsApp option' finding will remain until WhatsApp is switched on, by choice.
 
 ## Section 4: Speed on phones
 **Goal:** mobile speed 85 or better and no long blocking scripts. Measure first, then change one thing at a time.
@@ -98,3 +98,5 @@ Done when: mobile speed 85 or better (aim for 90), blocking time well under the 
 | 2026-10-27 | 1 | Built on `preview/audit-s1`: CSP and four other headers on every page (hashes for the two inline scripts), 3 descriptions fixed (/terms 64 to 130, /refund-policy 71 to 134, /website-design-durban 178 to 152), `scripts/seo-check.mjs` (`npm run seo:check` after a build). Tested in a browser with the exact headers: no blocked resources on home, Durban page, terms and /command at desktop and phone width; an injected inline script is blocked, so the policy is enforced. |
 | 2026-10-27 | 1 | Merged to main (`db9c806`). Headers confirmed on the Vercel preview; live recheck still to do after deploy. |
 | 2026-10-27 | 2 | Built on `preview/audit-s2`: `api/_cc/crawl.js` (stricter review proof, in-page link targets, FAQ section detection), `search.js` (in-page links count, FAQ section counts, brand-name matching), `conversion.js` (in-page contact link). New self-test block. Ran the real crawler on the built site: pages-missing, no-faq, name-missing and no-contact-page are gone; still reported and correct: no-blog, no-tel, no-whatsapp, trust-reviews. |
+| 2026-10-27 | 2 | Merged to main (`326488d`). |
+| 2026-10-27 | 3 | Built on `preview/audit-s3`: 061 244 0166 as tap-to-call in the footer and contact section, in the business markup, llms.txt and privacy policy. WhatsApp left off. Removed the footer's duplicate plain-text phone line. Copy tweak: 'A short form or a WhatsApp message is enough' now says 'a phone call'. Real crawler: no-tel gone; no-whatsapp remains by choice. |
