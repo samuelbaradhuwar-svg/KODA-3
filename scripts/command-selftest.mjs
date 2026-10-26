@@ -711,6 +711,24 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   assert.ok(DISCLAIMER.join(" ").includes("not guaranteed"));
 }
 
+// ---- robots.txt: every group, including the named AI and search crawlers, keeps the private pages off limits
+{
+  const groups = [];
+  let cur = null;
+  for (const line of fs.readFileSync("public/robots.txt", "utf8").split("\n").map((l) => l.replace(/#.*/, "").trim()).filter(Boolean)) {
+    const [k, ...v] = line.split(":");
+    const key = k.toLowerCase();
+    const val = v.join(":").trim();
+    if (key === "user-agent") { if (!cur || cur.rules.length) groups.push((cur = { agents: [], rules: [] })); cur.agents.push(val); }
+    else if (key === "disallow" || key === "allow") cur?.rules.push([key, val]);
+  }
+  assert.ok(groups.length >= 2);
+  for (const g of groups) for (const path of ["/command", "/report/", "/api/"]) assert.ok(g.rules.some(([k, v]) => k === "disallow" && v === path), `${g.agents.join(",")} must be told to keep out of ${path}`);
+  const sm = fs.readFileSync("public/sitemap.xml", "utf8");
+  assert.ok(!/command|\/report/.test(sm), "private pages are not in the sitemap");
+  assert.ok(!/command|\/report/i.test(fs.readFileSync("public/llms.txt", "utf8")), "private pages are not in llms.txt");
+}
+
 // ---- the database migration applies and rolls back, and nothing is readable by the browser roles
 const { PGlite } = await import("@electric-sql/pglite");
 const pg = new PGlite();

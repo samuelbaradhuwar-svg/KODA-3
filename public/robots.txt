@@ -4,26 +4,18 @@ Disallow: /command
 Disallow: /report/
 Disallow: /api/
 
-# Search and AI assistants are welcome to read the public pages.
+# Search and AI assistants are welcome to read the public pages. The private tools are off limits to everyone:
+# a crawler that has its own group ignores the * group above, so the Disallow lines are repeated here.
 User-agent: GPTBot
-Allow: /
-
 User-agent: OAI-SearchBot
-Allow: /
-
 User-agent: ChatGPT-User
-Allow: /
-
 User-agent: ClaudeBot
-Allow: /
-
 User-agent: Claude-SearchBot
-Allow: /
-
 User-agent: PerplexityBot
-Allow: /
-
 User-agent: Google-Extended
 Allow: /
+Disallow: /command
+Disallow: /report/
+Disallow: /api/
 
 Sitemap: https://www.heykoda.co.za/sitemap.xml
