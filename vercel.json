@@ -103,10 +103,6 @@
       "destination": "/api/command?p=:path*"
     },
     {
-      "source": "/command",
-      "destination": "/command"
-    },
-    {
       "source": "/command/:id",
       "destination": "/command"
     },
