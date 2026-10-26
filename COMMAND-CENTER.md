@@ -43,6 +43,11 @@ the Supabase dashboard (or move to the paid plan).
 | `COMMAND_RETENTION_DAYS` | `180` | Optional; days before a request deletes itself |
 | `PAGESPEED_API_KEY` | free Google key | Optional but recommended: without it Google's shared speed quota often runs out |
 
+Setup gotchas we hit:
+- Check the project name at the top left of Vercel says **koda-3**. The Autopilot project (growth-command-center) has similar variables, and "already exists" errors usually mean you are in that one.
+- Tick **Production and Preview** for every variable, including the secret service key; a preview build cannot see a Production-only variable.
+- Variables only reach a build that starts after they are saved, so redeploy after adding them.
+
 Already set and reused: `RESEND_API_KEY`, `AUDIT_FROM`, `AUDIT_NOTIFY_TO`, `AUDIT_MODE`. Note these are currently
 Production only; for the sign-in and for requests to be saved on a preview link, the Supabase ones above need Preview too.
 
