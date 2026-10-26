@@ -38,7 +38,8 @@ export function conversionFindings(crawl) {
 
   // ---- contact and booking paths
   const homeLinks = (home.links || []).map((l) => { try { return new URL(l).pathname.toLowerCase(); } catch { return ""; } });
-  const linksToContact = homeLinks.some((l) => /contact|get-in-touch|enquir|quote/.test(l));
+  const homeLabels = [...(home.anchors || []), ...(home.linkText || [])].map((t) => String(t).toLowerCase());
+  const linksToContact = homeLinks.some((l) => /contact|get-in-touch|enquir|quote/.test(l)) || homeLabels.some((l) => /contact|get-in-touch|enquir|quote/.test(l));
   const anyTel = pages.some((p) => p.tel?.length);
   const anyMail = pages.some((p) => p.mailto?.length);
   const anyWa = pages.some((p) => p.whatsapp);

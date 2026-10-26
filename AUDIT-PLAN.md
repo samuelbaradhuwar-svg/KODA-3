@@ -11,7 +11,7 @@ Status key: `todo` | `in progress` | `in review` (preview ready) | `done` (on ma
 | # | Section | Findings it clears | Owner | Status |
 |---|---|---|---|---|
 | 1 | Security headers and meta descriptions | Browser security protections missing; descriptions too short or too long | Claude | in review |
-| 2 | Audit tool false alarms | Reviews shown (wrong); key pages missing (wrong); contact link (wrong); business name in title (wrong); FAQ page (wrong) | Claude | todo |
+| 2 | Audit tool false alarms | Reviews shown (wrong); key pages missing (wrong); contact link (wrong); business name in title (wrong); FAQ page (wrong) | Claude | in review |
 | 3 | Phone and WhatsApp | Phone not found; not tap-to-call; no WhatsApp | Samuel decides, then Claude | blocked (needs yes or no) |
 | 4 | Speed on phones | Slow to react on a phone (high priority); site slow on a phone; slow to react on a computer | Claude | todo |
 | 5 | Off-site work | Social profiles; Google Business Profile; reviews; photos and brand; findable on search | Samuel (Claude assists) | todo |
@@ -35,12 +35,12 @@ Done when (after Samuel reviews and says push): preview deployed, headers verifi
 **Goal:** reports never claim something is working or missing when it is not true. These reports go to clients.
 
 Tasks
-- [ ] "Reviews or testimonials are shown": require a real review section or review markup, not the word "testimonials" in a feature list. Our site has none (`TESTIMONIALS` is empty), so it must not appear under "already working".
-- [ ] "Key pages are missing" and "home page does not link to a contact page": count in-page links (`/#contact`, `#services`) and real links with those words as valid.
-- [ ] "Business name not in the title or heading": compare name variants (domain `heykoda` against `KODA`, case and spacing ignored).
-- [ ] "No FAQ page": also accept an FAQ section on the page, or FAQ markup.
-- [ ] Add self-test cases for each of these so they stay fixed.
-- [ ] Re-run the audit on heykoda.co.za and confirm those five findings are gone or correct.
+- [x] "Reviews or testimonials are shown": require a real review section or review markup, not the word "testimonials" in a feature list. Our site has none (`TESTIMONIALS` is empty), so it must not appear under "already working".
+- [x] "Key pages are missing" and "home page does not link to a contact page": count in-page links (`/#contact`, `#services`) and real links with those words as valid.
+- [x] "Business name not in the title or heading": compare name variants (domain `heykoda` against `KODA`, case and spacing ignored).
+- [x] "No FAQ page": also accept an FAQ section on the page, or FAQ markup.
+- [x] Add self-test cases for each of these so they stay fixed.
+- [x] Re-run the audit on heykoda.co.za and confirm those five findings are gone or correct.
 
 Done when: a fresh audit of heykoda.co.za no longer shows these five and shows testimonials correctly as missing.
 
@@ -96,3 +96,5 @@ Done when: mobile speed 85 or better (aim for 90), blocking time well under the 
 |---|---|---|
 | 2026-10-27 | all | Plan created from the audit. Nothing started yet. |
 | 2026-10-27 | 1 | Built on `preview/audit-s1`: CSP and four other headers on every page (hashes for the two inline scripts), 3 descriptions fixed (/terms 64 to 130, /refund-policy 71 to 134, /website-design-durban 178 to 152), `scripts/seo-check.mjs` (`npm run seo:check` after a build). Tested in a browser with the exact headers: no blocked resources on home, Durban page, terms and /command at desktop and phone width; an injected inline script is blocked, so the policy is enforced. |
+| 2026-10-27 | 1 | Merged to main (`db9c806`). Headers confirmed on the Vercel preview; live recheck still to do after deploy. |
+| 2026-10-27 | 2 | Built on `preview/audit-s2`: `api/_cc/crawl.js` (stricter review proof, in-page link targets, FAQ section detection), `search.js` (in-page links count, FAQ section counts, brand-name matching), `conversion.js` (in-page contact link). New self-test block. Ran the real crawler on the built site: pages-missing, no-faq, name-missing and no-contact-page are gone; still reported and correct: no-blog, no-tel, no-whatsapp, trust-reviews. |
