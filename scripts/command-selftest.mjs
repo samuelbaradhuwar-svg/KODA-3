@@ -410,7 +410,8 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   assert.equal(safeBase("https://evil.com"), PUBLIC_BASE);
   assert.equal(safeBase("https://koda-3-abc123-koda12.vercel.app"), "https://koda-3-abc123-koda12.vercel.app");
   assert.equal(safeBase("https://koda-3-abc-koda12.vercel.app.evil.com"), PUBLIC_BASE);
-  assert.ok(validEmail("a@b.co") && !validEmail("a@b.co, c@d.co") && !validEmail("nope"));
+  assert.ok(validEmail("a@b.co") && validEmail("first.last+tag@sub.example.co.za") && !validEmail("a@b.co, c@d.co") && !validEmail("nope"));
+  for (const bad of ["x@y.co?bcc=evil@x.com", "x@y.co&cc=evil@x.com", "x@y.co#frag", "x%40y@z.co", '"a"@b.co', "a@b.co;c@d.co", "<a@b.co>"]) assert.equal(validEmail(bad), false, `${bad} must be refused`);
   const rep = buildReport({ request: { business: "Acme", site_url: "https://www.acme.co.za/" }, audit: { findings: [{ id: "a", area: "search", severity: "high", bucket: "fix_first", include: true, title: "Home page does not say what you do.", evidence: "e", why: "w", fix: "f", service_key: "seo" }], crawl: null, manual: {} }, now: new Date() });
   const d = defaultEmail({ request: {}, report: rep, url: "https://www.heykoda.co.za/report/xyz", expires: "2026-11-25T00:00:00Z" });
   assert.equal(d.subject, "Your website audit for acme.co.za");
@@ -637,6 +638,7 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   r = await aiDraft("summary", report, audit, { ask: async () => ({ ok: true, text: good, model: "m" }) });
   assert.equal(r.ok, true);
   assert.equal((await aiDraft("nope", report, audit)).status, 400);
+  for (const t of ["constructor", "toString", "__proto__", "hasOwnProperty"]) assert.equal((await aiDraft(t, report, audit)).status, 400, `${t} is not a draft type`);
 
   // the route
   const db6 = memDb();

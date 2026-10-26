@@ -38,7 +38,9 @@ export function normaliseUrl(raw) {
     return null;
   }
 }
-const validEmail = (e) => typeof e === "string" && e.length <= 200 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+// No spaces, commas, semicolons, angle brackets, quotes or ? & # % in an address: they can smuggle extra recipients or fields
+// into a mailto: link or a mail header later on.
+const validEmail = (e) => typeof e === "string" && e.length <= 200 && /^[^\s@,;<>"'?&#%]+@[^\s@,;<>"'?&#%]+\.[^\s@,;<>"'?&#%]+$/.test(e);
 
 const hits = new Map();
 function limited(ip) {

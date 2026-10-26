@@ -193,7 +193,7 @@ function Detail({ id, call, go, retentionDays }) {
 
       <Card title="Request">
         <dl className="grid gap-x-6 gap-y-2 text-[15px] sm:grid-cols-[8rem_1fr]">
-          <dt className="text-muted">Website</dt><dd><a className="underline" href={r.site_url} target="_blank" rel="noopener noreferrer">{r.site_url}</a></dd>
+          <dt className="text-muted">Website</dt><dd>{/^https?:\/\//i.test(r.site_url) ? <a className="underline" href={r.site_url} target="_blank" rel="noopener noreferrer">{r.site_url}</a> : r.site_url}</dd>
           <dt className="text-muted">Email</dt><dd>{r.email}</dd>
           <dt className="text-muted">Business</dt><dd>{r.business || "–"}</dd>
           <dt className="text-muted">Phone</dt><dd>{r.phone || "–"}</dd>
@@ -201,7 +201,7 @@ function Detail({ id, call, go, retentionDays }) {
           <dt className="text-muted">Received</dt><dd>{when(r.created_at)}</dd>
         </dl>
         <div className="mt-4 flex flex-wrap gap-2">
-          <a className={dark} href={`mailto:${r.email}?subject=${encodeURIComponent(replySubject)}`}>Reply by email</a>
+          <a className={dark} href={`mailto:${encodeURIComponent(r.email)}?subject=${encodeURIComponent(replySubject)}`}>Reply by email</a>
         </div>
       </Card>
 

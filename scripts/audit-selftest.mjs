@@ -28,6 +28,7 @@ assert.equal(normaliseUrl("example.co.za"), "https://example.co.za/");
 assert.equal(normaliseUrl("nonsense"), null);
 
 // validation
+for (const bad of ["x@y.co?bcc=evil@x.com", "x@y.co&cc=e@x.com", "a@b.co,c@d.co"]) { const r0 = await call({ url: base, email: bad, consent: true }); assert.equal(r0.code, 400, `${bad} must be refused by the public form`); }
 assert.equal((await call({ url: "", email: "a@b.co", consent: true }, "2.2.2.2")).code, 400);
 assert.equal((await call({ url: "example.co.za", email: "bad", consent: true }, "2.2.2.3")).body.field, "email");
 assert.equal((await call({ url: "example.co.za", email: "a@b.co", consent: false }, "2.2.2.4")).body.field, "consent");

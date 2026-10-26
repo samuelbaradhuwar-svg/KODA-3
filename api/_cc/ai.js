@@ -91,7 +91,7 @@ export async function askModel(target, facts, { fetcher = fetch, key = process.e
     const res = await fetcher("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-      body: JSON.stringify({ model, max_tokens: 900, system: PROMPTS[target], messages: [{ role: "user", content: `Facts:\n${JSON.stringify(facts)}` }] }),
+      body: JSON.stringify({ model, max_tokens: 900, system: Object.hasOwn(PROMPTS, target) ? PROMPTS[target] : PROMPTS.summary, messages: [{ role: "user", content: `Facts:\n${JSON.stringify(facts)}` }] }),
       signal: AbortSignal.timeout(25_000),
     });
     if (!res.ok) return { ok: false, status: 502, error: res.status === 401 || res.status === 403 ? "The Anthropic key was refused." : res.status === 429 ? "Anthropic is rate limiting requests. Try again in a minute." : `The AI service answered ${res.status}.` };
@@ -105,7 +105,7 @@ export async function askModel(target, facts, { fetcher = fetch, key = process.e
 }
 
 export async function draft(target, report, audit, deps) {
-  if (!PROMPTS[target]) return { ok: false, status: 400, error: "Unknown draft type." };
+  if (!Object.hasOwn(PROMPTS, target)) return { ok: false, status: 400, error: "Unknown draft type." };
   const facts = aiFacts(report, audit);
   const r = await (deps?.ask || askModel)(target, facts);
   if (!r.ok) return r;

@@ -10,7 +10,7 @@ export const PUBLIC_BASE = "https://www.heykoda.co.za";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 export const cleanSubject = (s) => String(s ?? "").replace(/[\r\n\u0000-\u001f]+/g, " ").trim().slice(0, 150);
 export const cleanBody = (s) => String(s ?? "").replace(/\r\n/g, "\n").replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "").slice(0, 8000).trim();
-export const validEmail = (e) => typeof e === "string" && e.length <= 200 && /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(e);
+export const validEmail = (e) => typeof e === "string" && e.length <= 200 && /^[^\s@,;<>"'?&#%]+@[^\s@,;<>"'?&#%]+\.[^\s@,;<>"'?&#%]+$/.test(e);
 
 // A base URL for the report link: the live site, or the address the owner is on (previews, for tests to themselves).
 const BASE_OK = /^https:\/\/(www\.heykoda\.co\.za|koda-3-[a-z0-9-]+-koda12\.vercel\.app)$/;
