@@ -104,19 +104,19 @@
     },
     {
       "source": "/command",
-      "destination": "/command.html"
+      "destination": "/command"
     },
     {
       "source": "/command/:id",
-      "destination": "/command.html"
+      "destination": "/command"
     },
     {
       "source": "/report/:token",
-      "destination": "/command.html"
+      "destination": "/command"
     },
     {
       "source": "/command/:id/preview",
-      "destination": "/command.html"
+      "destination": "/command"
     }
   ]
 }
