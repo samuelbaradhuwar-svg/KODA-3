@@ -8,7 +8,7 @@ import { MANUAL_CHECKLIST } from "./manual.js";
 export const DISCLAIMER = [
   "Results are not guaranteed. We cannot promise a ranking on Google, a number of visitors or a number of enquiries; search engines and customers decide those.",
   "What we can do is fix the things in this report, which are common reasons a site is harder to find, harder to trust and harder to contact.",
-  "This is a snapshot of the site on the date above. The automatic checks read up to 10 pages and can miss things. Items marked for manual review are judged by a person, and any that are still marked \"not yet reviewed\" have not been looked at.",
+  "This is a snapshot of the site on the date above. Our audit reads up to 10 pages and can miss things. Your Google Business Profile, the design and the writing are assessed in a hands-on review, and anything still marked \"not yet reviewed\" has not been assessed yet.",
 ];
 
 const SEV = { high: 0, medium: 1, low: 2, info: 3 };
@@ -71,7 +71,7 @@ function clientNotes(audit) {
   const out = [];
   const crawl = audit.crawl;
   const speed = audit.pagespeed || {};
-  if (!crawl) return ["The automatic website check has not been run."];
+  if (!crawl) return ["The website audit has not been run yet."];
   for (const n of crawl.incomplete || []) out.push(String(n).slice(0, 160));
   for (const d of ["mobile", "desktop"]) {
     const label = d === "mobile" ? "a phone" : "a computer";
@@ -94,14 +94,14 @@ function manualSummary(audit) {
 
 function defaultSummary({ name, hostname, facts, counts, strong, top, manual }) {
   const parts = [];
-  parts.push(`We looked at ${hostname}${name ? ` for ${name}` : ""}. Our automatic checks read ${facts.pagesRead} ${facts.pagesRead === 1 ? "page" : "pages"}${facts.linksChecked ? ` and checked ${facts.linksChecked} links` : ""}${facts.googleMobile ? ", and Google measured how it performs on phones" + (facts.googleDesktop ? " and computers" : "") : ""}.`);
+  parts.push(`We looked at ${hostname}${name ? ` for ${name}` : ""}. Our audit covered ${facts.pagesRead} ${facts.pagesRead === 1 ? "page" : "pages"}${facts.linksChecked ? ` and ${facts.linksChecked} links` : ""}${facts.googleMobile ? ", and we measured how it performs on phones" + (facts.googleDesktop ? " and computers" : "") : ""}.`);
   const total = counts.fix_first + counts.next + counts.later;
   if (!total) parts.push("We did not find any problems in what we checked.");
   else parts.push(`We found ${counts.fix_first} ${counts.fix_first === 1 ? "thing" : "things"} to fix first, ${counts.next} to do next and ${counts.later} that can wait.`);
   if (strong.length) parts.push(`Some things are already working well: ${join(strong.slice(0, 3).map((s) => lcFirst(s.replace(/\.$/, ""))))}.`);
   if (top) parts.push(`The most important thing to sort out first: ${lcFirst(top.title.replace(/\.$/, ""))}.`);
   const unreviewed = manual.filter((m) => m.status === "todo").length;
-  parts.push(unreviewed === manual.length ? "Your Google Business Profile, the design and the writing are judged by a person, and have not been reviewed yet, so they are not covered here." : unreviewed ? "Your Google Business Profile, the design and the writing are judged by a person. We have reviewed some of those by hand and the rest are marked as not yet reviewed." : "Your Google Business Profile, the design and the writing are judged by a person. We have reviewed those by hand and included our notes.");
+  parts.push(unreviewed === manual.length ? "Your Google Business Profile, the design and the writing are assessed in a hands-on review, which has not been done yet, so they are not covered here." : unreviewed ? "Your Google Business Profile, the design and the writing are assessed in a hands-on review. We have assessed some of those and the rest are marked as not yet reviewed." : "Your Google Business Profile, the design and the writing are assessed in a hands-on review, and our notes are included below.");
   return parts.join(" ");
 }
 

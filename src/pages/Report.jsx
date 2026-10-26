@@ -129,8 +129,8 @@ export function Report({ data, expires, preview }) {
           ))}
         </Section>
 
-        <Section title="Checked by a person">
-          <p className="text-[14.5px] text-muted">Things a computer cannot judge: your Google Business Profile, the design and the writing. Anything marked "not yet reviewed" has not been looked at.</p>
+        <Section title="Our hands-on review">
+          <p className="text-[14.5px] text-muted">The parts of an audit that need professional judgement: your Google Business Profile, the design and the writing. Anything marked "not yet reviewed" has not been assessed yet.</p>
           {groups.map((gr) => (
             <div key={gr} className="mt-4">
               <h3 className="xwide text-[0.95rem]">{gr}</h3>

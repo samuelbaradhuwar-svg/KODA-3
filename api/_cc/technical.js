@@ -23,7 +23,7 @@ export function technicalFindings(crawl, speed = {}) {
   if (!crawl) return out;
 
   if (crawl.site?.homeError) {
-    add("home-unreachable", "high", "Our checker could not open the home page", crawl.site.homeError, "If our checker cannot open the site, search engines and some visitors may not be able to either.", "Check the site loads from outside your own network, and that no firewall or login blocks it.", "maintenance");
+    add("home-unreachable", "high", "We could not open the home page", crawl.site.homeError, "If we cannot open the site, search engines and some visitors may not be able to either.", "Check the site loads from outside your own network, and that no firewall or login blocks it.", "maintenance");
     return out;
   }
   const pages = crawl.pages.filter((p) => p.status);

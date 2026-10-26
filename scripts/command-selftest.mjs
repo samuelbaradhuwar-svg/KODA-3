@@ -695,6 +695,21 @@ assert.equal(merged.find((x) => x.id === "https").title, "Mine");
   delete process.env.ANTHROPIC_API_KEY;
 }
 
+// ---- the client-facing voice: no talk of tools, and no claims about staff
+{
+  const F = (id, severity, bucket, service_key) => ({ id, area: "technical", severity, bucket, include: true, source: "auto", title: `Title ${id}`, evidence: "e", why: "w", fix: "f", service_key });
+  const audit = { findings: [F("a", "high", "fix_first", "seo"), F("b", "medium", "next", "redesign")], crawl: { finalUrl: "https://www.acme.co.za/", pages: [{ url: "https://www.acme.co.za/", status: 200, viewport: "w" }], site: { links: { checked: 6, broken: [] } }, incomplete: [] }, pagespeed: { mobile: { scores: { speed: 80, accessibility: 90, seo: 90, practice: 90 } } }, manual: {}, summary: null, plan: null };
+  const rep = buildReport({ request: { business: "Acme", site_url: "https://www.acme.co.za/" }, audit, now: new Date() });
+  const email = defaultEmail({ request: {}, report: rep, url: "https://www.heykoda.co.za/report/x", expires: "2026-11-25T00:00:00Z" });
+  const voice = JSON.stringify([rep.summary, rep.plan.text, rep.notChecked, rep.disclaimer, rep.manual.map((m) => m.title), email]);
+  assert.ok(!/automatic|automated|computer-|a computer cannot|checker|crawler|\bAI\b|\bbot\b|scanner/i.test(voice), "the client never reads about tools");
+  assert.ok(!/(our|the) (analyst|analysts|department|departments|specialist team|audit team|auditing team)|our staff|our team of/i.test(voice), "the draft claims nothing about staff or departments");
+  assert.ok(/Our audit covered 1 page and 6 links/.test(rep.summary) && /hands-on review/.test(rep.summary + rep.disclaimer.join(" ")));
+  assert.ok(technicalFindings({ site: { homeError: "x" }, pages: [] }).every((f) => !/checker/i.test(JSON.stringify(f))));
+  assert.match(PROMPTS.summary, /first person plural/);
+  assert.match(PROMPTS.plan, /never claim a number of staff, departments/);
+}
+
 // ---- report content rules
 {
   const F = (id, severity, bucket, service_key, extra = {}) => ({ id, area: "technical", severity, bucket, include: true, source: "auto", title: `Title ${id}`, evidence: "e", why: "w", fix: "f", service_key, ...extra });
