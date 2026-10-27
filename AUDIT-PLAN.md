@@ -13,7 +13,7 @@ Status key: `todo` | `in progress` | `in review` (preview ready) | `done` (on ma
 | 1 | Security headers and meta descriptions | Browser security protections missing; descriptions too short or too long | Claude | in review |
 | 2 | Audit tool false alarms | Reviews shown (wrong); key pages missing (wrong); contact link (wrong); business name in title (wrong); FAQ page (wrong) | Claude | in review |
 | 3 | Phone and WhatsApp | Phone not found; not tap-to-call; no WhatsApp | Samuel decided yes (phone only, no WhatsApp for now); Claude built | in review |
-| 4 | Speed on phones | Slow to react on a phone (high priority); site slow on a phone; slow to react on a computer | Claude | todo |
+| 4 | Speed on phones | Slow to react on a phone (high priority); site slow on a phone; slow to react on a computer | Claude | in review |
 | 5 | Off-site work | Social profiles; Google Business Profile; reviews; photos and brand; findable on search | Samuel (Claude assists) | todo |
 | 6 | Content and long term | No blog; no FAQ page; business name; keyword pages | Claude and Samuel | later |
 
@@ -60,13 +60,13 @@ Done when: the audit shows the phone found and tap-to-call present. The 'No What
 **Goal:** mobile speed 85 or better and no long blocking scripts. Measure first, then change one thing at a time.
 
 Tasks
-- [ ] Baseline: run PageSpeed on the live site (mobile) and record speed, total blocking time and the heaviest scripts.
-- [ ] Icons: the `icons` chunk is about 112 KB. Import only the icons actually used.
-- [ ] Defer below the fold: load the sections under the hero after first paint.
-- [ ] Defer smooth scrolling (Lenis) and the hero animation setup until the page is interactive, without changing how the hero looks.
-- [ ] Images: sizes, lazy loading, modern formats where not already.
-- [ ] Re-measure after each change and record the numbers in the log.
-- [ ] Check the hero, dark mode and the services deck still behave on a phone, a phone held sideways and a desktop.
+- [x] Baseline: run PageSpeed on the live site (mobile) and record speed, total blocking time and the heaviest scripts.
+- [ ] Icons: the `icons` chunk is about 112 KB (29 KB compressed). Not done: it is not a main cause and importing icons one by one is a wider change. Revisit if needed.
+- [x] Defer below the fold: load the sections under the hero after first paint.
+- [ ] Defer smooth scrolling (Lenis) and the hero animation setup: not done, the hero is above the fold and unchanged on purpose.
+- [x] Images: the hidden hero frame photo is now low priority so it no longer competes with fonts and scripts for the first paint. Other images already lazy and in WebP.
+- [x] Re-measure after each change and record the numbers in the log.
+- [x] Check the hero, dark mode and the services deck still behave on a phone, a phone held sideways and a desktop.
 
 Done when: mobile speed 85 or better (aim for 90), blocking time well under the audit's 200 ms target as far as practical, and no visual regressions.
 
@@ -100,3 +100,5 @@ Done when: mobile speed 85 or better (aim for 90), blocking time well under the 
 | 2026-10-27 | 2 | Built on `preview/audit-s2`: `api/_cc/crawl.js` (stricter review proof, in-page link targets, FAQ section detection), `search.js` (in-page links count, FAQ section counts, brand-name matching), `conversion.js` (in-page contact link). New self-test block. Ran the real crawler on the built site: pages-missing, no-faq, name-missing and no-contact-page are gone; still reported and correct: no-blog, no-tel, no-whatsapp, trust-reviews. |
 | 2026-10-27 | 2 | Merged to main (`326488d`). |
 | 2026-10-27 | 3 | Built on `preview/audit-s3`: 061 244 0166 as tap-to-call in the footer and contact section, in the business markup, llms.txt and privacy policy. WhatsApp left off. Removed the footer's duplicate plain-text phone line. Copy tweak: 'A short form or a WhatsApp message is enough' now says 'a phone call'. Real crawler: no-tel gone; no-whatsapp remains by choice. |
+| 2026-10-27 | 3 | Merged to main (`4197dc4`). |
+| 2026-10-27 | 4 | Built on `preview/audit-s4`. Google's shared PageSpeed quota was used up and the live site is not reachable from here, so I measured with Lighthouse (the same engine) on the built site, served compressed. Calibration: at 24x CPU slowdown the old build scored 61 (the audit said 64). Changes: (1) sections below the first screen load and start up only when within two screens of the viewer (`src/sections.client.js`, `src/lib/near.js`, `#sections` alias in `vite.config.js`; the server build still pre-renders everything), (2) the Services deck reserves its final height in the pre-built HTML so nothing below it moves when it wakes (this fixed deep links landing in the wrong place), (3) low priority for the hidden hero frame photo. Results: standard phone setting score 92 to 94, blocking time 103 ms to 2 ms; 24x slowdown median score 61 to 80, blocking time 2042 ms to 428 ms. Tried and removed: `content-visibility` on lower sections (faster, but it broke jump-to-section positions). Checked: pixel-identical sections (0.00% differ, 12 sections, phone and desktop), 10 deep links and menu clicks land correctly with no layout shift, FAQ, dark mode, forms, all pages load without errors, selftests pass. |

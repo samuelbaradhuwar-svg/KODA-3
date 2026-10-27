@@ -10,7 +10,7 @@ const ICONS = { Instagram: InstagramLogo, Facebook: FacebookLogo, LinkedIn: Link
 export default function Footer() {
   const socials = SOCIALS.filter((s) => s.url);
   return (
-    <footer className="keep-light bg-ink text-paper">
+    <footer id="site-footer" className="keep-light bg-ink text-paper">
       <div className="wrap border-t border-paper/15 py-12">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">

@@ -685,3 +685,13 @@
     text-align: left;
   }
 }
+
+/* The deck is a plain list until it starts up, then becomes a tall scroll-driven track. When the browser runs scripts,
+   the list reserves that final height, so nothing below it moves when the deck wakes up (and a jump to a lower section
+   lands in the right place). Without scripts the plain list is all there is, so no space is reserved. */
+@media (scripting: enabled) {
+  .deck-list {
+    min-height: calc(100svh + (var(--n) - 1) * var(--step) * 100svh);
+    align-content: start;
+  }
+}

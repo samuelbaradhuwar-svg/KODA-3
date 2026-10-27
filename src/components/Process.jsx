@@ -113,7 +113,7 @@ export default function Process() {
   }, []);
 
   return (
-    <section className="sec">
+    <section id="process" className="sec">
       <div className="wrap">
         <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
           <Reveal className="lg:col-span-7">

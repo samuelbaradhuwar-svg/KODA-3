@@ -484,7 +484,7 @@ function MotionHero() {
                 (isVideo(MEDIA[i]) ? (
                   <video src={MEDIA[i]} autoPlay loop muted playsInline preload="metadata" />
                 ) : (
-                  <img src={MEDIA[i]} alt="" decoding="async" />
+                  <img src={MEDIA[i]} alt="" decoding="async" fetchPriority="low" />
                 ))}
             </div>
             <div className="svc-copy">
