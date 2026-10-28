@@ -47,7 +47,35 @@ export function pickPages(homeLinks, origin, sitemapUrls = [], max = 10) {
   return [...seen.values()].sort((a, b) => b.score - a.score).slice(0, max - 1).map((x) => x.url);
 }
 
-function analysePage(html, res) {
+
+// Real social proof, not just the word on the page: review markup, star ratings, a review widget, or a heading or
+// section that is itself about testimonials or reviews. A feature list that says "gallery and testimonials" does not count.
+function reviewProof(html, headingList, types) {
+  if ([...types].some((t) => /^(Review|AggregateRating|Rating)$/i.test(t))) return true;
+  if (/[\u2605\u2B50]|\b[1-5](\.\d)? ?(\/|out of) ?5\b|\b[1-5] stars?\b/i.test(html.replace(/<script[\s\S]*?<\/script>/gi, " "))) return true;
+  if (/trustpilot|elfsight|reviews\.io|featurable|google\.com\/maps\/place|g\.page\/r\/|data-widget-type=["']reviews/i.test(html)) return true;
+  if (headingList.some((h) => /testimonial|reviews?\b|what (our )?(clients|customers|people) (say|think)|client stories|kind words|happy clients/i.test(h.t))) return true;
+  return /\b(id|class)=["'][^"']*\b(testimonials?|reviews?-(section|list|slider|carousel|widget)|review-card)\b/i.test(html);
+}
+
+// In-page links: "#contact", "/#services" and the words on the links ("Services", "Contact us"). A one-page site
+// reaches its sections this way, so these count as links to those pages.
+function inPageTargets(links, base) {
+  let here = "/";
+  try { here = new URL(base).pathname.replace(/\/+$/, "") || "/"; } catch {}
+  const anchors = new Set();
+  for (const a of links) {
+    if (!a.href) continue;
+    try {
+      const u = new URL(a.href, base);
+      if (u.hash.length > 1 && (u.pathname.replace(/\/+$/, "") || "/") === here) anchors.add(decode(u.hash.slice(1)).toLowerCase().slice(0, 40));
+    } catch {}
+  }
+  const texts = [...new Set(links.map((a) => (a.text || "").toLowerCase().trim()).filter((t) => t && t.length <= 40))].slice(0, 60);
+  return { anchors: [...anchors].slice(0, 40), linkText: texts };
+}
+
+export function analysePage(html, res) {
   const lower = html.toLowerCase();
   const title = decode((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || "");
   const meta = (name, attr = "name") => {
@@ -63,6 +91,8 @@ function analysePage(html, res) {
   const canonical = (tagsOf(html, "link").find((a) => (a.rel || "").toLowerCase().split(/\s+/).includes("canonical")) || {}).href || "";
   const buttons = [...html.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/gi)].map((m) => decode(m[1].replace(/<[^>]+>/g, " ")));
   const ctas = [...new Set([...links.map((a) => a.text), ...buttons].filter((t) => t && t.length <= 40 && CTA_WORDS.test(t)))].slice(0, 10);
+  const types = schemaTypes(html);
+  const faqShown = [...types].includes("FAQPage") || hs.some((h) => /\bfaqs?\b|frequently asked|common questions/i.test(h.t));
   const mixed = [...html.matchAll(/<(?:img|script|iframe|source|link)\b[^>]*\b(?:src|href)=["']http:\/\/[^"']+/gi)].length;
   return {
     url: base,
@@ -81,7 +111,9 @@ function analysePage(html, res) {
     lang: (html.match(/<html[^>]*\blang=["']?([a-zA-Z-]+)/i) || [])[1] || "",
     og: { title: meta("og:title", "property"), description: meta("og:description", "property"), image: meta("og:image", "property") },
     twitterCard: meta("twitter:card"),
-    schema: schemaTypes(html),
+    schema: types,
+    faq: faqShown,
+    ...inPageTargets(links, base),
     images: {
       total: imgs.length,
       noAlt: imgs.filter((a) => a.alt === undefined).length,
@@ -99,7 +131,7 @@ function analysePage(html, res) {
     mixedContent: mixed,
     booking: /calendly|cal\.com|setmore|acuity|simplybook|booksy|fresha|youcanbook|book(ing)? (now|online|an? appointment|a (call|consultation))|schedule (a|an) /i.test(html),
     signals: {
-      testimonials: /testimonial|customer reviews?|client reviews?|what (our )?(clients|customers) say|google reviews?|trustpilot|[★⭐]/i.test(text),
+      testimonials: reviewProof(html, hs, new Set(types)),
       guarantee: /guarantee|warranty|money.?back|satisfaction/i.test(text),
       credentials: /accredited|certified|registered|licen[sc]ed|insured|member of|award|years of experience|since (19|20)\d\d|established (in )?(19|20)\d\d/i.test(text),
       proof: /case stud|portfolio|our work|before and after|recent (work|projects)|projects/i.test(text),

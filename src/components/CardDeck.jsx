@@ -281,7 +281,7 @@ export default function CardDeck({ items, renderCard, label, step = 0.62 }) {
 
   if (mode === "list") {
     return (
-      <ol className="grid gap-4 sm:grid-cols-2">
+      <ol className="deck-list grid gap-4 sm:grid-cols-2" style={{ "--n": n, "--step": step }}>
         {items.map((s, i) => (
           <li key={s.title || i} className="min-h-[15rem]">
             {renderCard(s, i, n)}

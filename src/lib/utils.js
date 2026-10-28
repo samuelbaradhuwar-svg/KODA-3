@@ -1,8 +1,8 @@
 export const EMAIL = "hello@heykoda.co.za";
 
-// Set the real number (digits only, with country code, e.g. "27XXXXXXXXX") to switch the phone line and
-// WhatsApp button back on.
-export const PHONE = { digits: "", display: "" };
+// The phone line shows wherever PHONE.digits is set (digits only, with country code). The WhatsApp button and link are a
+// separate switch: set whatsapp to true to turn them on. They are off for now.
+export const PHONE = { digits: "27612440166", display: "061 244 0166", whatsapp: false };
 
 import { smoothScrollTo } from "./smooth.js";
 

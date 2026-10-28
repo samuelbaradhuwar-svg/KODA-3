@@ -3,7 +3,7 @@ import { WhatsappLogo } from "@phosphor-icons/react";
 import { PHONE } from "../lib/utils.js";
 
 export default function WhatsApp() {
-  if (!PHONE.digits) return null;
+  if (!PHONE.whatsapp || !PHONE.digits) return null;
   return (
     <a
       href={`https://wa.me/${PHONE.digits}`}

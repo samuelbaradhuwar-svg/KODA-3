@@ -3,14 +3,14 @@ import { FacebookLogo, InstagramLogo, LinkedinLogo } from "@phosphor-icons/react
 import { NAV_LINKS, SOCIALS, BUSINESS, LEGAL_LINKS } from "../content.js";
 import { Logo, Koda } from "./ui.jsx";
 import { LETTER_PATHS } from "../lib/logo-paths.js";
-import { EMAIL, openGmailCompose, scrollToId } from "../lib/utils.js";
+import { EMAIL, PHONE, openGmailCompose, scrollToId } from "../lib/utils.js";
 
 const ICONS = { Instagram: InstagramLogo, Facebook: FacebookLogo, LinkedIn: LinkedinLogo };
 
 export default function Footer() {
   const socials = SOCIALS.filter((s) => s.url);
   return (
-    <footer className="keep-light bg-ink text-paper">
+    <footer id="site-footer" className="keep-light bg-ink text-paper">
       <div className="wrap border-t border-paper/15 py-12">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
@@ -36,6 +36,12 @@ export default function Footer() {
             <a href="/website-design-durban" className="inline-flex min-h-11 min-w-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Website design Durban</a>
           </nav>
           <div className="lg:col-span-2">
+            {PHONE.digits && (
+              <a href={`tel:+${PHONE.digits}`} className="flex min-h-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">
+                <span className="sr-only">Call us on </span>
+                {PHONE.display}
+              </a>
+            )}
             <a href={`mailto:${EMAIL}`} onClick={openGmailCompose} className="inline-flex min-h-11 items-center break-all text-sm text-paper/70 transition-colors hover:text-accent">{EMAIL}</a>
             {socials.length > 0 && (
               <div className="mt-5 flex gap-2.5">
@@ -70,7 +76,6 @@ export default function Footer() {
           <address className="text-[13px] not-italic leading-[1.6] text-paper/60 lg:col-span-5 lg:text-right">
             {[BUSINESS.legalName, BUSINESS.entityType, BUSINESS.registrationNumber && `Reg. ${BUSINESS.registrationNumber}`, BUSINESS.vatNumber && `VAT ${BUSINESS.vatNumber}`].filter(Boolean).join(" · ") || null}
             {BUSINESS.physicalAddress && <><br />{BUSINESS.physicalAddress}</>}
-            {BUSINESS.phone && <><br />{BUSINESS.phone}</>}
           </address>
         </div>
         <p className="mt-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper/60">

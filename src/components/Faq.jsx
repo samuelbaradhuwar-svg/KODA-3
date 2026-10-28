@@ -7,7 +7,7 @@ import { cn } from "../lib/utils.js";
 export default function Faq({ title = "Common questions", open0 = 0 }) {
   const [open, setOpen] = useState(open0);
   return (
-    <section className="sec">
+    <section id="faq" className="sec">
       <div className="wrap grid gap-10 lg:grid-cols-12 lg:gap-8">
         <Reveal className="lg:col-span-4">
           <Eyebrow>FAQ</Eyebrow>

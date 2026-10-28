@@ -5,7 +5,7 @@ import { Eyebrow, Headline, Reveal } from "./ui.jsx";
 // A short, honest strip: nobody can promise a number one ranking, and what we do promise.
 export default function StraightTalk() {
   return (
-    <section aria-label="Straight talk" className="keep-light bg-ink py-16 text-paper sm:py-20 lg:py-24">
+    <section id="straight-talk" aria-label="Straight talk" className="keep-light bg-ink py-16 text-paper sm:py-20 lg:py-24">
       <div className="wrap">
         <Reveal>
           <Eyebrow light>Straight talk</Eyebrow>

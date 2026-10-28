@@ -10,7 +10,7 @@ export const BUSINESS = {
   physicalAddress: "", // a business address where documents can be served (not a home address you want to keep private)
   postalAddress: "", // optional
   email: "hello@heykoda.co.za",
-  phone: "", // optional
+  phone: "061 244 0166", // optional
   informationOfficer: "", // the person responsible for POPIA compliance (for a sole proprietor, the owner)
   informationOfficerEmail: "hello@heykoda.co.za",
 };

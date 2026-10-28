@@ -11,7 +11,7 @@ export default function Testimonials() {
   if (!TESTIMONIALS.length) return null;
   const [lead, ...rest] = TESTIMONIALS;
   return (
-    <section className="sec bg-paper2">
+    <section id="testimonials" className="sec bg-paper2">
       <div className="wrap">
         <Reveal>
           <Eyebrow>Client stories</Eyebrow>

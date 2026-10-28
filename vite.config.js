@@ -1,8 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react()],
+  resolve: {
+    // The browser build loads the lower sections lazily; the server build imports them normally so the pre-rendered HTML is complete.
+    alias: { "#sections": new URL(isSsrBuild ? "./src/sections.ssr.js" : "./src/sections.client.js", import.meta.url).pathname },
+  },
   build: {
     target: "es2020",
     rollupOptions: {
@@ -16,4 +20,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

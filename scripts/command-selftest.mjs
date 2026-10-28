@@ -8,14 +8,14 @@ import { saveRequest, trimFindings, retentionDays } from "../api/_cc/requests.js
 import { isPrivateIp, assertPublic } from "../api/_safe.js";
 import { verifyAdmin } from "../api/_cc/auth.js";
 import http from "node:http";
-import { crawlSite, pickPages } from "../api/_cc/crawl.js";
+import { crawlSite, pickPages, analysePage } from "../api/_cc/crawl.js";
 import { technicalFindings, checkedSummary } from "../api/_cc/technical.js";
 import { mergeFindings } from "../api/_cc/handler.js";
 import { aiFacts, checkDraft, askModel, draft as aiDraft, PROMPTS } from "../api/_cc/ai.js";
 import { telHref, waNumber } from "../src/lib/phone.js";
 import { renderEmailHtml, previewHtml, cleanSubject, safeBase, defaultEmail, sendViaResend, validEmail, PUBLIC_BASE, REPLY_TO } from "../api/_cc/email.js";
 import { buildReport, suggestPlan, DISCLAIMER } from "../api/_cc/report.js";
-import { searchFindings, searchNotes } from "../api/_cc/search.js";
+import { searchFindings, searchNotes, nameShown } from "../api/_cc/search.js";
 import { conversionFindings } from "../api/_cc/conversion.js";
 import { sanitizeFindings, sanitizeManual } from "../api/_cc/audit-edit.js";
 import { MANUAL_CHECKLIST, MANUAL_KEYS } from "../api/_cc/manual.js";
@@ -831,5 +831,37 @@ await pg.exec("delete from cc_requests");
 assert.equal((await pg.query("select count(*)::int as n from cc_audits")).rows[0].n, 0, "deleting a request deletes its audit");
 await pg.exec(fs.readFileSync("command-center/db/0002_cc_sends_log.down.sql", "utf8"));
 await pg.exec(fs.readFileSync("command-center/db/0001_cc_init.down.sql", "utf8"));
+
+
+// ---- false alarms found in our own audit (27 Oct 2026): a one-page site with real in-page links, a feature list that says
+// "testimonials", an FAQ section, and a brand name that is a longer form of the title
+{
+  const page = (body, title = "Website Design Durban | Small Business Websites | KODA") =>
+    analysePage(`<!doctype html><html lang="en"><head><title>${title}</title></head><body><nav><a href="/#portfolio">Work</a><a href="/#services">Services</a><a href="/#pricing">Pricing</a><a href="/#about">About</a><a href="/#contact">Contact</a></nav>${body}</body></html>`, { url: "https://www.heykoda.co.za/", status: 200, ms: 100, type: "text/html", chain: [{}] });
+  // a plan feature that mentions testimonials is not social proof
+  const ours = page(`<h1>Websites for small businesses</h1><ul><li>Photo gallery and testimonials</li></ul><h2>Common questions</h2><p>Answers</p>`);
+  assert.equal(ours.signals.testimonials, false, "the word in a feature list is not a review");
+  assert.equal(ours.faq, true, "an FAQ section is seen");
+  assert.ok(ours.anchors.includes("services") && ours.anchors.includes("contact"), "in-page links are kept");
+  assert.ok(ours.linkText.includes("services") && ours.linkText.includes("contact"));
+  // real proof still counts
+  assert.equal(page(`<h2>What our clients say</h2><p>Great</p>`).signals.testimonials, true);
+  assert.equal(page(`<p>Rated 4.8 out of 5 by clients</p>`).signals.testimonials, true);
+  assert.equal(page(`<script type="application/ld+json">{"@type":"AggregateRating","ratingValue":"5"}</script>`).signals.testimonials, true);
+  assert.equal(page(`<div class="testimonials"><blockquote>Great</blockquote></div>`).signals.testimonials, true);
+  // findings on a crawl like ours
+  const crawl = { finalUrl: "https://www.heykoda.co.za/", site: {}, pages: [{ ...ours, url: "https://www.heykoda.co.za/", words: 600, links: ["https://www.heykoda.co.za/website-design-durban", "https://www.heykoda.co.za/privacy-policy"] }, { ...ours, url: "https://www.heykoda.co.za/website-design-durban", links: [] }] };
+  const sIds = searchFindings(crawl, { businessName: "heykoda" }).map((x) => x.id);
+  for (const gone of ["pages-missing", "no-faq", "name-missing"]) assert.ok(!sIds.includes(gone), `${gone} must not be raised for a site like ours`);
+  assert.ok(sIds.includes("no-blog"), "a missing blog is still reported");
+  assert.ok(!conversionFindings(crawl).some((x) => x.id === "no-contact-page"), "in-page contact link counts");
+  assert.ok(conversionFindings(crawl).some((x) => x.id === "trust-reviews"), "no real reviews is still reported");
+  // a site with no such links is still caught
+  const bare = { ...crawl, pages: crawl.pages.map((p) => ({ ...p, anchors: [], linkText: [], faq: false, links: ["https://www.heykoda.co.za/x"] })) };
+  assert.ok(searchFindings(bare, {}).some((x) => x.id === "pages-missing") && searchFindings(bare, {}).some((x) => x.id === "no-faq"));
+  // name matching
+  assert.ok(nameShown("heykoda", "Website Design Durban | KODA") && nameShown("The Blooming Bilingual", "Blooming Bilingual tutoring") && nameShown("Acme Plumbers", "Acme Plumbers Durban"));
+  assert.ok(!nameShown("Acme Plumbers", "Home") && !nameShown("Zed Ltd", "Welcome to our site"));
+}
 
 console.log("command centre self-test: all checks passed");

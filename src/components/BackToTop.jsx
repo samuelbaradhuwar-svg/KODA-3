@@ -43,7 +43,7 @@ export default function BackToTop() {
       aria-hidden={!show}
       className={cn(
         "totop fixed z-40 grid h-12 w-12 place-items-center rounded-full bg-accent text-ink shadow-[0_14px_30px_-12px_rgba(16,16,16,0.55)] ring-1 ring-ink/15 transition-[transform,opacity,visibility] duration-300 active:scale-[0.94] [@media(min-width:768px)_and_(hover:hover)]:hidden",
-        PHONE.digits && "totop-lifted",
+        PHONE.whatsapp && PHONE.digits && "totop-lifted",
         show ? "visible translate-y-0 opacity-100" : "invisible translate-y-3 opacity-0"
       )}
     >

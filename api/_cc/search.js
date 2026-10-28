@@ -17,6 +17,18 @@ const path = (u) => {
     return String(u).slice(0, 80);
   }
 };
+// Is the business name in the text? Spacing, case and punctuation are ignored, a leading "hey", "the" or "my" does not
+// have to be there, and a name that ends or starts with a word in the text counts ("heykoda" against "KODA").
+const squash = (t) => String(t).toLowerCase().replace(/[^a-z0-9]+/g, "");
+export function nameShown(name, text) {
+  const n = squash(name), t = squash(text);
+  if (!n) return true;
+  if (t.includes(n)) return true;
+  const core = n.replace(/^(hey|the|my|mr|mrs|ms|dr|www)/, "").replace(/(pty|ltd|cc|pty ?ltd)$/, "");
+  if (core.length >= 3 && t.includes(core)) return true;
+  const words = String(text).toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length >= 3);
+  return words.some((w) => n.startsWith(w) || n.endsWith(w));
+}
 const list = (items, n = 4) => items.slice(0, n).join("; ") + (items.length > n ? `; and ${items.length - n} more` : "");
 const q = (s, n = 70) => `"${String(s).slice(0, n)}"`;
 
@@ -64,7 +76,9 @@ export function searchFindings(crawl, inputs = {}) {
 
   // ---- one-page site and missing pages
   const links = new Set(crawl.pages.flatMap((p) => [p.url, ...(p.links || [])]).map((l) => { try { return new URL(l).pathname.toLowerCase(); } catch { return ""; } }));
-  const has = (re) => [...links].some((l) => re.test(l));
+  // in-page links count too: "#contact" and a link that says "Services" reach those sections on a one-page site
+  const labels = new Set(crawl.pages.flatMap((p) => [...(p.anchors || []), ...(p.linkText || [])]).map((t) => String(t).toLowerCase()));
+  const has = (re) => [...links].some((l) => re.test(l)) || [...labels].some((l) => re.test(l));
   if (pages.length <= 1) add("one-page", "low", "The site is effectively one page", "No other pages were found linked from the home page.", "One page cannot rank for each service or area separately.", "Add a page for each main service and for each area you serve.", "design");
   else {
     const gaps = [];
@@ -73,7 +87,7 @@ export function searchFindings(crawl, inputs = {}) {
     if (!has(/contact|get-in-touch|enquir|quote/)) gaps.push("a contact page");
     if (gaps.length) add("pages-missing", "medium", "Key pages are missing", `No link to ${gaps.join(", ")} was found among the pages read.`, "Customers and Google look for these pages first.", "Add the missing pages and link them from the menu.", "design");
     if (!has(/blog|news|articles|insights/)) add("no-blog", "low", "No blog or news section", "No blog, news or articles page was found.", "Regular helpful articles give you more chances to show up for what customers search.", "Add a small blog with answers to the questions customers ask.", "seo_social");
-    if (!has(/faq/)) add("no-faq", "low", "No FAQ page", "No FAQ page was found.", "Answering common questions builds trust and can win search snippets.", "Add an FAQ with real customer questions.", "seo");
+    if (!has(/faq|questions/) && !pages.some((p) => p.faq)) add("no-faq", "low", "No FAQ page", "No FAQ page was found.", "Answering common questions builds trust and can win search snippets.", "Add an FAQ with real customer questions.", "seo");
   }
 
   // ---- keywords against the trade and the town (needs the owner's input)
@@ -107,7 +121,7 @@ export function searchFindings(crawl, inputs = {}) {
   }
   if (inputs.businessName) {
     const name = String(inputs.businessName).toLowerCase().trim();
-    if (name.length >= 3 && !`${home.title} ${(home.h1 || []).join(" ")}`.toLowerCase().includes(name)) add("name-missing", "low", "The business name is not in the home page title or heading", `${q(inputs.businessName)} does not appear in the title or main heading.`, "The name in the title helps people searching for you by name.", "Include the business name in the home page title.", "seo");
+    if (name.length >= 3 && !nameShown(name, `${home.title} ${(home.h1 || []).join(" ")}`)) add("name-missing", "low", "The business name is not in the home page title or heading", `${q(inputs.businessName)} does not appear in the title or main heading.`, "The name in the title helps people searching for you by name.", "Include the business name in the home page title.", "seo");
   }
   const areas = terms(inputs.areas);
   if (areas.length) {

@@ -1,25 +1,13 @@
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import Header from "./components/Header.jsx";
 import Hero from "./components/Hero.jsx";
 import { Ticker, Proof } from "./components/Ticker.jsx";
 import Presence from "./components/Presence.jsx";
-import Work from "./components/Work.jsx";
-import Services from "./components/Services.jsx";
-import Process from "./components/Process.jsx";
-import About from "./components/About.jsx";
-import Pricing from "./components/Pricing.jsx";
-import Compare from "./components/Compare.jsx";
-import StraightTalk from "./components/StraightTalk.jsx";
-import Testimonials from "./components/Testimonials.jsx";
-import Faq from "./components/Faq.jsx";
-import Audit from "./components/Audit.jsx";
-import Contact from "./components/Contact.jsx";
-import Footer from "./components/Footer.jsx";
 import WhatsApp from "./components/WhatsApp.jsx";
 import BackToTop from "./components/BackToTop.jsx";
-import WebsiteDesignDurban from "./pages/WebsiteDesignDurban.jsx";
-import { PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "./pages/Legal.jsx";
 import { PAGES } from "./content.js";
+// The browser and the server build load these differently (see sections.client.js and sections.ssr.js).
+import { Work, Services, Process, About, Pricing, Compare, StraightTalk, Testimonials, Faq, Audit, Contact, Footer, WebsiteDesignDurban, PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "#sections";
 import { scrollToId } from "./lib/utils.js";
 
 export { PAGES };
@@ -31,17 +19,17 @@ function Home() {
       <Ticker />
       <Proof />
       <Presence />
-      <Work />
-      <Services />
-      <Process />
-      <About />
-      <Pricing />
-      <Compare />
-      <StraightTalk />
-      <Testimonials />
-      <Faq />
-      <Audit />
-      <Contact />
+      <Suspense fallback={null}><Work /></Suspense>
+      <Suspense fallback={null}><Services /></Suspense>
+      <Suspense fallback={null}><Process /></Suspense>
+      <Suspense fallback={null}><About /></Suspense>
+      <Suspense fallback={null}><Pricing /></Suspense>
+      <Suspense fallback={null}><Compare /></Suspense>
+      <Suspense fallback={null}><StraightTalk /></Suspense>
+      <Suspense fallback={null}><Testimonials /></Suspense>
+      <Suspense fallback={null}><Faq /></Suspense>
+      <Suspense fallback={null}><Audit /></Suspense>
+      <Suspense fallback={null}><Contact /></Suspense>
     </main>
   );
 }
@@ -88,19 +76,19 @@ export default function App({ path = "/" }) {
       </a>
       <Header />
       {path === "/website-design-durban" ? (
-        <WebsiteDesignDurban />
+        <Suspense fallback={null}><WebsiteDesignDurban /></Suspense>
       ) : path === "/privacy-policy" ? (
-        <PrivacyPolicy />
+        <Suspense fallback={null}><PrivacyPolicy /></Suspense>
       ) : path === "/terms" ? (
-        <Terms />
+        <Suspense fallback={null}><Terms /></Suspense>
       ) : path === "/refund-policy" ? (
-        <RefundPolicy />
+        <Suspense fallback={null}><RefundPolicy /></Suspense>
       ) : path === "/cookie-policy" ? (
-        <CookiePolicy />
+        <Suspense fallback={null}><CookiePolicy /></Suspense>
       ) : (
         <Home />
       )}
-      <Footer />
+      <Suspense fallback={null}><Footer /></Suspense>
       <WhatsApp />
       <BackToTop />
     </div>
