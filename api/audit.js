@@ -16,6 +16,7 @@
 import { buildPdf } from "./_pdf.js";
 import { safeFetch } from "./_safe.js";
 import { saveRequest } from "./_cc/requests.js";
+import { SIGNATURE_ATTACHMENT, signatureHtml } from "./_cc/email-signature.js";
 
 export const config = { maxDuration: 60 };
 
@@ -537,7 +538,7 @@ export default async function handler(req, res) {
   if (live) {
     sendAt = deliveryTime();
     const intro = `<p style="font-family:Arial,sans-serif;max-width:620px;line-height:1.55">Hi${lead.business ? ` ${esc(lead.business)}` : ""}, here is the website report you asked for. It comes from KODA's automatic website check, and a PDF copy is attached. If you would like to talk it through, just reply to this email.</p>`;
-    mail = await sendEmail({ to: lead.email, bcc: NOTIFY_TO(), replyTo: NOTIFY_TO(), subject: `Your website report for ${host}`, html: intro + html, scheduledAt: sendAt, attachments });
+    mail = await sendEmail({ to: lead.email, bcc: NOTIFY_TO(), replyTo: NOTIFY_TO(), subject: `Your website report for ${host}`, html: intro + html + `<div style="font-family:Arial,sans-serif;max-width:620px;margin-top:20px"><p style="margin:0 0 8px">Kind regards</p>${signatureHtml()}</div>`, scheduledAt: sendAt, attachments: [...attachments, SIGNATURE_ATTACHMENT] });
     // If the scheduled send is refused (for example attachments on a scheduled email), tell KODA straight away so the report is not lost.
     if (!mail.ok) {
       const fallback = await sendEmail({ to: NOTIFY_TO(), replyTo: lead.email, subject: `Audit NOT scheduled for ${lead.email} (${host}): send it by hand`, html: `<p>The scheduled send to <b>${esc(lead.email)}</b> failed (${esc(mail.reason)}). Report below; PDF attached.</p>${html}`, attachments });

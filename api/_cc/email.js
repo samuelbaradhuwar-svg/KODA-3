@@ -2,6 +2,7 @@
 // through Resend from hello@heykoda.co.za. The server rebuilds the HTML from the text on every preview and send, so what
 // is previewed is what is sent and nothing from the browser is ever trusted as markup.
 import { LOGO_PNG_BASE64 } from "./email-logo.js";
+import { SIGNATURE_PNG_BASE64, SIGNATURE_ATTACHMENT, SIGNATURE_TEXT, signatureHtml } from "./email-signature.js";
 
 export const REPLY_TO = "hello@heykoda.co.za";
 export const FROM = () => process.env.COMMAND_FROM || "KODA <hello@heykoda.co.za>";
@@ -51,7 +52,7 @@ const link = (s) => s.replace(/https:\/\/[^\s<]+/g, (u) => {
   return `<a href="${clean}" style="color:#101010;text-decoration:underline">${clean}</a>${trail}`;
 });
 
-export function renderEmailHtml(body, { logoSrc = "cid:kodalogo" } = {}) {
+export function renderEmailHtml(body, { logoSrc = "cid:kodalogo", sigSrc = "cid:kodasig" } = {}) {
   const blocks = cleanBody(body).split(/\n{2,}/).filter(Boolean);
   const out = blocks.map((b) => {
     const lines = b.split("\n");
@@ -62,11 +63,11 @@ export function renderEmailHtml(body, { logoSrc = "cid:kodalogo" } = {}) {
     }
     return `<p style="margin:0 0 16px">${link(esc(b)).replace(/\n/g, "<br>")}</p>`;
   });
-  return `<!doctype html><html><body style="margin:0;padding:0;background:#F6F6F4"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#F6F6F4"><tr><td align="center" style="padding:28px 16px"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px"><tr><td style="padding:0 0 22px"><img src="${logoSrc}" width="134" height="40" alt="KODA" style="display:block;border:0"></td></tr><tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#101010">${out.join("")}</td></tr><tr><td style="padding:20px 0 0;border-top:1px solid #E8E7E5;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#595958">Durban, South Africa &middot; ${REPLY_TO}<br>You are receiving this once because you asked for a detailed website audit at heykoda.co.za. We have not added you to any mailing list. <a href="${PUBLIC_BASE}/privacy-policy" style="color:#595958">Privacy notice</a></td></tr></table></td></tr></table></body></html>`;
+  return `<!doctype html><html><body style="margin:0;padding:0;background:#F6F6F4"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#F6F6F4"><tr><td align="center" style="padding:28px 16px"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px"><tr><td style="padding:0 0 22px"><img src="${logoSrc}" width="134" height="40" alt="KODA" style="display:block;border:0"></td></tr><tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#101010">${out.join("")}${signatureHtml(sigSrc)}</td></tr><tr><td style="padding:20px 0 0;border-top:1px solid #E8E7E5;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#595958">Durban, South Africa &middot; ${REPLY_TO}<br>You are receiving this once because you asked for a detailed website audit at heykoda.co.za. We have not added you to any mailing list. <a href="${PUBLIC_BASE}/privacy-policy" style="color:#595958">Privacy notice</a></td></tr></table></td></tr></table></body></html>`;
 }
 
-export const previewHtml = (body) => renderEmailHtml(body, { logoSrc: `data:image/png;base64,${LOGO_PNG_BASE64}` });
-export const plainText = (body) => `${cleanBody(body)}\n\n--\nDurban, South Africa - ${REPLY_TO}\nYou are receiving this once because you asked for a detailed website audit at heykoda.co.za. We have not added you to any mailing list.`;
+export const previewHtml = (body) => renderEmailHtml(body, { logoSrc: `data:image/png;base64,${LOGO_PNG_BASE64}`, sigSrc: `data:image/png;base64,${SIGNATURE_PNG_BASE64}` });
+export const plainText = (body) => `${cleanBody(body)}\n\n${SIGNATURE_TEXT}\n\n--\nDurban, South Africa - ${REPLY_TO}\nYou are receiving this once because you asked for a detailed website audit at heykoda.co.za. We have not added you to any mailing list.`;
 
 // Sends through Resend. Returns {ok, id, error}; the error text never contains the key.
 export async function sendViaResend({ to, subject, body, bcc, idem }, { fetcher = fetch, key = process.env.RESEND_API_KEY, from = FROM() } = {}) {
@@ -78,7 +79,7 @@ export async function sendViaResend({ to, subject, body, bcc, idem }, { fetcher 
       body: JSON.stringify({
         from, to: [to], subject: cleanSubject(subject), reply_to: REPLY_TO, ...(bcc ? { bcc: [bcc] } : {}),
         html: renderEmailHtml(body), text: plainText(body),
-        attachments: [{ filename: "logo.png", content: LOGO_PNG_BASE64, content_type: "image/png", content_id: "kodalogo" }],
+        attachments: [{ filename: "logo.png", content: LOGO_PNG_BASE64, content_type: "image/png", content_id: "kodalogo" }, SIGNATURE_ATTACHMENT],
       }),
       signal: AbortSignal.timeout(15_000),
     });
