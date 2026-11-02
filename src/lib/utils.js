@@ -2,7 +2,7 @@ export const EMAIL = "hello@heykoda.co.za";
 
 // The phone line shows wherever PHONE.digits is set (digits only, with country code). The WhatsApp button and link are a
 // separate switch: set whatsapp to true to turn them on. They are off for now.
-export const PHONE = { digits: "27612440166", display: "061 244 0166", whatsapp: false };
+export const PHONE = { digits: "27849997601", display: "084 999 7601", whatsapp: false };
 
 import { smoothScrollTo } from "./smooth.js";
 
