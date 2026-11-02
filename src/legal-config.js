@@ -21,7 +21,7 @@ export const LEGAL = {
   reviewed: false,
   // Set to true once the Information Officer is registered with the Information Regulator (not shown on the site).
   informationOfficerRegistered: false,
-  updated: "19 October 2026",
+  updated: "2 November 2026",
 };
 
 export const LEGAL_LINKS = [

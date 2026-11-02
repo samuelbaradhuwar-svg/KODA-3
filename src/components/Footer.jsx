@@ -71,6 +71,9 @@ export default function Footer() {
                   <a href={l.href} className="inline-flex min-h-11 items-center text-sm text-paper/70 transition-colors hover:text-accent">{l.label}</a>
                 </li>
               ))}
+              <li>
+                <button type="button" data-cookie-settings className="inline-flex min-h-11 items-center text-sm text-paper/70 transition-colors hover:text-accent">Cookie settings</button>
+              </li>
             </ul>
           </nav>
           <address className="text-[13px] not-italic leading-[1.6] text-paper/60 lg:col-span-5 lg:text-right">

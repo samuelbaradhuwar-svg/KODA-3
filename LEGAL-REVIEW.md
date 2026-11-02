@@ -28,7 +28,7 @@ This is a technical and plain-English review, not legal advice. The four policie
 | Area | Finding | Action |
 | --- | --- | --- |
 | Cookies | The site sets no cookies and no local or session storage (tested in a browser). | No cookie banner needed. Cookie policy says so. |
-| Analytics and trackers | None: no Google Analytics, Meta pixel or similar. | Policy states this. If you add any later, add consent first. |
+| Analytics and trackers | Google Analytics 4 (G-Z4ZDL040ED), loaded only after a visitor presses Accept on the cookie banner (Accept and Decline equally prominent; "Cookie settings" in the footer changes the choice). No advertising or retargeting tools, no Google signals. Detailed data kept 2 months (Google's default). | Wording approved by the attorney on 2 November 2026; policies state this. Add consent first for anything else. |
 | Third-party embeds | The Google Maps iframe loaded from Google as soon as the page opened. | Changed to click to load. Before the click, nothing is sent to Google. |
 | Fonts | Self-hosted (Geist, Archivo, SIL Open Font License). Nothing loads from Google Fonts. | None. |
 | Forms | Contact form: name, email, optional phone, business, message; no consent line. Audit form had consent. | Added a required consent tick and privacy link to the contact form; privacy link added to the audit consent; email footer says why they received it. |

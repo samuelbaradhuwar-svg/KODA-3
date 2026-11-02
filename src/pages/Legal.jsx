@@ -92,19 +92,20 @@ export function PrivacyPolicy() {
         <li><strong>Emails and messages you send us.</strong> We keep them to answer you and to keep a record of what we agreed.</li>
         <li><strong>Clients.</strong> If we work together, the contact, billing and business details and the content you supply (text, images, logos) so we can deliver and invoice the work.</li>
         <li><strong>Monthly plans.</strong> To run a monthly plan we also need access to the accounts we manage for you, such as your website, Google Business Profile, Search Console, analytics, social media and advertising accounts. Wherever possible we ask you to give us access through each platform's own sharing or manager permissions, rather than sharing a password.</li>
+        <li><strong>Analytics (only if you accept).</strong> Pages viewed, how you arrived, your device, browser and approximate location, and cookie identifiers, collected by Google Analytics only after you press Accept on the cookie banner. We use it to understand how the website is used and to report on it.</li>
         <li><strong>Technical data.</strong> Our hosting provider records your IP address, browser and the pages requested in server logs, for security and to keep the site running. To prevent misuse of the free check, requests are limited per IP address; this count is kept briefly in the server's memory and is not saved to a database.</li>
       </UL>
-      <P>We do not use analytics, advertising or tracking tools on this website. We do not collect special personal information (such as health, religion or children's information), and this website is not directed at anyone under 18.</P>
+      <P>We use Google Analytics on this website only if you accept analytics cookies on our cookie banner. We do not use advertising or retargeting tools. We do not collect special personal information (such as health, religion or children's information), and this website is not directed at anyone under 18.</P>
 
       <H>Our lawful basis</H>
-      <P>We process personal information because you ask us to (for example, to reply to an enquiry or send a report you requested), to take steps toward or perform an agreement with you, with your consent where you give it, and for our legitimate interests in running and securing the website, as POPIA allows. You may withdraw consent at any time; this does not affect what we did before.</P>
+      <P>We process personal information because you ask us to (for example, to reply to an enquiry or send a report you requested), to take steps toward or perform an agreement with you, with your consent where you give it, and for our legitimate interests in running and securing the website, as POPIA allows. Analytics data is processed only with your consent, which you give by pressing Accept on the cookie banner and can withdraw at any time through Cookie settings in the footer. You may withdraw consent at any time; this does not affect what we did before.</P>
 
       <H>Who we share it with</H>
       <P>We do not sell personal information. We use these service providers to run the website and the free check, and they process information on our behalf:</P>
       <UL>
         <li><strong>Vercel Inc.</strong> hosts the website and runs the program that performs the free check. It sees technical data such as IP addresses.</li>
         <li><strong>Resend</strong> delivers the report and notification emails, so it handles your email address and the report content.</li>
-        <li><strong>Google</strong> (PageSpeed Insights) receives the website address you entered, to measure its speed. Google also receives data if you choose to load the map on our contact section, or if you use Gmail to send us a message.</li>
+        <li><strong>Google</strong> (PageSpeed Insights) receives the website address you entered, to measure its speed. Google also receives data if you choose to load the map on our contact section, or if you use Gmail to send us a message. If you accept analytics cookies, Google Analytics also receives the visit data described above.</li>
         <li><strong>Anthropic</strong>, only if switched on, helps write the short summary at the top of your report. It receives the technical findings of the check, but not your name, email address or website address.</li>
       </UL>
       <P>We may also disclose information where the law requires it, or to protect our rights.</P>
@@ -120,10 +121,10 @@ export function PrivacyPolicy() {
       </UL>
 
       <H>Sending information outside South Africa</H>
-      <P>These providers store and process information in other countries, including the United States. When we send personal information abroad, we use providers that are contractually bound to protect it, as section 72 of POPIA requires. By submitting a form you understand that your information may be processed in this way.</P>
+      <P>These providers store and process information in other countries, including the United States. That includes Google, if you accept analytics cookies. When we send personal information abroad, we use providers that are contractually bound to protect it, as section 72 of POPIA requires. By submitting a form you understand that your information may be processed in this way.</P>
 
       <H>How long we keep it</H>
-      <P>We keep personal information only as long as needed for the purpose it was collected for. Enquiries that do not lead to work are deleted once they are no longer needed. Records about work we do and invoices are kept for as long as the law requires (for example, tax records are kept for five years). When a monthly plan ends, we stop using the access you gave us, and we delete or hand back the information we hold for you within a reasonable time, unless the law requires us to keep it. The free check is not stored in a database: your report is sent by email and we keep the email copy only as long as we need it to follow up.</P>
+      <P>We keep personal information only as long as needed for the purpose it was collected for. Enquiries that do not lead to work are deleted once they are no longer needed. Records about work we do and invoices are kept for as long as the law requires (for example, tax records are kept for five years). When a monthly plan ends, we stop using the access you gave us, and we delete or hand back the information we hold for you within a reasonable time, unless the law requires us to keep it. The free check is not stored in a database: your report is sent by email and we keep the email copy only as long as we need it to follow up. Google Analytics is set to keep detailed visit data for 2 months; summary figures in our reports may be kept longer.</P>
 
       <H>How we protect it</H>
       <P>We use reasonable technical and organisational measures: encrypted connections (HTTPS), access limited to people who need it, and providers with their own security controls. No system is perfectly secure. If a breach affects your personal information, we will notify you and the Information Regulator as POPIA requires.</P>
@@ -138,7 +139,7 @@ export function PrivacyPolicy() {
       <P>If you think we have handled your information unlawfully, please tell us first so we can put it right. You may also complain to the Information Regulator (South Africa): <a className="underline underline-offset-4" href="https://inforegulator.org.za" rel="noopener noreferrer">inforegulator.org.za</a>, email {mail("POPIAComplaints@inforegulator.org.za")}, JD House, 27 Stiemens Street, Braamfontein, Johannesburg, 2001.</P>
 
       <H>Cookies</H>
-      <P>See our <a className="underline underline-offset-4" href="/cookie-policy">cookie policy</a>. In short, this website does not set tracking or advertising cookies.</P>
+      <P>See our <a className="underline underline-offset-4" href="/cookie-policy">cookie policy</a>. In short, this website sets analytics cookies only if you accept them, and it sets no advertising cookies.</P>
 
       <H>Changes to this policy</H>
       <P>If we change how we handle personal information, we will update this page and the date at the top.</P>
@@ -259,19 +260,21 @@ export function CookiePolicy() {
     <Shell
       eyebrow="Legal"
       title="Cookie policy"
-      intro={<>The {withBrand("KODA")} website does not set tracking or advertising cookies, and it does not use analytics. This page explains exactly what the site does and does not store on your device.</>}
+      intro={<>The {withBrand("KODA")} website uses analytics cookies only if you accept them. Until you do, it sets no tracking or advertising cookies and sends nothing to Google Analytics. This page explains exactly what the site does and does not store on your device.</>}
     >
       <H>What cookies are</H>
       <P>Cookies are small files a website can save in your browser. Some are needed for a site to work; others track what you do or show you ads.</P>
 
       <H>What this website does</H>
       <UL>
-        <li>It does not set any cookies of its own.</li>
-        <li>It does not use Google Analytics or any similar visitor-tracking tool.</li>
-        <li>It does not use advertising or retargeting pixels, for example from Meta or Google Ads.</li>
-        <li>It does not save anything about you in your browser's local storage.</li>
+        <li>It sets no cookies until you choose Accept on the cookie banner.</li>
+        <li>If you accept, it uses Google Analytics to measure visits (see below). It does not use advertising or retargeting pixels, for example from Meta or Google Ads.</li>
+        <li>It saves your cookie choice in your browser so we do not ask on every page.</li>
         <li>Its fonts are served from the same website, not from Google Fonts or another provider.</li>
       </UL>
+
+      <H>Analytics (only if you accept)</H>
+      <P>If you press Accept, we load Google Analytics 4, provided by Google. It sets the cookies <code>_ga</code> and <code>_ga_</code> followed by an identifier, which last up to 2 years, and records which pages are viewed, how visitors arrived, and rough device, browser and approximate location. We use this to understand how the website is used and to report on it. Google acts as our service provider and may process this data outside South Africa. If you press Decline, or do not answer, none of this happens. You can change your choice at any time using "Cookie settings" in the footer, or by deleting cookies in your browser.</P>
 
       <H>The map</H>
       <P>The contact section has a Google Maps map. It does not load until you press the button to show it. Once you do, Google receives your visit and may set its own cookies, under <a className="underline underline-offset-4" href="https://policies.google.com/privacy" rel="noopener noreferrer">Google's privacy policy</a>. If you do not press the button, nothing is sent to Google.</P>
@@ -283,10 +286,10 @@ export function CookiePolicy() {
       <P>Our hosting provider keeps basic technical logs (such as IP address and browser) so the site stays secure and working. This is explained in the <a className="underline underline-offset-4" href="/privacy-policy">privacy policy</a>.</P>
 
       <H>If this changes</H>
-      <P>If we add analytics or any non-essential cookies in future, we will ask for your consent before using them and update this page.</P>
+      <P>If we add any other non-essential cookies in future, we will ask for your consent before using them and update this page.</P>
 
       <H>Your choices</H>
-      <P>You can delete or block cookies in your browser settings at any time.</P>
+      <P>You can change your cookie choice at any time using "Cookie settings" in the footer. You can also delete or block cookies in your browser settings.</P>
     </Shell>
   );
 }

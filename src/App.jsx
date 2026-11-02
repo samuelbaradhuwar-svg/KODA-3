@@ -5,6 +5,7 @@ import { Ticker, Proof } from "./components/Ticker.jsx";
 import Presence from "./components/Presence.jsx";
 import WhatsApp from "./components/WhatsApp.jsx";
 import BackToTop from "./components/BackToTop.jsx";
+import Consent from "./components/Consent.jsx";
 import { PAGES } from "./content.js";
 // The browser and the server build load these differently (see sections.client.js and sections.ssr.js).
 import { Work, Services, Process, About, Pricing, Compare, StraightTalk, Testimonials, Faq, Audit, Contact, Footer, WebsiteDesignDurban, PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "#sections";
@@ -91,6 +92,7 @@ export default function App({ path = "/" }) {
       <Suspense fallback={null}><Footer /></Suspense>
       <WhatsApp />
       <BackToTop />
+      <Consent />
     </div>
   );
 }

@@ -145,7 +145,7 @@ export const PAGES = {
   "/privacy-policy": { title: "Privacy Policy | KODA", description: "How KODA collects, uses and protects personal information, in line with South Africa's Protection of Personal Information Act (POPIA)." },
   "/terms": { title: "Terms and Conditions | KODA", description: "The terms that apply when you use the KODA website, request our free website check or ask us about a web design project in Durban." },
   "/refund-policy": { title: "Refund Policy | KODA", description: "When and how KODA refunds payments for web design and related services in South Africa, in plain English, and how to ask for a refund." },
-  "/cookie-policy": { title: "Cookie Policy | KODA", description: "KODA does not use tracking or advertising cookies. This page explains what the site does and does not store on your device." },
+  "/cookie-policy": { title: "Cookie Policy | KODA", description: "KODA uses analytics cookies only if you accept them, and no advertising cookies. This page explains what the site does and does not store on your device." },
   "/": {
     title: "Website Design Durban | Small Business Websites | KODA",
     description: "Durban web design studio. Fast, mobile friendly websites from R3,499, with Google Business Profile and SEO set-up. Get a free homepage mock-up first.",
