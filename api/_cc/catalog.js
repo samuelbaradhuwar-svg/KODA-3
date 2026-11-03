@@ -7,6 +7,7 @@ export const SERVICE_MAP = {
   hosting: { included: "Managed hosting", once: ["Starter", "Business"] },
   maintenance: { service: "Website Maintenance", monthly: ["Presence"] },
   seo: { service: "SEO Optimisation", once: ["Business"], monthly: ["Presence", "Growth"] },
+  ai_seo: { service: "AI SEO and Ad Campaigns", once: ["Business", "Custom"], monthly: ["Growth", "Performance"] },
   seo_social: { service: "SEO and Social Media", monthly: ["Growth"] },
   redesign: { service: "Website Redesign", once: ["Business"] },
   design: { service: "Website Design", once: ["Starter", "Business"] },
