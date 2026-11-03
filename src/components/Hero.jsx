@@ -1,4 +1,5 @@
 import React from "react";
+import AiPresenceArt from "./AiPresenceArt.jsx";
 import LiquidMetalShader from "./shader/liquid-metal-shader.jsx";
 import { kodaContourFragmentShader } from "./shader/contour-shader.js";
 import { Button, withBrand } from "./ui.jsx";
@@ -14,7 +15,7 @@ const LIME = "#BDF64F";
 const SERVICES = [
   { n: "01", title: "Website design", body: "A modern, mobile friendly site that builds credibility." },
   { n: "02", title: "Google Workspace", body: "Professional email and tools under your own business name." },
-  { n: "03", title: "Digital presence", body: "One consistent story across your site, profile and email." },
+  { n: "03", title: "Digital presence", body: "AI SEO and ads to help you get found on Google, ChatGPT and Gemini." },
 ];
 
 // The picture or clip inside each of the three frames. Drop a file named hero-service-1, hero-service-2 and
@@ -263,6 +264,9 @@ function MotionHero() {
         const o = fade(u);
         setStyle(slide, "opacity", num(o));
         setStyle(slide, "visibility", o < 0.01 ? "hidden" : "visible");
+        // on while the slide is clearly showing, off once it has faded out, so the art replays each time it comes round
+        const on = o > 0.35 ? "1" : o < 0.05 ? "0" : null;
+        if (on && slide && changed(slide, "on", on)) slide.setAttribute("data-on", on);
         const copy = slide?.lastElementChild;
         if (copy && changed(copy, "drift", num(u * 22, 1))) copy.style.setProperty("--drift", `${num(u * 22, 1)}px`);
       }
@@ -480,12 +484,16 @@ function MotionHero() {
         {SERVICES.map((s, i) => (
           <div key={s.n} ref={(el) => { serviceRefs.current[i] = el; }} className="pointer-events-none invisible absolute inset-0 opacity-0">
             <div className="svc-media" aria-hidden="true">
-              {MEDIA[i] &&
+              {i === 2 ? (
+                <AiPresenceArt />
+              ) : (
+                MEDIA[i] &&
                 (isVideo(MEDIA[i]) ? (
                   <video src={MEDIA[i]} autoPlay loop muted playsInline preload="metadata" />
                 ) : (
                   <img src={MEDIA[i]} alt="" decoding="async" fetchPriority="low" />
-                ))}
+                ))
+              )}
             </div>
             <div className="svc-copy">
               <span className="text-[13px] tracking-[0.14em] text-muted">{s.n} / 03</span>

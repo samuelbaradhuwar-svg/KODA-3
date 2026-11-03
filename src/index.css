@@ -695,3 +695,55 @@
     align-content: start;
   }
 }
+
+/* Hero slide 3 (AiPresenceArt): the two lines draw themselves in, the end dots pop, the three tiles rise in turn.
+   The hero sets data-on="1" on the slide while it is showing, so it plays again each time the slide comes round. */
+.svc-media > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.ai-text {
+  font-family: "Archivo Variable", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+}
+.ai-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.ai-dot,
+.ai-ring {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ai-tile {
+  opacity: 0;
+  transform: translateY(18px);
+}
+[data-on="1"] .ai-line {
+  animation: ai-draw 1.5s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+}
+[data-on="1"] .ai-line-seo { animation-delay: 0.1s; }
+[data-on="1"] .ai-line-ads { animation-delay: 0.45s; }
+[data-on="1"] .ai-dot { animation: ai-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards; }
+[data-on="1"] .ai-dot-seo { animation-delay: 1.5s; }
+[data-on="1"] .ai-dot-ads { animation-delay: 1.9s; }
+[data-on="1"] .ai-ring { animation: ai-pulse 2.6s ease-out 2s infinite; }
+[data-on="1"] .ai-tile {
+  animation: ai-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(0.7s + var(--i) * 0.18s);
+}
+@keyframes ai-draw { to { stroke-dashoffset: 0; } }
+@keyframes ai-pop { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(1); } }
+@keyframes ai-pulse { 0% { opacity: 0.6; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.7); } }
+@keyframes ai-rise { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .ai-line { stroke-dashoffset: 0; }
+  .ai-dot { opacity: 1; }
+  .ai-ring { opacity: 0.5; }
+  .ai-tile { opacity: 1; transform: none; }
+  [data-on="1"] .ai-line,
+  [data-on="1"] .ai-dot,
+  [data-on="1"] .ai-ring,
+  [data-on="1"] .ai-tile { animation: none; }
+}
