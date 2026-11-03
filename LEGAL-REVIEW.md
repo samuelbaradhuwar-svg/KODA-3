@@ -1,5 +1,7 @@
 # Legal and compliance review (draft, 19 October 2026)
 
+> Update, 3 November 2026: the owner confirmed the attorney approved the four policies as written, so `LEGAL.reviewed` is true. Business details are filled in except the physical address (still required under ECTA section 43). Information Officer registration is still to be confirmed.
+
 This is a technical and plain-English review, not legal advice. The four policies are drafts written for South Africa
 (POPIA, CPA, ECTA). Have an attorney review them before they are treated as final.
 

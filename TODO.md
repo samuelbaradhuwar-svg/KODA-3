@@ -4,7 +4,7 @@ Tick items off as they are done. `npm run legal:check` reports the legal items a
 
 ## Legal and compliance (blocking: the legal pages are still drafts)
 - [ ] **Register your Information Officer with the Information Regulator** (POPIA). Not done yet. For a sole proprietor this is the owner. Then set `LEGAL.informationOfficerRegistered = true` in `src/legal-config.js`.
-- [ ] Fill in the business details in `src/legal-config.js`: registered name, type of business, a business address you are happy to publish, Information Officer. If the business itself is not registered yet (CIPC), decide the legal form first.
+- [ ] (Partly done 3 Nov 2026: name, sole proprietor and Information Officer are filled in. STILL NEEDED: the physical address.) Fill in the business details in `src/legal-config.js`: registered name, type of business, a business address you are happy to publish, Information Officer. If the business itself is not registered yet (CIPC), decide the legal form first.
 - [ ] Attorney review of the privacy, terms, refund and cookie pages, then set `LEGAL.reviewed = true` to remove the "Draft" notice.
 - [ ] Confirm whether you are VAT registered; if so, show VAT-inclusive prices.
 - [ ] Confirm every promise on the site is one you can keep: free homepage mock-up, specialist audit by hand, hosting with SSL/backups/monitoring on every plan, five to seven working day timeline.
