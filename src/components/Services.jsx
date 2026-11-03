@@ -4,7 +4,7 @@ import { Button, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
 import CardDeck from "./CardDeck.jsx";
 import { SERVICE_ART } from "./ServiceArt.jsx";
-import { Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, ShareNetwork } from "@phosphor-icons/react";
+import { Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, Sparkle, ShieldCheck, ShareNetwork } from "@phosphor-icons/react";
 
 export function ServiceList({ items = SERVICES }) {
   return (
@@ -22,7 +22,7 @@ export function ServiceList({ items = SERVICES }) {
   );
 }
 
-const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, ShareNetwork];
+const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, Sparkle, ShieldCheck, ShareNetwork];
 
 // One picture per service, drawn in the hero card look (see ServiceArt.jsx) and set in a rounded panel, so it sits
 // cleanly on any card colour. The cards cycle dark, lime and light.

@@ -9,6 +9,7 @@ export const SERVICES = [
   { title: "Booking Systems", desc: "Let customers book appointments, tables or services online, 24/7, without a single phone call." },
   { title: "Google Business Profile", desc: "We set up and optimise your profile so your business can show up on Google Search and Maps when local customers look for you." },
   { title: "SEO Optimisation", desc: "On page and technical SEO that helps your website get found by people who are looking for what you offer. We cannot promise a particular ranking." },
+  { title: "AI SEO and Ad Campaigns", desc: "AI-powered SEO and ad campaigns that help your business get found on Google and in AI answers like ChatGPT and Gemini. We cannot promise a particular ranking or result." },
   { title: "Website Maintenance", desc: "Ongoing updates, backups and security monitoring to help keep your site fast, safe and online." },
   { title: "SEO and Social Media", desc: "Search visibility and social content working together, so more of the right people find you, follow you and get in touch." },
 ];

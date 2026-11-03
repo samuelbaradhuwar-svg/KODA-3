@@ -227,7 +227,38 @@ export function SeoArt() {
   );
 }
 
-// 8 Website maintenance: the jobs we look after, and the site staying online
+// 8 AI SEO and ad campaigns: two lines rising (SEO and ads) and where we help the business get found
+export function AiGrowthArt() {
+  return (
+    <Panel>
+      <rect x="60" y="84" width="34" height="8" rx="4" fill={ACID} />
+      <Txt x={106} y={74} size={20} w={500} fill={SOFT}>AI SEO</Txt>
+      <rect x="230" y="84" width="34" height="8" rx="4" fill={PAPER} />
+      <Txt x={276} y={74} size={20} w={500} fill={SOFT}>AI Ads</Txt>
+      <circle cx="508" cy="86" r="22" fill={ACID} />
+      <Ic n="sparkle" size={26} cx={508} cy={86} fill={INK} />
+      {[150, 200, 250].map((y) => (
+        <line key={y} x1="60" x2="540" y1={y} y2={y} stroke={INK3} strokeWidth="2" />
+      ))}
+      <path d="M72 262 L150 240 L228 246 L316 206 L394 214 L496 176" fill="none" stroke={PAPER} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M72 262 L150 226 L222 242 L308 176 L388 192 L496 126" fill="none" stroke={ACID} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="496" cy="176" r="9" fill={PAPER} />
+      <circle cx="496" cy="126" r="12" fill={ACID} />
+      {["Google", "ChatGPT", "Gemini"].map((t, i) => {
+        const x = 60 + i * 165;
+        return (
+          <g key={t}>
+            <rect x={x} y="292" width="150" height="44" rx="22" fill={INK2} />
+            <circle cx={x + 28} cy="314" r="6" fill={ACID} />
+            <Txt x={x + 46} y={304} size={20} w={800}>{t}</Txt>
+          </g>
+        );
+      })}
+    </Panel>
+  );
+}
+
+// 9 Website maintenance: the jobs we look after, and the site staying online
 export function MaintenanceArt() {
   const jobs = ["Updates", "Backups", "Security", "Uptime"];
   return (
@@ -251,7 +282,7 @@ export function MaintenanceArt() {
   );
 }
 
-// 9 SEO and social media: found in search, shared on social
+// 10 SEO and social media: found in search, shared on social
 export function SocialArt() {
   return (
     <Panel>
@@ -281,4 +312,4 @@ export function SocialArt() {
   );
 }
 
-export const SERVICE_ART = [WebsiteArt, BrandingArt, RedesignArt, EcommerceArt, BookingArt, ProfileArt, SeoArt, MaintenanceArt, SocialArt];
+export const SERVICE_ART = [WebsiteArt, BrandingArt, RedesignArt, EcommerceArt, BookingArt, ProfileArt, SeoArt, AiGrowthArt, MaintenanceArt, SocialArt];
