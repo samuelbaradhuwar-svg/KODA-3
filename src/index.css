@@ -747,3 +747,77 @@
   [data-on="1"] .ai-ring,
   [data-on="1"] .ai-tile { animation: none; }
 }
+
+/* Hero slide 1 (WebsiteDesignArt): the window appears, the page writes itself in, the phone slides up, the tiles rise. */
+.wd-window,
+.wd-pic,
+.wd-phone,
+.wd-tile {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.wd-bar {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+.wd-btn {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.5);
+}
+.wd-phone {
+  transform: translateY(46px);
+}
+[data-on="1"] .wd-window { animation: ai-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s forwards; }
+[data-on="1"] .wd-bar { animation: wd-write 0.7s cubic-bezier(0.3, 0.7, 0.2, 1) forwards; }
+[data-on="1"] .wd-bar-1 { animation-delay: 0.55s; }
+[data-on="1"] .wd-bar-2 { animation-delay: 0.75s; }
+[data-on="1"] .wd-pic { animation: ai-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.85s forwards; }
+[data-on="1"] .wd-btn { animation: ai-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) 1.05s forwards; }
+[data-on="1"] .wd-phone { animation: ai-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 1.2s forwards; }
+[data-on="1"] .wd-tile {
+  animation: ai-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(1.5s + var(--i) * 0.16s);
+}
+@keyframes wd-write { from { opacity: 1; transform: scaleX(0); } to { opacity: 1; transform: scaleX(1); } }
+
+/* Hero slide 2 (WorkspaceArt): the inbox opens, three messages arrive one by one, the newest is picked out, the tools rise. */
+.wk-head,
+.wk-tile {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.wk-row {
+  opacity: 0;
+  transform: translateX(70px);
+}
+.wk-new {
+  opacity: 0;
+}
+.wk-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+[data-on="1"] .wk-head { animation: ai-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s forwards; }
+[data-on="1"] .wk-row {
+  animation: wk-arrive 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(0.45s + var(--i) * 0.28s);
+}
+[data-on="1"] .wk-new { animation: ai-fade 0.5s ease-out 1.4s forwards; }
+[data-on="1"] .wk-dot { animation: wk-ping 2.2s ease-out 1.9s infinite; }
+[data-on="1"] .wk-tile {
+  animation: ai-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(1.5s + var(--i) * 0.14s);
+}
+@keyframes wk-arrive { to { opacity: 1; transform: none; } }
+@keyframes ai-fade { to { opacity: 1; } }
+@keyframes wk-ping { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.7); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .wd-window, .wd-pic, .wd-phone, .wd-tile, .wd-btn, .wd-bar, .wk-head, .wk-row, .wk-new, .wk-tile { opacity: 1; transform: none; }
+  [data-on="1"] .wd-window, [data-on="1"] .wd-bar, [data-on="1"] .wd-pic, [data-on="1"] .wd-btn, [data-on="1"] .wd-phone, [data-on="1"] .wd-tile,
+  [data-on="1"] .wk-head, [data-on="1"] .wk-row, [data-on="1"] .wk-new, [data-on="1"] .wk-dot, [data-on="1"] .wk-tile { animation: none; }
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import AiPresenceArt from "./AiPresenceArt.jsx";
+import { WebsiteDesignArt, WorkspaceArt } from "./HeroSlideArt.jsx";
 import LiquidMetalShader from "./shader/liquid-metal-shader.jsx";
 import { kodaContourFragmentShader } from "./shader/contour-shader.js";
 import { Button, withBrand } from "./ui.jsx";
@@ -18,8 +19,11 @@ const SERVICES = [
   { n: "03", title: "Digital presence", body: "AI SEO and ads to help you get found on Google, ChatGPT and Gemini." },
 ];
 
-// The picture or clip inside each of the three frames. Drop a file named hero-service-1, hero-service-2 and
-// hero-service-3 (.gif, .webp, .png, .jpg, .mp4 or .webm) into src/assets and it shows up in its frame.
+// The three frames are drawn as vector art (HeroSlideArt.jsx and AiPresenceArt.jsx), so they stay sharp and can animate.
+const ART = [WebsiteDesignArt, WorkspaceArt, AiPresenceArt];
+
+// A frame without art can still show a picture or clip: drop a file named hero-service-1, hero-service-2 or
+// hero-service-3 (.gif, .webp, .png, .jpg, .mp4 or .webm) into src/assets. Art takes precedence.
 const MEDIA_FILES = import.meta.glob("../assets/hero-service-*.{gif,webp,png,jpg,jpeg,mp4,webm}", { eager: true, query: "?url", import: "default" });
 const MEDIA = Object.entries(MEDIA_FILES).reduce((acc, [path, url]) => {
   const m = path.match(/hero-service-(\d+)\./);
@@ -484,8 +488,8 @@ function MotionHero() {
         {SERVICES.map((s, i) => (
           <div key={s.n} ref={(el) => { serviceRefs.current[i] = el; }} className="pointer-events-none invisible absolute inset-0 opacity-0">
             <div className="svc-media" aria-hidden="true">
-              {i === 2 ? (
-                <AiPresenceArt />
+              {ART[i] ? (
+                React.createElement(ART[i])
               ) : (
                 MEDIA[i] &&
                 (isVideo(MEDIA[i]) ? (
