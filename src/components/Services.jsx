@@ -62,7 +62,7 @@ export default function Services() {
             <Headline className="h-section mt-5">Everything your business needs to succeed online.</Headline>
           </Reveal>
           <Reveal delay={100} className="lg:col-span-4 lg:col-start-9">
-            <p className="t-body">From your first website to ongoing SEO and support, one studio for every step.</p>
+            <p className="t-body">From your first website to AI SEO, ad campaigns and ongoing support, one studio for every step.</p>
             <div className="mt-5">
               <TextLink href="/website-design-durban">Website design in Durban</TextLink>
             </div>

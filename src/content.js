@@ -12,7 +12,7 @@ export const NAV_LINKS = [
   { label: "Contact", id: "contact" },
 ];
 
-export const TICKER = ["Websites", "Google Business profiles", "Google Workspace", "Branding and logos", "Local SEO", "Booking systems", "Online stores", "Ongoing care"];
+export const TICKER = ["Websites", "AI SEO", "AI ad campaigns", "Google Workspace", "Google Business profiles", "Branding and logos", "Booking systems", "Online stores", "Ongoing care"];
 
 export const PRESENCE = [
   {
@@ -24,8 +24,8 @@ export const PRESENCE = [
     desc: "Google Workspace gives you Gmail, Calendar, Meet video calls and Drive, all under your business name.",
   },
   {
-    title: "Found when customers search",
-    desc: "A website and a Google Business profile help you appear on Google Search and Maps when people look for what you do.",
+    title: "Found in search and AI answers",
+    desc: "A website, a Google Business profile and AI SEO help you appear on Google and in AI answers like ChatGPT and Gemini when people look for what you do.",
   },
   {
     title: "One story everywhere",
@@ -61,8 +61,8 @@ export const PROJECTS = [
 
 export const PROCESS = [
   { n: "01", title: "Discover", desc: "We learn about your business, what you offer and who your customers are." },
-  { n: "02", title: "Design", desc: "We build a professional website and set up your Google Business profile." },
-  { n: "03", title: "Launch", desc: "We take you live, so customers can find you on Google, Maps and social." },
+  { n: "02", title: "Design", desc: "We build a professional website and set up your Google Business profile and AI SEO." },
+  { n: "03", title: "Launch", desc: "We take you live, so customers can find you on Google, Maps, social and in AI answers." },
   { n: "04", title: "Grow", desc: "We keep your website and online presence up to date so you stay easy to find." },
 ];
 
@@ -74,7 +74,7 @@ export const WHY_US = [
 ];
 
 export const OUTCOMES = [
-  { title: "Easier to find", desc: "A website and Google profile make it easier for customers to find you and get in touch." },
+  { title: "Easier to find", desc: "A website, a Google profile and AI SEO make it easier for customers to find you, on Google and in AI answers, and get in touch." },
   { title: "Easier to trust", desc: "A clear, professional site with your details in one place helps people feel confident about contacting you." },
   { title: "Easier to contact", desc: "WhatsApp, email and a simple form on every page, so enquiring takes seconds." },
   { title: "Always open", desc: "Your website is available around the clock, so customers can learn about you whenever suits them." },
@@ -100,7 +100,7 @@ export const MOCKUP_STEPS = [
   { title: "Tell us about your business", desc: "A short form or a phone call is enough." },
   { title: "We design your homepage", desc: "A free mock-up, on a link you can open on your phone." },
   { title: "You decide", desc: "Like it and we build the rest. If not, you owe nothing." },
-  { title: "We build and launch", desc: "Your full website, with Google set-up if you want it." },
+  { title: "We build and launch", desc: "Your full website, with Google and AI search set-up if you want it." },
 ];
 
 // Straight talk: what we will and will not promise.
@@ -115,7 +115,7 @@ export const COMPARE = {
   cols: ["DIY website builder", "Cheapest quote", "KODA"],
   rows: [
     { label: "Who builds it", tones: ["con", "con", "pro"], vals: ["You, in your own time", "Often a reused template", "We design and build it for you"] },
-    { label: "Google set-up", tones: ["con", "con", "pro"], vals: ["You work it out yourself", "Often extra, or not included", "Google Business Profile and SEO set-up available"] },
+    { label: "Google and AI search set-up", tones: ["con", "con", "pro"], vals: ["You work it out yourself", "Often extra, or not included", "Google Business Profile, SEO and AI SEO set-up available"] },
     { label: "Hosting and security", tones: ["mid", "mid", "pro"], vals: ["A monthly plan you manage", "Varies", "Managed hosting with SSL, backups and monitoring"] },
     { label: "Who you talk to", tones: ["mid", "mid", "pro"], vals: ["Help articles and forums", "Varies", "The people who built your site"] },
     { label: "Asking for a change", tones: ["con", "mid", "pro"], vals: ["You make it yourself", "Varies", "Send us a message and we do it, covered by our monthly plans"] },
@@ -126,10 +126,11 @@ export const COMPARE = {
 
 export const FAQS = [
   { q: "How long does a website take?", a: "Most single page sites launch within five to seven working days. Websites with multiple pages, or those with a booking system or ecommerce store, typically take two to four weeks, depending on content and revisions." },
+  { q: "What is AI SEO?", a: "More and more people ask AI assistants such as ChatGPT and Gemini who to call, as well as searching on Google. AI SEO is how we make your business easy for those tools to find and understand: clear business details, the right website markup, consistent listings and helpful content. Nobody can promise to be recommended, but it gives your business a fair chance of being mentioned." },
   { q: "Do you provide hosting?", a: "Yes. Every website we build includes secure, managed hosting with SSL, backups and uptime monitoring, so you never have to think about the technical side." },
   { q: "Can I update my website?", a: "Yes, and we do it for you. There is no editor to learn or accidentally break. Tell us what to change and we take care of it, with ongoing updates, backups and security covered by our monthly plans." },
   { q: "Do you provide support?", a: "Yes. Every plan includes support after launch, and our maintenance service covers ongoing updates, security monitoring and small changes for a flat monthly fee." },
-  { q: "Can you help if I only have an idea?", a: "Yes. Plenty of businesses start with just a name or a sketch. We can design your logo and brand look first, then build your website and set up Google, at a pace that suits you. There is no pressure and no obligation." },
+  { q: "Can you help if I only have an idea?", a: "Yes. Plenty of businesses start with just a name or a sketch. We can design your logo and brand look first, then build your website and set up Google and AI search, at a pace that suits you. There is no pressure and no obligation." },
   { q: "Do you design logos and brands?", a: "Yes. We design logos and a simple brand look (colours, type and style), so your website, Google profile, email and social pages all feel like one business. Ask us for a quote when you get in touch." },
   { q: "Do I need to know anything technical to get started?", a: "No. We handle the strategy, design, build and setup from start to finish. All we need from you is a short call about your business." },
 ];
@@ -147,13 +148,13 @@ export const PAGES = {
   "/refund-policy": { title: "Refund Policy | KODA", description: "When and how KODA refunds payments for web design and related services in South Africa, in plain English, and how to ask for a refund." },
   "/cookie-policy": { title: "Cookie Policy | KODA", description: "KODA uses analytics cookies only if you accept them, and no advertising cookies. This page explains what the site does and does not store on your device." },
   "/": {
-    title: "Website Design Durban | Small Business Websites | KODA",
-    description: "Durban web design studio. Fast, mobile friendly websites from R3,499, with Google Business Profile and SEO set-up. Get a free homepage mock-up first.",
+    title: "Website Design Durban | AI SEO and Ads | KODA",
+    description: "Durban web design studio. Fast, mobile friendly websites from R3,499, plus AI SEO and ads to help you get found on Google and in ChatGPT. Free mock-up first.",
   },
   "/website-design-durban": {
     title: "Website Design in Durban for Small Businesses | KODA",
     description:
-      "Website design in Durban for small businesses: websites, ecommerce, booking, logos, Google Business Profile and SEO. From R3,499. Free homepage mock-up.",
+      "Website design in Durban for small businesses, plus AI SEO and ad campaigns to help you get found on Google and in ChatGPT. From R3,499. Free homepage mock-up.",
   },
 };
 

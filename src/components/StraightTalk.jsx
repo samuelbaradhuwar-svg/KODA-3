@@ -10,7 +10,7 @@ export default function StraightTalk() {
         <Reveal>
           <Eyebrow light>Straight talk</Eyebrow>
           <Headline light as="h2" className="h-section mt-5 max-w-[22ch]">
-            Nobody can promise you the number one spot on Google.
+            Nobody can promise you the number one spot on Google or ChatGPT.
           </Headline>
           <p className="mt-6 max-w-[62ch] text-[16px] leading-[1.7] text-paper/70">
             Not us, and not anyone else. What we can promise is a website built properly, a written quote that confirms exactly what is included, and people who answer when you get in touch.

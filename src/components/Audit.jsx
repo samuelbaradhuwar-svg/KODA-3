@@ -133,7 +133,7 @@ function Specialist({ report, lead, sample }) {
     <div className="mt-9 rounded-2xl bg-accent/[0.08] p-5 ring-1 ring-accent/30">
       <h4 className="xwide flex items-start gap-2.5 text-[clamp(1.05rem,2.3vw,1.3rem)] leading-[1.1] tracking-[-0.02em]"><span aria-hidden="true" className="mt-[0.28em] h-2.5 w-2.5 shrink-0 rounded-[3px] bg-accent" />Get a detailed audit from a specialist</h4>
       <p className="card-body mt-3">
-        This report is an automatic check of your home page. If you would like more, one of our specialists will go through your whole site by hand: the design, the writing, your Google Business Profile and how you compare with local competitors. They will send you a detailed audit with clear recommendations. It is free and there is no obligation.
+        This report is an automatic check of your home page. If you would like more, one of our specialists will go through your whole site by hand: the design, the writing, your Google Business Profile, how you show up in AI answers and how you compare with local competitors. They will send you a detailed audit with clear recommendations. It is free and there is no obligation.
       </p>
       {status === "sent" ? (
         <p role="status" className="mt-4 rounded-xl bg-accent/15 px-4 py-3 text-[14px] text-accent">Request received. We will email {lead.email} to confirm, and a specialist will take it from there.</p>

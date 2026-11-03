@@ -14,7 +14,7 @@ export default function Presence() {
               Customers look you up <em>before</em> they call you.
             </Headline>
             <p className="t-body mx-auto mt-6 text-base">
-              Today, people check a business on Google, then on its website, before they pick up the phone. A professional email address, a Google Workspace set up around your business name and a complete Google presence tell them you are real, reliable and ready to help. Without them, they move on to someone who does.
+              Today, people ask an AI assistant or check Google, then look at your website, before they pick up the phone. A professional email address, a Google Workspace set up around your business name and a complete presence, on Google and in AI answers, tell them you are real, reliable and ready to help. Without them, they move on to someone who does.
             </p>
           </Reveal>
 

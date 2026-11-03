@@ -15,7 +15,7 @@ export default function Footer() {
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Logo light />
-            <p className="mt-5 max-w-[34ch] text-[15px] leading-[1.7] text-paper/60">Web design studio in Durban, South Africa. Websites and Google Business profiles for local businesses.</p>
+            <p className="mt-5 max-w-[34ch] text-[15px] leading-[1.7] text-paper/60">Web design studio in Durban, South Africa. Websites, AI SEO and Google Business profiles for local businesses.</p>
           </div>
           <nav aria-label="Footer" className="grid content-start gap-x-6 sm:grid-cols-2 lg:col-span-4 lg:col-start-7">
             {NAV_LINKS.map((l) => (

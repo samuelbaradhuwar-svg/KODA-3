@@ -1,6 +1,6 @@
 # KODA
 
-> KODA is a web design studio in Durban, KwaZulu-Natal, South Africa. We design and build fast, mobile friendly websites for small and medium businesses, and we set up Google Business Profiles and SEO. Every website includes managed hosting with SSL, backups and monitoring, and support after launch.
+> KODA is a web design studio in Durban, KwaZulu-Natal, South Africa. We design and build fast, mobile friendly websites for small and medium businesses, and we run AI SEO and ad campaigns so a business can be found on Google and in AI answers such as ChatGPT and Gemini. We also set up Google Business Profiles. Every website includes managed hosting with SSL, backups and monitoring, and support after launch.
 
 ## Facts
 - Name: KODA (also written "KODA Web Design" or "HeyKoda")

@@ -25,7 +25,7 @@ export default function WebsiteDesignDurban() {
             </Reveal>
             <Reveal delay={160}>
               <p className="t-body mt-7 max-w-[56ch] text-base">
-                <Koda /> is a Durban web design studio. We design and build professional websites for small and medium sized businesses, set up your Google Business profile, and handle the technical side so customers can find you, trust you and get in touch.
+                <Koda /> is a Durban web design studio. We design and build professional websites for small and medium sized businesses, run AI SEO and ad campaigns so customers can find you on Google and in AI answers like ChatGPT and Gemini, and handle the technical side so they can trust you and get in touch.
               </p>
             </Reveal>
             <Reveal delay={240} className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
@@ -45,7 +45,7 @@ export default function WebsiteDesignDurban() {
           </Reveal>
           <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
             <p className="t-body text-base">
-              We work with small and medium sized businesses that need a professional online presence: service providers, trades, clinics, salons, restaurants, retailers and growing local companies. If customers look for you on Google or check your website before they call, a clear, fast website helps.
+              We work with small and medium sized businesses that need a professional online presence: service providers, trades, clinics, salons, restaurants, retailers and growing local companies. If customers ask an AI assistant, look for you on Google or check your website before they call, a clear, fast website and good AI SEO help.
             </p>
           </Reveal>
         </div>

@@ -35,7 +35,7 @@ const isVideo = (url) => /\.(mp4|webm)(\?|$)/.test(url);
 const EYEBROW = "Web design studio, Durban";
 const HEADLINE = "Your business deserves to be found.";
 const LEAD =
-  "KODA is a Durban web design studio. We build modern websites, set up and optimise your Google Business profile, and help local customers find local businesses online.";
+  "KODA is a Durban web design studio. We build modern websites and run AI SEO and ad campaigns, so customers can find your business on Google and in AI answers like ChatGPT and Gemini.";
 
 const STATEMENT_ONE = [
   { w: "We", muted: true },
@@ -466,7 +466,7 @@ function MotionHero() {
             ))}
           </h2>
           <p ref={oneSub} className="mt-8 max-w-[34rem] text-[clamp(16px,1.7vw,24px)] leading-snug text-muted">
-            Websites, search visibility and a brand that shows up everywhere your customers look.
+            Websites, AI search visibility and a brand that shows up wherever your customers look and ask.
           </p>
         </div>
 
