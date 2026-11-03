@@ -821,3 +821,10 @@
   [data-on="1"] .wd-window, [data-on="1"] .wd-bar, [data-on="1"] .wd-pic, [data-on="1"] .wd-btn, [data-on="1"] .wd-phone, [data-on="1"] .wd-tile,
   [data-on="1"] .wk-head, [data-on="1"] .wk-row, [data-on="1"] .wk-new, [data-on="1"] .wk-dot, [data-on="1"] .wk-tile { animation: none; }
 }
+
+/* Services deck pictures (ServiceArt): each fills its rounded panel. */
+.svc-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

@@ -3,15 +3,7 @@ import { SERVICES } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal, TextLink } from "./ui.jsx";
 import { scrollToId } from "../lib/utils.js";
 import CardDeck from "./CardDeck.jsx";
-import art1 from "../assets/service-1-website-design.webp";
-import art2 from "../assets/service-2-branding.webp";
-import art3 from "../assets/service-3-redesign.webp";
-import art4 from "../assets/service-4-ecommerce.webp";
-import art5 from "../assets/service-5-booking.webp";
-import art6 from "../assets/service-6-google-profile.webp";
-import art7 from "../assets/service-7-seo.webp";
-import art8 from "../assets/service-8-maintenance.webp";
-import art9 from "../assets/service-9-social.webp";
+import { SERVICE_ART } from "./ServiceArt.jsx";
 import { Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, ShareNetwork } from "@phosphor-icons/react";
 
 export function ServiceList({ items = SERVICES }) {
@@ -32,43 +24,23 @@ export function ServiceList({ items = SERVICES }) {
 
 const SERVICE_ICONS = [Browser, PenNib, ArrowsClockwise, ShoppingBag, CalendarCheck, MapPin, MagnifyingGlass, ShieldCheck, ShareNetwork];
 
-// One picture per service, set in a rounded panel so it sits cleanly on any card colour. The cards cycle white,
-// black and lime like before; `pos` keeps the main subject of each picture in frame.
+// One picture per service, drawn in the hero card look (see ServiceArt.jsx) and set in a rounded panel, so it sits
+// cleanly on any card colour. The cards cycle dark, lime and light.
 const SURFACES = [
-  { card: "bg-paper text-ink", body: "text-ink/80", tile: "bg-accent text-ink" },
   { card: "keep-light bg-ink text-paper", body: "text-paper/80", tile: "bg-accent text-ink" },
   { card: "bg-accent text-ink", body: "text-ink/80", tile: "bg-ink text-accent" },
-];
-
-const ART = [
-  { src: art1, w: 1400, h: 934, pos: "50% 40%" },
-  { src: art2, w: 1400, h: 764, pos: "55% 50%" },
-  { src: art3, w: 1400, h: 934, pos: "55% 40%" },
-  { src: art4, w: 1400, h: 934, pos: "50% 40%" },
-  { src: art5, w: 1400, h: 934, pos: "50% 40%" },
-  { src: art6, w: 1400, h: 934, pos: "50% 40%" },
-  { src: art7, w: 1400, h: 934, pos: "50% 40%" },
-  { src: art8, w: 1400, h: 934, pos: "50% 45%" },
-  { src: art9, w: 1400, h: 764, pos: "50% 50%" },
+  { card: "bg-paper text-ink", body: "text-ink/80", tile: "bg-accent text-ink" },
 ];
 
 function ServiceCard({ s, i }) {
-  const art = ART[i % ART.length];
+  const Art = SERVICE_ART[i % SERVICE_ART.length];
   const surface = SURFACES[i % SURFACES.length];
   const Icon = SERVICE_ICONS[i % SERVICE_ICONS.length];
   return (
     <article className={`relative h-full overflow-hidden rounded-[28px] ${surface.card}`}>
-      <img
-        src={art.src}
-        width={art.w}
-        height={art.h}
-        alt=""
-        loading="lazy"
-        decoding="async"
-        draggable={false}
-        className="svc-art absolute rounded-[18px] object-cover shadow-[0_18px_40px_-24px_rgba(16,16,16,0.5)] ring-1 ring-black/10 md:rounded-[22px]"
-        style={{ objectPosition: art.pos }}
-      />
+      <div className="svc-art absolute overflow-hidden rounded-[18px] bg-[#E8E7E5] shadow-[0_18px_40px_-24px_rgba(16,16,16,0.5)] ring-1 ring-black/10 md:rounded-[22px]" aria-hidden="true">
+        <Art />
+      </div>
       <div className="relative z-10 flex h-full flex-col justify-end gap-2.5 p-5 text-left sm:p-7 md:w-[40%] md:justify-center md:gap-4 md:p-10 [@media(max-height:520px)]:w-[44%] [@media(max-height:520px)]:justify-center [@media(max-height:520px)]:gap-1.5 [@media(max-height:520px)]:p-4">
         <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${surface.tile} md:h-14 md:w-14 [@media(max-height:520px)]:hidden`}>
           <Icon size={24} weight="bold" aria-hidden="true" />
