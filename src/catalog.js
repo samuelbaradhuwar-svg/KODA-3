@@ -47,7 +47,7 @@ export const PLANS = [
     name: "Custom",
     timeline: "Agreed with you",
     price: "From R14,999",
-    note: "custom quote",
+    note: "Booking sites, custom quote. Online stores from R20,000",
     desc: "For businesses that book or sell online and need a site to match.",
     features: ["Everything in Business", "Online booking system or online store", "Advanced SEO and AI SEO strategy", "AI ad campaigns, as quoted", "Custom integrations", "Priority support"],
     cta: "Get a quote",
@@ -65,7 +65,7 @@ export const MONTHLY_PLANS = [
   },
   {
     name: "Growth",
-    price: "From R2,999",
+    price: "From R3,500",
     note: "/ month",
     desc: "For businesses wanting consistent digital growth.",
     features: [
@@ -83,7 +83,7 @@ export const MONTHLY_PLANS = [
   },
   {
     name: "Performance",
-    price: "From R4,999",
+    price: "From R6,500",
     note: "/ month",
     desc: "For businesses wanting a comprehensive digital marketing operation.",
     features: [
@@ -92,7 +92,7 @@ export const MONTHLY_PLANS = [
       "4 marketing campaigns monthly",
       "Advanced SEO and AI SEO strategy",
       "Conversion optimisation",
-      "AI ad campaign management, including Google Ads",
+      "Google Ads management (one platform, up to 4 campaigns)",
       "Competitor monitoring",
       "Detailed monthly reporting",
     ],

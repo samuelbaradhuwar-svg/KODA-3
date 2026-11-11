@@ -8,7 +8,7 @@ import FreeMockup from "./FreeMockup.jsx";
 // One plan card, used for both the once-off websites and the monthly plans.
 function PlanCard({ p, i, id, monthly }) {
   const hot = p.highlighted;
-  // "From R2,999" is shown as a small "From" line over the number, so every card's price lines up
+  // "From R3,500" is shown as a small "From" line over the number, so every card's price lines up
   const from = p.price.startsWith("From ");
   const amount = from ? p.price.slice(5) : p.price;
   return (
@@ -120,7 +120,7 @@ export default function Pricing() {
           <Reveal className="mt-12 border-t border-ink/15 pt-6">
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-muted">Quoted separately</p>
             <p className="mt-2 max-w-[70ch] text-[15px] leading-[1.65] text-ink/85">
-              Advertising budgets, extensive video production, professional photography and initial website development are quoted separately.
+              Ad budgets are paid directly to the advertising platform. Extra ad platforms, extensive video production, professional photography and initial website development are quoted separately.
             </p>
             <p className="mt-2 max-w-[70ch] text-[14px] leading-[1.65] text-muted">
               Each monthly plan has a fixed allowance of posts and campaigns, not unlimited work. Add a logo and brand look to any plan from R3,500, once off.
