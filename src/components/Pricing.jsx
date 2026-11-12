@@ -63,14 +63,14 @@ function PlanCard({ p, i, id, monthly }) {
   );
 }
 
-export default function Pricing() {
+export default function Pricing({ page = false }) {
   return (
-    <section id="pricing" className="sec">
+    <section id="pricing" className={page ? "sec pt-32 lg:pt-40" : "sec"}>
       <div className="wrap">
         <Reveal className="grid gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
             <Eyebrow>Pricing</Eyebrow>
-            <Headline className="h-section mt-5">Simple pricing, built for local businesses.</Headline>
+            <Headline as={page ? "h1" : "h2"} className="h-section mt-5">Simple pricing, built for local businesses.</Headline>
           </div>
         </Reveal>
 

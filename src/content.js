@@ -151,6 +151,14 @@ export const PAGES = {
     title: "Website Design Durban | AI SEO and Ads | KODA",
     description: "Durban web design studio. Fast, mobile friendly websites from R3,499, plus AI SEO and ads to help you get found on Google and in ChatGPT. Free mock-up first.",
   },
+  "/pricing": {
+    title: "Website Design Pricing in Durban | KODA",
+    description: "KODA website prices in rand: Starter from R3,499, Business R7,999, plus monthly SEO and AI SEO plans from R1,499. Free homepage mock-up before you commit.",
+  },
+  "/about": {
+    title: "About KODA | Durban Web Design Studio",
+    description: "KODA is a Durban web design studio for small businesses. See who you deal with, how we work, and what we do: websites, AI SEO, ad campaigns and ongoing care.",
+  },
   "/website-design-durban": {
     title: "Website Design in Durban for Small Businesses | KODA",
     description:
