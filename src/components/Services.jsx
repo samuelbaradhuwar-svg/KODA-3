@@ -68,6 +68,9 @@ export default function Services() {
             <div className="mt-5">
               <TextLink href="/website-design-durban">Website design in Durban</TextLink>
             </div>
+            <div className="mt-2">
+              <TextLink href="/website-developers-in-durban">Website developers in Durban</TextLink>
+            </div>
           </Reveal>
         </div>
         <CardDeck items={SERVICES} label="Our services" renderCard={(s, i, n) => <ServiceCard s={s} i={i} />} />

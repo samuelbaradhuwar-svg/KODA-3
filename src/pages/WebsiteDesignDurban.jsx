@@ -47,6 +47,9 @@ export default function WebsiteDesignDurban() {
             <p className="t-body text-base">
               We work with small and medium sized businesses that need a professional online presence: service providers, trades, clinics, salons, restaurants, retailers and growing local companies. If customers ask an AI assistant, look for you on Google or check your website before they call, a clear, fast website and good AI SEO help.
             </p>
+            <p className="t-body mt-5 text-base">
+              Looking for <a className="underline underline-offset-4" href="/website-developers-in-durban">website developers in Durban</a>? See how we build and look after websites for local businesses and start-ups.
+            </p>
           </Reveal>
         </div>
       </section>
