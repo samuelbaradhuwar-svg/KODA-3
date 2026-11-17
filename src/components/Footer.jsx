@@ -35,6 +35,7 @@ export default function Footer() {
             ))}
             <a href="/website-design-durban" className="inline-flex min-h-11 min-w-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Website design Durban</a>
             <a href="/website-developers-in-durban" className="inline-flex min-h-11 min-w-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Website developers Durban</a>
+            <a href="/our-work" className="inline-flex min-h-11 min-w-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Our work</a>
             <a href="/pricing" className="inline-flex min-h-11 min-w-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">Full pricing</a>
             <a href="/about" className="inline-flex min-h-11 min-w-11 w-fit items-center text-sm text-paper/70 transition-colors hover:text-accent">About the studio</a>
           </nav>

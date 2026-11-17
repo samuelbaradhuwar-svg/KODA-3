@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 const SITE = "https://www.heykoda.co.za";
 const ssrDir = path.resolve("dist-ssr");
 const entry = fs.readdirSync(ssrDir).find((f) => /^entry-server.*\.(m?js)$/.test(f));
-const { render, pages, FAQS, DEV_FAQS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
+const { render, pages, FAQS, DEV_FAQS, WORK_FAQS, PROJECTS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
 
 const template = fs.readFileSync(path.resolve("dist/index.html"), "utf8");
 if (!template.includes('<div id="root"></div>')) throw new Error("Root placeholder not found in dist/index.html");
@@ -26,6 +26,19 @@ const faqLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+}).replace(/</g, "\\u003c")}</script>`;
+
+// Markup for the our work page: the page, the projects it lists (from the same data) and its own questions.
+const workLd = (meta) => `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage", "@id": `${SITE}/our-work#webpage`, url: `${SITE}/our-work`, name: meta.title, description: meta.description, inLanguage: "en-ZA",
+      isPartOf: { "@id": `${SITE}/#website` }, about: { "@id": `${SITE}/#organization` },
+      mainEntity: { "@type": "ItemList", itemListElement: PROJECTS.map((p, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "WebSite", name: p.name, url: p.url, creator: { "@id": `${SITE}/#organization` } } })) },
+    },
+    { "@type": "FAQPage", mainEntity: WORK_FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+  ],
 }).replace(/</g, "\\u003c")}</script>`;
 
 // Markup for the website developers page: the page, the service and its own questions (built from the same text).
@@ -52,7 +65,8 @@ for (const [route, meta] of Object.entries(pages)) {
     .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(meta.title)}$2`)
     .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`);
-  if (route === "/website-developers-in-durban") html = html.replace("</head>", `    ${devLd(meta)}\n  </head>`);
+  if (route === "/our-work") html = html.replace("</head>", `    ${workLd(meta)}\n  </head>`);
+  else if (route === "/website-developers-in-durban") html = html.replace("</head>", `    ${devLd(meta)}\n  </head>`);
   else if (html.includes(esc(FAQS[0].q)) || html.includes(FAQS[0].q)) html = html.replace("</head>", `    ${faqLd}\n  </head>`);
   const out = route === "/" ? "dist/index.html" : path.join("dist", route, "index.html");
   fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });

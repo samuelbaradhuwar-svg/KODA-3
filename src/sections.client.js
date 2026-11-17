@@ -22,6 +22,7 @@ export const Footer = near("site-footer", () => import("./components/Footer.jsx"
 // Pages other than the home page load their own file when they are the page being shown.
 export const WebsiteDesignDurban = lazy(() => import("./pages/WebsiteDesignDurban.jsx"));
 export const WebsiteDevelopers = lazy(() => import("./pages/WebsiteDevelopers.jsx"));
+export const OurWork = lazy(() => import("./pages/OurWork.jsx"));
 export const PricingPage = lazy(() => import("./pages/PricingPage.jsx"));
 export const AboutPage = lazy(() => import("./pages/AboutPage.jsx"));
 export const PrivacyPolicy = lazy(() => import("./pages/Legal.jsx").then((m) => ({ default: m.PrivacyPolicy })));

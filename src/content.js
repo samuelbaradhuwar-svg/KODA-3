@@ -1,6 +1,7 @@
 import SHOT_BLOOMING from "./assets/photo-blooming-bilingual.webp";
 import SHOT_TRYNETIX from "./assets/photo-trynetix.webp";
 
+import { PLANS } from "./catalog.js";
 export { SERVICES, PLANS, MONTHLY_PLANS, INCLUDED } from "./catalog.js";
 
 export const NAV_LINKS = [
@@ -152,6 +153,15 @@ export const DEV_FAQS = [
   { q: "Do you work outside Durban?", a: "We work with businesses across South Africa." },
 ];
 
+// Questions for the /our-work page. The price answer reads the Starter price from the plans, so it cannot drift.
+export const WORK_FAQS = [
+  { q: "Can I see more of your work?", a: "This page shows everything we have built so far. We are a new studio and we only show real projects. If you would like to see how we would approach your business, ask for the free homepage mock-up." },
+  { q: "Will my website look like the ones above?", a: "No. Every site is designed around your business, your customers and your brand. The projects above show our quality and approach, not a template." },
+  { q: "Do you build booking systems and online stores?", a: "Yes. The Blooming Bilingual includes lesson booking and a student login. If you need booking or an online store, tell us what you have in mind and we will quote for it." },
+  { q: "What does a website cost?", a: `Websites start from ${PLANS[0].price.replace(/^From /, "")}. Your written quote confirms exactly what is included, and the free mock-up costs nothing.` },
+  { q: "Can you promise my website will bring in customers?", a: "No, and be careful of anyone who does. A clear, fast website with good Google and AI SEO gives your business a fair chance of being found, but nobody controls what Google or AI tools show." },
+];
+
 // Add real profile links here and the footer icons appear. Empty links are hidden.
 export const SOCIALS = [
   { label: "Instagram", url: "" },
@@ -175,6 +185,10 @@ export const PAGES = {
   "/about": {
     title: "About KODA | Durban Web Design Studio",
     description: "KODA is a Durban web design studio for small businesses. See who you deal with, how we work, and what we do: websites, AI SEO, ad campaigns and ongoing care.",
+  },
+  "/our-work": {
+    title: "Our Work | Website Projects | KODA",
+    description: "See websites KODA has built for businesses, from online booking to lead generation. Start with a free website mock-up and a free website audit.",
   },
   "/website-developers-in-durban": {
     title: "Website Developers in Durban | KODA",
