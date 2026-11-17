@@ -12,6 +12,7 @@ export { default as Audit } from "./components/Audit.jsx";
 export { default as Contact } from "./components/Contact.jsx";
 export { default as Footer } from "./components/Footer.jsx";
 export { default as WebsiteDesignDurban } from "./pages/WebsiteDesignDurban.jsx";
+export { default as WebsiteDevelopers } from "./pages/WebsiteDevelopers.jsx";
 export { default as PricingPage } from "./pages/PricingPage.jsx";
 export { default as AboutPage } from "./pages/AboutPage.jsx";
 export { PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "./pages/Legal.jsx";

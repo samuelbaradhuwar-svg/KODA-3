@@ -135,6 +135,23 @@ export const FAQS = [
   { q: "Do I need to know anything technical to get started?", a: "No. We handle the strategy, design, build and setup from start to finish. All we need from you is a short call about your business." },
 ];
 
+// Copy for the /website-developers-in-durban page.
+export const DEV_SERVICES = [
+  { title: "Website development", desc: "We design and build websites that work well on a phone, because that is where most of your customers will see them. Your website is built around what your business actually offers and what your customers ask." },
+  { title: "SEO", desc: "Search engine optimisation is how we make your website easy for Google to read and understand. We set up your pages, titles, descriptions and business details properly, so Google can show the right information about you." },
+  { title: "AI SEO and campaigns", desc: "More people now ask ChatGPT and other AI tools who to call. We make your business easy for these tools to read and understand, with clear business details, the right website markup and helpful content. AI tools decide for themselves what to recommend, so we cannot promise a mention. What we can do is give your business a fair chance." },
+  { title: "Digital marketing", desc: "Once your website is live, we can help you get it seen: marketing campaigns, Google business details and regular reports on what we have done." },
+  { title: "Digital presence", desc: "Your website, your Google Business Profile and your online listings should all say the same thing. We help keep them consistent, so customers find the same business wherever they look." },
+];
+
+export const DEV_FAQS = [
+  { q: "What does a website developer do?", a: "A website developer builds your website: the design, the pages, the forms and the technical setup. We also set up hosting and your Google details, so the website is ready to be found." },
+  { q: "How long does a website take?", a: "Most single page websites launch within five to seven working days. Larger websites, or those with booking or online store features, usually take two to four weeks." },
+  { q: "Do I have to pay for the mock-up or the audit?", a: "No. Both are free, and there is no obligation to continue with us afterwards." },
+  { q: "Can you promise my business will appear in ChatGPT or on Google?", a: "No, and be careful of anyone who does. Google and AI tools make their own decisions. We make your business easy for them to find and understand, and we explain what we have done." },
+  { q: "Do you work outside Durban?", a: "We work with businesses across South Africa." },
+];
+
 // Add real profile links here and the footer icons appear. Empty links are hidden.
 export const SOCIALS = [
   { label: "Instagram", url: "" },
@@ -158,6 +175,10 @@ export const PAGES = {
   "/about": {
     title: "About KODA | Durban Web Design Studio",
     description: "KODA is a Durban web design studio for small businesses. See who you deal with, how we work, and what we do: websites, AI SEO, ad campaigns and ongoing care.",
+  },
+  "/website-developers-in-durban": {
+    title: "Website Developers in Durban | KODA",
+    description: "Website developers in Durban for local businesses and start-ups. Website development, SEO and AI SEO, plus a free website mock-up and a free website audit.",
   },
   "/website-design-durban": {
     title: "Website Design in Durban for Small Businesses | KODA",

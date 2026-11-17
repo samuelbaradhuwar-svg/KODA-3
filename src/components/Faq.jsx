@@ -4,7 +4,7 @@ import { FAQS } from "../content.js";
 import { Eyebrow, Headline, Reveal } from "./ui.jsx";
 import { cn } from "../lib/utils.js";
 
-export default function Faq({ title = "Common questions", open0 = 0 }) {
+export default function Faq({ title = "Common questions", open0 = 0, items = FAQS }) {
   const [open, setOpen] = useState(open0);
   return (
     <section id="faq" className="sec">
@@ -15,7 +15,7 @@ export default function Faq({ title = "Common questions", open0 = 0 }) {
         </Reveal>
         <Reveal delay={100} className="lg:col-span-7 lg:col-start-6">
           <div className="border-t border-ink/15">
-            {FAQS.map((f, i) => {
+            {items.map((f, i) => {
               const isOpen = open === i;
               return (
                 <div key={f.q} className="border-b border-ink/15">

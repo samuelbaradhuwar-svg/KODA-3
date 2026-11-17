@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 const SITE = "https://www.heykoda.co.za";
 const ssrDir = path.resolve("dist-ssr");
 const entry = fs.readdirSync(ssrDir).find((f) => /^entry-server.*\.(m?js)$/.test(f));
-const { render, pages, FAQS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
+const { render, pages, FAQS, DEV_FAQS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
 
 const template = fs.readFileSync(path.resolve("dist/index.html"), "utf8");
 if (!template.includes('<div id="root"></div>')) throw new Error("Root placeholder not found in dist/index.html");
@@ -28,6 +28,16 @@ const faqLd = `<script type="application/ld+json">${JSON.stringify({
   mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
 }).replace(/</g, "\\u003c")}</script>`;
 
+// Markup for the website developers page: the page, the service and its own questions (built from the same text).
+const devLd = (meta) => `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebPage", "@id": `${SITE}/website-developers-in-durban#webpage`, url: `${SITE}/website-developers-in-durban`, name: meta.title, description: meta.description, inLanguage: "en-ZA", isPartOf: { "@id": `${SITE}/#website` } },
+    { "@type": "Service", name: "Website development", serviceType: "Website development, SEO, AI SEO and digital marketing", provider: { "@id": `${SITE}/#organization` }, areaServed: { "@type": "Country", name: "South Africa" } },
+    { "@type": "FAQPage", mainEntity: DEV_FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+  ],
+}).replace(/</g, "\\u003c")}</script>`;
+
 for (const [route, meta] of Object.entries(pages)) {
   const url = route === "/" ? `${SITE}/` : `${SITE}${route}`;
   let html = template
@@ -42,7 +52,8 @@ for (const [route, meta] of Object.entries(pages)) {
     .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(meta.title)}$2`)
     .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`);
-  if (html.includes(esc(FAQS[0].q)) || html.includes(FAQS[0].q)) html = html.replace("</head>", `    ${faqLd}\n  </head>`);
+  if (route === "/website-developers-in-durban") html = html.replace("</head>", `    ${devLd(meta)}\n  </head>`);
+  else if (html.includes(esc(FAQS[0].q)) || html.includes(FAQS[0].q)) html = html.replace("</head>", `    ${faqLd}\n  </head>`);
   const out = route === "/" ? "dist/index.html" : path.join("dist", route, "index.html");
   fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
   fs.writeFileSync(path.resolve(out), html);
