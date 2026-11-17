@@ -32,10 +32,12 @@ const SURFACES = [
   { card: "bg-paper text-ink", body: "text-ink/80", tile: "bg-accent text-ink" },
 ];
 
-function ServiceCard({ s, i }) {
-  const Art = SERVICE_ART[i % SERVICE_ART.length];
+// `s.art` picks which of the ten pictures and icons a card uses (other pages show a few services in their own order).
+export function ServiceCard({ s, i }) {
+  const k = s.art ?? i;
+  const Art = SERVICE_ART[k % SERVICE_ART.length];
   const surface = SURFACES[i % SURFACES.length];
-  const Icon = SERVICE_ICONS[i % SERVICE_ICONS.length];
+  const Icon = SERVICE_ICONS[k % SERVICE_ICONS.length];
   return (
     <article className={`relative h-full overflow-hidden rounded-[28px] ${surface.card}`}>
       <div className="svc-art absolute overflow-hidden rounded-[18px] bg-[#E8E7E5] shadow-[0_18px_40px_-24px_rgba(16,16,16,0.5)] ring-1 ring-black/10 md:rounded-[22px]" aria-hidden="true">

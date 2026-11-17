@@ -137,11 +137,11 @@ export const FAQS = [
 
 // Copy for the /website-developers-in-durban page.
 export const DEV_SERVICES = [
-  { title: "Website development", desc: "We design and build websites that work well on a phone, because that is where most of your customers will see them. Your website is built around what your business actually offers and what your customers ask." },
-  { title: "SEO", desc: "Search engine optimisation is how we make your website easy for Google to read and understand. We set up your pages, titles, descriptions and business details properly, so Google can show the right information about you." },
-  { title: "AI SEO and campaigns", desc: "More people now ask ChatGPT and other AI tools who to call. We make your business easy for these tools to read and understand, with clear business details, the right website markup and helpful content. AI tools decide for themselves what to recommend, so we cannot promise a mention. What we can do is give your business a fair chance." },
-  { title: "Digital marketing", desc: "Once your website is live, we can help you get it seen: marketing campaigns, Google business details and regular reports on what we have done." },
-  { title: "Digital presence", desc: "Your website, your Google Business Profile and your online listings should all say the same thing. We help keep them consistent, so customers find the same business wherever they look." },
+  { art: 0, title: "Website development", desc: "We design and build websites that work well on a phone, because that is where most of your customers will see them. Your website is built around what your business actually offers and what your customers ask." },
+  { art: 6, title: "SEO", desc: "Search engine optimisation is how we make your website easy for Google to read and understand. We set up your pages, titles, descriptions and business details properly, so Google can show the right information about you." },
+  { art: 7, title: "AI SEO and campaigns", desc: "More people now ask ChatGPT and other AI tools who to call. We make your business easy for these tools to read and understand, with clear business details, the right website markup and helpful content. AI tools decide for themselves what to recommend, so we cannot promise a mention. What we can do is give your business a fair chance." },
+  { art: 9, title: "Digital marketing", desc: "Once your website is live, we can help you get it seen: marketing campaigns, Google business details and regular reports on what we have done." },
+  { art: 5, title: "Digital presence", desc: "Your website, your Google Business Profile and your online listings should all say the same thing. We help keep them consistent, so customers find the same business wherever they look." },
 ];
 
 export const DEV_FAQS = [

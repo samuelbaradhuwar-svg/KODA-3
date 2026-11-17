@@ -1,7 +1,8 @@
 import React from "react";
 import { DEV_SERVICES, DEV_FAQS, BUSINESS } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal, Koda } from "../components/ui.jsx";
-import { ServiceList } from "../components/Services.jsx";
+import { ServiceCard } from "../components/Services.jsx";
+import CardDeck from "../components/CardDeck.jsx";
 import FreeMockup from "../components/FreeMockup.jsx";
 import Audit from "../components/Audit.jsx";
 import Faq from "../components/Faq.jsx";
@@ -64,12 +65,12 @@ export default function WebsiteDevelopers() {
         </div>
       </section>
 
-      <section className="sec">
+      <section id="services" className="sec">
         <div className="wrap">
           <Reveal>
             <Headline className="h-section mb-14 max-w-[18ch]">What we do</Headline>
           </Reveal>
-          <ServiceList items={DEV_SERVICES} />
+          <CardDeck items={DEV_SERVICES} label="Our services" renderCard={(s, i) => <ServiceCard s={s} i={i} />} />
         </div>
       </section>
 
