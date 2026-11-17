@@ -8,10 +8,13 @@ import BackToTop from "./components/BackToTop.jsx";
 import Consent from "./components/Consent.jsx";
 import { PAGES } from "./content.js";
 // The browser and the server build load these differently (see sections.client.js and sections.ssr.js).
-import { Work, Services, Process, About, Pricing, Compare, StraightTalk, Testimonials, Faq, Audit, Contact, Footer, WebsiteDesignDurban, WebsiteDevelopers, OurWork, Ecommerce, PricingPage, AboutPage, PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "#sections";
+import { Work, Services, Process, About, Pricing, Compare, StraightTalk, Testimonials, Faq, Audit, Contact, Footer, WebsiteDesignDurban, WebsiteDevelopers, OurWork, Ecommerce, NotFound, PricingPage, AboutPage, PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "#sections";
 import { scrollToId } from "./lib/utils.js";
 
 export { PAGES };
+
+// Every address that is a real page. Anything else (including "/404", which the pre-render step uses) is the not found page.
+const KNOWN = new Set(Object.keys(PAGES));
 
 function Home() {
   return (
@@ -96,8 +99,10 @@ export default function App({ path = "/" }) {
         <Suspense fallback={null}><RefundPolicy /></Suspense>
       ) : path === "/cookie-policy" ? (
         <Suspense fallback={null}><CookiePolicy /></Suspense>
-      ) : (
+      ) : KNOWN.has(path) ? (
         <Home />
+      ) : (
+        <Suspense fallback={null}><NotFound /></Suspense>
       )}
       <Suspense fallback={null}><Footer /></Suspense>
       <WhatsApp />

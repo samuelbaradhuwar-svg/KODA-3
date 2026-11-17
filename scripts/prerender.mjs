@@ -87,4 +87,25 @@ for (const [route, meta] of Object.entries(pages)) {
   fs.writeFileSync(path.resolve(out), html);
   console.log(`Pre-rendered ${route}`);
 }
+// The page shown for addresses that do not exist. The host serves dist/404.html with a 404 status. It must not be indexed
+// and must not claim a canonical address, so those tags are replaced.
+{
+  const title = "Page not found | KODA";
+  const description = "That page does not exist. Go back to the KODA home page or see our pricing, our work and our free website audit.";
+  let html = template
+    .replace("</head>", `    ${preloads}\n  </head>`)
+    .replace('<div id="root"></div>', `<div id="root">${render("/404")}</div>`)
+    .replace(/<noscript>[\s\S]*?<\/noscript>\s*/, "")
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(description)}$2`)
+    .replace(/\s*<link rel="canonical"[^>]*>/, "")
+    .replace(/\s*<meta property="og:url"[^>]*>/, "")
+    .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
+    .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(description)}$2`)
+    .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
+    .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(description)}$2`)
+    .replace("</head>", `    <meta name="robots" content="noindex">\n  </head>`);
+  fs.writeFileSync(path.resolve("dist/404.html"), html);
+  console.log("Pre-rendered 404 page");
+}
 fs.rmSync(ssrDir, { recursive: true, force: true });

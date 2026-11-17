@@ -28,4 +28,9 @@ for (const file of ["dist/index.html", "dist/command.html"]) {
 for (const need of ["X-Frame-Options", "X-Content-Type-Options", "Referrer-Policy", "Permissions-Policy"]) {
   assert.ok(vercel.headers.some((h) => h.source === "/(.*)" && h.headers.some((x) => x.key === need)), `missing ${need} on all pages`);
 }
+// 3. the not found page exists, is told not to be indexed and has no canonical address
+const nf = fs.existsSync("dist/404.html") ? fs.readFileSync("dist/404.html", "utf8") : "";
+assert.ok(nf.includes("That page") && nf.includes("exist"), "dist/404.html is missing or is not the not found page");
+assert.ok(/<meta name="robots" content="noindex">/.test(nf), "dist/404.html must have a noindex tag");
+assert.ok(!/rel="canonical"/.test(nf), "dist/404.html must not have a canonical address");
 console.log(`seo check passed (${pages.length} pages, policy hashes match)`);
