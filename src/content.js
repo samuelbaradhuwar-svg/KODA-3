@@ -2,7 +2,8 @@ import SHOT_BLOOMING from "./assets/photo-blooming-bilingual.webp";
 import SHOT_TRYNETIX from "./assets/photo-trynetix.webp";
 
 import { PLANS } from "./catalog.js";
-export { SERVICES, PLANS, MONTHLY_PLANS, INCLUDED } from "./catalog.js";
+import { STORE_FROM } from "./catalog.js";
+export { SERVICES, PLANS, MONTHLY_PLANS, INCLUDED, STORE_FROM } from "./catalog.js";
 
 export const NAV_LINKS = [
   { label: "Work", id: "portfolio" },
@@ -162,6 +163,15 @@ export const WORK_FAQS = [
   { q: "Can you promise my website will bring in customers?", a: "No, and be careful of anyone who does. A clear, fast website with good Google and AI SEO gives your business a fair chance of being found, but nobody controls what Google or AI tools show." },
 ];
 
+// Questions for the /ecommerce page. The price reads from the catalog, so it cannot drift.
+export const ECOM_FAQS = [
+  { q: "How long does an online store take to build?", a: "Websites with a booking system or online store usually take two to four weeks, depending on how many products you have and how quickly we get your photos and descriptions." },
+  { q: "What does an online store cost?", a: `Online stores start from ${STORE_FROM}. The price depends on what your store needs, so we give you a written quote that lists exactly what is included.` },
+  { q: "Which payment methods can my customers use?", a: "This depends on the payment provider we set up for you. We explain the options before we start." },
+  { q: "Can I add and change products myself?", a: "Tell us how you would like to manage your store and we will explain what is possible. Our monthly plans cover ongoing updates, so there is no system to learn if you would rather we do it." },
+  { q: "Can you promise my store will get orders?", a: "No, and be careful of anyone who does. A clear, fast, secure store with good SEO and AI SEO gives your business a fair chance of being found, but nobody controls what Google or AI tools show." },
+];
+
 // Add real profile links here and the footer icons appear. Empty links are hidden.
 export const SOCIALS = [
   { label: "Instagram", url: "" },
@@ -189,6 +199,10 @@ export const PAGES = {
   "/our-work": {
     title: "Our Work | Website Projects | KODA",
     description: "See websites KODA has built for businesses, from online booking to lead generation. Start with a free website mock-up and a free website audit.",
+  },
+  "/ecommerce": {
+    title: "Ecommerce Website Design | Online Stores | KODA",
+    description: "Online stores for South African businesses, built to be fast, secure and easy to run. Start with a free website mock-up and a free website audit.",
   },
   "/website-developers-in-durban": {
     title: "Website Developers in Durban | KODA",

@@ -1,3 +1,6 @@
+// Starting price for an online store (shown on the Custom plan and the online stores page).
+export const STORE_FROM = "R20,000";
+
 // Services, plans and prices. Plain data with no imports, so both the website (via content.js) and the private
 // command centre API can read the same numbers. Edit here; nothing else holds a copy of a price.
 
@@ -47,7 +50,7 @@ export const PLANS = [
     name: "Custom",
     timeline: "Agreed with you",
     price: "From R14,999",
-    note: "Booking sites, custom quote. Online stores from R20,000",
+    note: `Booking sites, custom quote. Online stores from ${STORE_FROM}`,
     desc: "For businesses that book or sell online and need a site to match.",
     features: ["Everything in Business", "Online booking system or online store", "Advanced SEO and AI SEO strategy", "AI ad campaigns, as quoted", "Custom integrations", "Priority support"],
     cta: "Get a quote",

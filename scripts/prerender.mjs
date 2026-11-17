@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 const SITE = "https://www.heykoda.co.za";
 const ssrDir = path.resolve("dist-ssr");
 const entry = fs.readdirSync(ssrDir).find((f) => /^entry-server.*\.(m?js)$/.test(f));
-const { render, pages, FAQS, DEV_FAQS, WORK_FAQS, PROJECTS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
+const { render, pages, FAQS, DEV_FAQS, WORK_FAQS, ECOM_FAQS, STORE_FROM, PROJECTS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
 
 const template = fs.readFileSync(path.resolve("dist/index.html"), "utf8");
 if (!template.includes('<div id="root"></div>')) throw new Error("Root placeholder not found in dist/index.html");
@@ -26,6 +26,19 @@ const faqLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+}).replace(/</g, "\\u003c")}</script>`;
+
+// Markup for the online stores page: the page, the service (with its starting price) and its own questions.
+const ecomLd = (meta) => `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebPage", "@id": `${SITE}/ecommerce#webpage`, url: `${SITE}/ecommerce`, name: meta.title, description: meta.description, inLanguage: "en-ZA", isPartOf: { "@id": `${SITE}/#website` } },
+    {
+      "@type": "Service", name: "Ecommerce website design", serviceType: "Online store design and development", provider: { "@id": `${SITE}/#organization` }, areaServed: { "@type": "Country", name: "South Africa" },
+      offers: { "@type": "Offer", priceSpecification: { "@type": "PriceSpecification", priceCurrency: "ZAR", minPrice: Number(STORE_FROM.replace(/[^0-9]/g, "")) }, description: "Online stores from this price. A written quote confirms what is included." },
+    },
+    { "@type": "FAQPage", mainEntity: ECOM_FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+  ],
 }).replace(/</g, "\\u003c")}</script>`;
 
 // Markup for the our work page: the page, the projects it lists (from the same data) and its own questions.
@@ -65,7 +78,8 @@ for (const [route, meta] of Object.entries(pages)) {
     .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(meta.title)}$2`)
     .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`);
-  if (route === "/our-work") html = html.replace("</head>", `    ${workLd(meta)}\n  </head>`);
+  if (route === "/ecommerce") html = html.replace("</head>", `    ${ecomLd(meta)}\n  </head>`);
+  else if (route === "/our-work") html = html.replace("</head>", `    ${workLd(meta)}\n  </head>`);
   else if (route === "/website-developers-in-durban") html = html.replace("</head>", `    ${devLd(meta)}\n  </head>`);
   else if (html.includes(esc(FAQS[0].q)) || html.includes(FAQS[0].q)) html = html.replace("</head>", `    ${faqLd}\n  </head>`);
   const out = route === "/" ? "dist/index.html" : path.join("dist", route, "index.html");

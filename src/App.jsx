@@ -8,7 +8,7 @@ import BackToTop from "./components/BackToTop.jsx";
 import Consent from "./components/Consent.jsx";
 import { PAGES } from "./content.js";
 // The browser and the server build load these differently (see sections.client.js and sections.ssr.js).
-import { Work, Services, Process, About, Pricing, Compare, StraightTalk, Testimonials, Faq, Audit, Contact, Footer, WebsiteDesignDurban, WebsiteDevelopers, OurWork, PricingPage, AboutPage, PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "#sections";
+import { Work, Services, Process, About, Pricing, Compare, StraightTalk, Testimonials, Faq, Audit, Contact, Footer, WebsiteDesignDurban, WebsiteDevelopers, OurWork, Ecommerce, PricingPage, AboutPage, PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "#sections";
 import { scrollToId } from "./lib/utils.js";
 
 export { PAGES };
@@ -82,6 +82,8 @@ export default function App({ path = "/" }) {
         <Suspense fallback={null}><WebsiteDevelopers /></Suspense>
       ) : path === "/our-work" ? (
         <Suspense fallback={null}><OurWork /></Suspense>
+      ) : path === "/ecommerce" ? (
+        <Suspense fallback={null}><Ecommerce /></Suspense>
       ) : path === "/pricing" ? (
         <Suspense fallback={null}><PricingPage /></Suspense>
       ) : path === "/about" ? (
