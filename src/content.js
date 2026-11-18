@@ -154,6 +154,17 @@ export const DEV_FAQS = [
   { q: "Do you work outside Durban?", a: "We work with businesses across South Africa." },
 ];
 
+// Questions for the /website-design-durban page. Prices read from the plans, so they cannot drift.
+export const DURBAN_FAQS = [
+  { q: "How much does a website cost in Durban?", a: `Websites start from ${PLANS[0].price.replace(/^From /, "")} once off for a single page. ${PLANS[1].name} is ${PLANS[1].price} and ${PLANS[2].name} starts from ${PLANS[2].price.replace(/^From /, "")}, with online stores from ${STORE_FROM}. Your written quote confirms exactly what is included.` },
+  { q: "How long does a website take?", a: "Most single page websites launch within five to seven working days. Larger websites, or those with booking or online store features, usually take two to four weeks, depending on content and revisions." },
+  { q: "Can I see my website before I pay?", a: "Yes. We design a free mock-up of your homepage first. If you like it, we carry on. If not, you owe us nothing." },
+  { q: "What is AI SEO, and can you promise ChatGPT will recommend my business?", a: "AI SEO is how we make your business easy for tools like ChatGPT and Gemini to find and understand: clear business details, the right website markup, consistent listings and helpful content. Nobody can promise to be recommended, because those tools decide for themselves, but it gives your business a fair chance of being mentioned." },
+  { q: "Do you provide hosting?", a: "Yes. Every website we build includes secure, managed hosting with SSL, backups and uptime monitoring." },
+  { q: "Can you redesign my existing website?", a: "Yes. Our free website audit shows you in plain English what is working and what is not, and we can redesign from there." },
+  { q: "Do you build online stores and booking systems?", a: "Yes. If you need booking or an online store, tell us what you have in mind and we will quote for it." },
+];
+
 // Questions for the /our-work page. The price answer reads the Starter price from the plans, so it cannot drift.
 export const WORK_FAQS = [
   { q: "Can I see more of your work?", a: "This page shows everything we have built so far. We are a new studio and we only show real projects. If you would like to see how we would approach your business, ask for the free homepage mock-up." },

@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 const SITE = "https://www.heykoda.co.za";
 const ssrDir = path.resolve("dist-ssr");
 const entry = fs.readdirSync(ssrDir).find((f) => /^entry-server.*\.(m?js)$/.test(f));
-const { render, pages, FAQS, DEV_FAQS, WORK_FAQS, ECOM_FAQS, STORE_FROM, PROJECTS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
+const { render, pages, FAQS, DURBAN_FAQS, DEV_FAQS, WORK_FAQS, ECOM_FAQS, STORE_FROM, PROJECTS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
 
 const template = fs.readFileSync(path.resolve("dist/index.html"), "utf8");
 if (!template.includes('<div id="root"></div>')) throw new Error("Root placeholder not found in dist/index.html");
@@ -26,6 +26,17 @@ const faqLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+}).replace(/</g, "\\u003c")}</script>`;
+
+// Markup for the Durban page: the page, a breadcrumb trail, the service and its questions (built from the same text).
+const durbanLd = (meta) => `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebPage", "@id": `${SITE}/website-design-durban#webpage`, url: `${SITE}/website-design-durban`, name: meta.title, description: meta.description, inLanguage: "en-ZA", isPartOf: { "@id": `${SITE}/#website` }, breadcrumb: { "@id": `${SITE}/website-design-durban#breadcrumb` } },
+    { "@type": "BreadcrumbList", "@id": `${SITE}/website-design-durban#breadcrumb`, itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` }, { "@type": "ListItem", position: 2, name: "Website design in Durban", item: `${SITE}/website-design-durban` }] },
+    { "@type": "Service", name: "Website design in Durban", serviceType: "Website development, SEO, AI SEO and digital marketing", provider: { "@id": `${SITE}/#organization` }, areaServed: { "@type": "City", name: "Durban" } },
+    { "@type": "FAQPage", mainEntity: DURBAN_FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+  ],
 }).replace(/</g, "\\u003c")}</script>`;
 
 // Markup for the online stores page: the page, the service (with its starting price) and its own questions.
@@ -78,7 +89,8 @@ for (const [route, meta] of Object.entries(pages)) {
     .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(meta.title)}$2`)
     .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`);
-  if (route === "/ecommerce") html = html.replace("</head>", `    ${ecomLd(meta)}\n  </head>`);
+  if (route === "/website-design-durban") html = html.replace("</head>", `    ${durbanLd(meta)}\n  </head>`);
+  else if (route === "/ecommerce") html = html.replace("</head>", `    ${ecomLd(meta)}\n  </head>`);
   else if (route === "/our-work") html = html.replace("</head>", `    ${workLd(meta)}\n  </head>`);
   else if (route === "/website-developers-in-durban") html = html.replace("</head>", `    ${devLd(meta)}\n  </head>`);
   else if (html.includes(esc(FAQS[0].q)) || html.includes(FAQS[0].q)) html = html.replace("</head>", `    ${faqLd}\n  </head>`);
