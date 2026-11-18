@@ -25,6 +25,7 @@ export const WebsiteDevelopers = lazy(() => import("./pages/WebsiteDevelopers.js
 export const OurWork = lazy(() => import("./pages/OurWork.jsx"));
 export const Ecommerce = lazy(() => import("./pages/Ecommerce.jsx"));
 export const NotFound = lazy(() => import("./pages/NotFound.jsx"));
+export const TownPage = lazy(() => import("./pages/TownPage.jsx"));
 export const PricingPage = lazy(() => import("./pages/PricingPage.jsx"));
 export const AboutPage = lazy(() => import("./pages/AboutPage.jsx"));
 export const PrivacyPolicy = lazy(() => import("./pages/Legal.jsx").then((m) => ({ default: m.PrivacyPolicy })));

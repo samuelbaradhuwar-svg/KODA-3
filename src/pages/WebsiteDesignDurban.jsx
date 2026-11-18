@@ -6,6 +6,7 @@ import Process from "../components/Process.jsx";
 import Faq from "../components/Faq.jsx";
 import Contact from "../components/Contact.jsx";
 import { scrollToId } from "../lib/utils.js";
+import { routedTowns, townPath } from "../towns.js";
 
 const INCLUDED = ["Website Design", "Branding and Logo Design", "Website Redesign", "Booking Systems", "Ecommerce Stores", "Google Business Profile", "SEO Optimisation", "AI SEO and Ad Campaigns", "Website Maintenance", "SEO and Social Media"];
 
@@ -53,6 +54,25 @@ export default function WebsiteDesignDurban() {
           </Reveal>
         </div>
       </section>
+
+      {routedTowns().length > 0 && (
+        <section className="sec">
+          <div className="wrap grid gap-8 lg:grid-cols-12">
+            <Reveal className="lg:col-span-5">
+              <Headline className="h-section">Areas we serve</Headline>
+            </Reveal>
+            <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
+              <ul className="grid gap-3">
+                {routedTowns().map((t) => (
+                  <li key={t.slug}>
+                    <a className="inline-flex min-h-11 items-center underline underline-offset-4" href={townPath(t)}>Website design for {t.name} businesses{t.live ? "" : " (draft)"}</a>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       <section className="sec">
         <div className="wrap">

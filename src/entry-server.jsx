@@ -4,6 +4,7 @@ import App, { PAGES } from "./App.jsx";
 
 export const pages = PAGES;
 export { FAQS, DEV_FAQS, WORK_FAQS, ECOM_FAQS, STORE_FROM, PROJECTS } from "./content.js";
+export { routedTowns, townPath, townMeta, townProblems, TOWN_SHARED_FAQS } from "./towns.js";
 
 export function render(path) {
   return renderToString(

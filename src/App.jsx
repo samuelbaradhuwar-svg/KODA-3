@@ -7,8 +7,9 @@ import WhatsApp from "./components/WhatsApp.jsx";
 import BackToTop from "./components/BackToTop.jsx";
 import Consent from "./components/Consent.jsx";
 import { PAGES } from "./content.js";
+import { townForPath } from "./towns.js";
 // The browser and the server build load these differently (see sections.client.js and sections.ssr.js).
-import { Work, Services, Process, About, Pricing, Compare, StraightTalk, Testimonials, Faq, Audit, Contact, Footer, WebsiteDesignDurban, WebsiteDevelopers, OurWork, Ecommerce, NotFound, PricingPage, AboutPage, PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "#sections";
+import { Work, Services, Process, About, Pricing, Compare, StraightTalk, Testimonials, Faq, Audit, Contact, Footer, WebsiteDesignDurban, WebsiteDevelopers, OurWork, Ecommerce, NotFound, TownPage, PricingPage, AboutPage, PrivacyPolicy, Terms, RefundPolicy, CookiePolicy } from "#sections";
 import { scrollToId } from "./lib/utils.js";
 
 export { PAGES };
@@ -99,6 +100,8 @@ export default function App({ path = "/" }) {
         <Suspense fallback={null}><RefundPolicy /></Suspense>
       ) : path === "/cookie-policy" ? (
         <Suspense fallback={null}><CookiePolicy /></Suspense>
+      ) : townForPath(path) ? (
+        <Suspense fallback={null}><TownPage town={townForPath(path)} /></Suspense>
       ) : KNOWN.has(path) ? (
         <Home />
       ) : (
