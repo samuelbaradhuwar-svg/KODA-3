@@ -6,8 +6,8 @@
 // for every town hold true facts. Nothing here is guessed.
 //
 // HOW TO MAKE A TOWN LIVE
-//  1. Check its entry in TOWNS, fix anything that is wrong, and replace the [square bracketed] second question with a
-//     real one. No [square brackets] left.
+//  1. Check its entry in TOWNS and fix anything that is wrong. Add a question a business there has really asked.
+//     No [square brackets] left.
 //  2. Run the checklist in TOWNS.md.
 //  3. Set live: true. The build fails if a live town still has a placeholder or too little town-specific text, and
 //     `npm run seo:check` repeats the same checks.
@@ -67,9 +67,11 @@ const entry = (slug, name, why, areas) => ({
   areas,
   serve: `We work with ${name} businesses by phone and video, and meet in person by arrangement.`,
   work: null,
+  // The first two questions use the same wording on every page (marked shared), so they do not count as town-specific.
+  // Add a question a business in the town has really asked to make the page more useful, and it will count.
   faqs: [
-    { q: `Can you meet me in ${name}?`, a: "Yes, by arrangement. We also work by phone and video." },
-    { q: `[A QUESTION A ${name.toUpperCase()} BUSINESS HAS REALLY ASKED YOU]`, a: "[YOUR ANSWER]" },
+    { q: `Can you meet me in ${name}?`, a: "Yes, by arrangement. We also work by phone and video.", shared: true },
+    { q: "Can you set up my Google Business Profile as well?", a: "Yes. Google Business Profile setup is included with our Starter website.", shared: true },
   ],
 });
 
@@ -99,11 +101,11 @@ export const townMeta = (t) => ({
   description: `Website design for ${t.name} businesses, with SEO and AI SEO. Start with a free website mock-up and a free website audit from KODA.`,
 });
 
-// The words that are specific to this town: why, areas, work and the town's own extra questions. The sentence about how
-// we serve the town and the first question are the same wording on every page, so they do not count.
+// The words that are specific to this town: why, areas, work and the town's own questions. The sentence about how we
+// serve the town and the questions marked shared are the same wording on every page, so they do not count.
 export const MIN_TOWN_WORDS = 80;
 export const townWords = (t) =>
-  words([...(t.why || []), ...(t.areas || []), t.work?.name, t.work?.text, ...(t.faqs || []).slice(1).flatMap((f) => [f.q, f.a])].join(" "));
+  words([...(t.why || []), ...(t.areas || []), t.work?.name, t.work?.text, ...(t.faqs || []).filter((f) => !f.shared).flatMap((f) => [f.q, f.a])].join(" "));
 
 // Everything that stops a town from going live. An empty list means it is ready.
 export function townProblems(t) {
