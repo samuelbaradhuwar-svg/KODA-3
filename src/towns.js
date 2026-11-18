@@ -58,6 +58,8 @@ const draft = (slug, name) => ({
 
 // The towns and areas around Durban the site will have a page for (the same set as the pages your competitor has).
 export const TOWNS = [
+  draft("durban-cbd", "Durban CBD"),
+  draft("durban-north", "Durban North"),
   draft("umhlanga", "Umhlanga"),
   draft("chatsworth", "Chatsworth"),
   draft("ballito", "Ballito"),
