@@ -31,7 +31,7 @@ Start with a few pages and add a town only when real proof turns up (a client, a
 
 1. In `src/towns.js`, replace the town's `draft("slug", "Name")` line with a full entry (there is an example in the file) and fill in every field with real facts. No `[square brackets]` left.
 2. Set `live: true`.
-3. `npm run build` fails if a live town still has a placeholder, fewer than three areas, or fewer than 35 town-specific words (the shared wording does not count).
+3. `npm run build` fails if a live town still has a placeholder, fewer than three areas, or fewer than 80 town-specific words (the shared wording does not count).
    `npm run seo:check` repeats the same checks and the title and description length rules.
 
 Live towns are added to the sitemap by the build, listed under "Website design across Durban" on `/website-design-durban`, and linked from each other town page.
@@ -41,5 +41,5 @@ Live towns are added to the sitemap by the build, listed under "Website design a
 Towns with `live: false` never go on the live site. They show (marked as drafts, with the placeholders highlighted) in
 Vercel preview builds, and locally when you build with `TOWN_DRAFTS=1 npm run build`.
 
-The 35 word minimum is deliberately low, so the pages that go live are thin. Add true local detail (a real question a
-business there asked, a client, businesses you know) to make a town page more useful.
+A page needs about 80 town-specific words. Add true local detail (a real question a business there asked, a client,
+businesses you know) until a town passes.
