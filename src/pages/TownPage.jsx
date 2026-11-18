@@ -86,7 +86,7 @@ export default function TownPage({ town }) {
         <div className="wrap grid gap-8 lg:grid-cols-12">
           <Reveal className="lg:col-span-5">
             <Eyebrow>Areas we serve</Eyebrow>
-            <Headline className="h-section mt-5 max-w-[16ch]">Areas we cover in {town.name}.</Headline>
+            <Headline className="h-section mt-5 max-w-[16ch]">{`Areas we cover in ${town.name}.`}</Headline>
           </Reveal>
           <Reveal delay={100} className="lg:col-span-6 lg:col-start-7">
             <ul className="flex flex-wrap gap-2.5">
@@ -177,7 +177,7 @@ export default function TownPage({ town }) {
       <section className="sec bg-paper2">
         <div className="wrap">
           <Reveal>
-            <Headline className="h-section mb-12 max-w-[18ch]">Website design across Durban</Headline>
+            <Headline className="h-section mb-12 max-w-[20ch]">Website design across Durban and nearby</Headline>
           </Reveal>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <li><a className="block rounded-2xl border border-ink/15 bg-paper px-5 py-4 text-[15px] transition-colors hover:border-ink/40" href="/website-design-durban">Website design Durban</a></li>

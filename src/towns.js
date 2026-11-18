@@ -59,10 +59,10 @@ const draft = (slug, name) => ({
 // How KODA serves every town (option B): by phone and video, and in person by arrangement.
 // Each entry below holds the suggested areas and one factual sentence about the town, checked against web sources.
 // Check the areas against a map and keep only the ones you really serve. The second question still needs a real one.
-const entry = (slug, name, why, areas) => ({
+const entry = (slug, name, why, areas, live = false) => ({
   slug,
   name,
-  live: false,
+  live,
   why: [why],
   areas,
   serve: `We work with ${name} businesses by phone and video, and meet in person by arrangement.`,
@@ -78,12 +78,12 @@ const entry = (slug, name, why, areas) => ({
 // The towns and areas around Durban the site will have a page for (the same set as the pages your competitor has,
 // plus Durban CBD and Durban North).
 export const TOWNS = [
-  entry("durban-cbd", "Durban CBD", "Durban's central business district is the city's commercial core, with the beachfront, the Point waterfront, Albert Park and the Warwick Junction transport hub around it.", ["Central Business District", "Albert Park", "Greyville", "Warwick Junction", "The Point", "Berea"]),
-  entry("durban-north", "Durban North", "Durban North is a large residential area between the N2 and the coast, with the Umgeni River as its southern boundary. Its suburbs include coastal Glenashley and Virginia, and Briardene is mainly an industrial area.", ["Glenashley", "Virginia", "Parkhill", "Kenville", "Briardene"]),
-  entry("umhlanga", "Umhlanga", "Umhlanga is a coastal business and shopping area north of Durban, with the established seafront of Umhlanga Rocks and the newer commercial centre of Umhlanga Ridge around the Gateway shopping centre.", ["Umhlanga Rocks", "Umhlanga Ridge", "La Lucia", "Somerset Park", "La Lucia Ridge"]),
+  entry("durban-cbd", "Durban CBD", "Durban's central business district is the city's commercial core, with the beachfront, the Point waterfront, Albert Park and the Warwick Junction transport hub around it.", ["Central Business District", "Albert Park", "Greyville", "Warwick Junction", "The Point", "Berea"], true),
+  entry("durban-north", "Durban North", "Durban North is a large residential area between the N2 and the coast, with the Umgeni River as its southern boundary. Its suburbs include coastal Glenashley and Virginia, and Briardene is mainly an industrial area.", ["Glenashley", "Virginia", "Parkhill", "Kenville", "Briardene"], true),
+  entry("umhlanga", "Umhlanga", "Umhlanga is a coastal business and shopping area north of Durban, with the established seafront of Umhlanga Rocks and the newer commercial centre of Umhlanga Ridge around the Gateway shopping centre.", ["Umhlanga Rocks", "Umhlanga Ridge", "La Lucia", "Somerset Park", "La Lucia Ridge"], true),
   entry("chatsworth", "Chatsworth", "Chatsworth is a large residential area of Durban made up of many named suburbs, each with its own local shops and businesses.", ["Bayview", "Croftdene", "Crossmoor", "Havenside", "Kharwastan", "Montford", "Silverglen"]),
-  entry("ballito", "Ballito", "Ballito is the main town on the Dolphin Coast, north of Durban. It sits in the KwaDukuza municipality, with Shaka's Rock, Salt Rock and Sheffield Beach joined to it along the coast.", ["Ballito", "Shaka's Rock", "Salt Rock", "Sheffield Beach", "Zimbali", "Umhlali", "Tinley Manor"]),
-  entry("pinetown", "Pinetown", "Pinetown is a major commercial and industrial centre west of Durban. Westmead is known for manufacturing, automotive and logistics, while suburbs such as Cowies Hill and Sarnia are mainly residential.", ["Cowies Hill", "Westmead", "Sarnia", "Moseley", "Manors", "Mariannhill", "Caversham Glen"]),
+  entry("ballito", "Ballito", "Ballito is the main town on the Dolphin Coast, north of Durban. It sits in the KwaDukuza municipality, with Shaka's Rock, Salt Rock and Sheffield Beach joined to it along the coast.", ["Ballito", "Shaka's Rock", "Salt Rock", "Sheffield Beach", "Zimbali", "Umhlali", "Tinley Manor"], true),
+  entry("pinetown", "Pinetown", "Pinetown is a major commercial and industrial centre west of Durban. Westmead is known for manufacturing, automotive and logistics, while suburbs such as Cowies Hill and Sarnia are mainly residential.", ["Cowies Hill", "Westmead", "Sarnia", "Moseley", "Manors", "Mariannhill", "Caversham Glen"], true),
   entry("westville", "Westville", "Westville is a suburb of Durban between Sherwood and Pinetown, next to Queensburgh and Reservoir Hills.", ["Westville", "Atholl Heights", "Berea West", "Chiltern Hills", "Dawncliffe", "Dawncrest", "Grayleigh"]),
   entry("queensburgh", "Queensburgh", "Queensburgh is the collective name for several suburbs south-west of Durban, mainly Malvern, Escombe and Northdene.", ["Malvern", "Escombe", "Northdene", "Queensmead (industrial)", "Burlington Greenfields"]),
   entry("reservoir-hills", "Reservoir Hills", "Reservoir Hills is a residential suburb of Durban, north of Westville and Palmiet, named after the reservoir on its highest peak.", ["Reservoir Hills", "Richmond Gardens", "Palmiet", "Clermont"]),
@@ -103,7 +103,8 @@ export const townMeta = (t) => ({
 
 // The words that are specific to this town: why, areas, work and the town's own questions. The sentence about how we
 // serve the town and the questions marked shared are the same wording on every page, so they do not count.
-export const MIN_TOWN_WORDS = 80;
+// Set low on purpose: pages at this length are thin. Add true local detail to a town to make its page more useful.
+export const MIN_TOWN_WORDS = 35;
 export const townWords = (t) =>
   words([...(t.why || []), ...(t.areas || []), t.work?.name, t.work?.text, ...(t.faqs || []).filter((f) => !f.shared).flatMap((f) => [f.q, f.a])].join(" "));
 
