@@ -33,4 +33,14 @@ const nf = fs.existsSync("dist/404.html") ? fs.readFileSync("dist/404.html", "ut
 assert.ok(nf.includes("That page") && nf.includes("exist"), "dist/404.html is missing or is not the not found page");
 assert.ok(/<meta name="robots" content="noindex">/.test(nf), "dist/404.html must have a noindex tag");
 assert.ok(!/rel="canonical"/.test(nf), "dist/404.html must not have a canonical address");
+// 4. every live town page has real town facts, a good title and a good description
+const { TOWNS, townProblems, townMeta, townPath } = await import("../src/towns.js");
+for (const t of TOWNS.filter((x) => x.live)) {
+  const problems = townProblems(t);
+  assert.deepEqual(problems, [], `town page ${t.slug} cannot be live: ${problems.join("; ")}`);
+  const m = townMeta(t);
+  assert.ok(m.description.length >= 120 && m.description.length <= 160, `${townPath(t)} description is ${m.description.length} characters (want 120 to 160)`);
+  assert.ok(m.title.length <= 60, `${townPath(t)} title is ${m.title.length} characters (want 60 or fewer)`);
+  assert.ok(fs.existsSync(`dist${townPath(t)}/index.html`), `dist${townPath(t)}/index.html was not built`);
+}
 console.log(`seo check passed (${pages.length} pages, policy hashes match)`);

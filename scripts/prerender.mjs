@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 const SITE = "https://www.heykoda.co.za";
 const ssrDir = path.resolve("dist-ssr");
 const entry = fs.readdirSync(ssrDir).find((f) => /^entry-server.*\.(m?js)$/.test(f));
-const { render, pages, FAQS, DURBAN_FAQS, DEV_FAQS, WORK_FAQS, ECOM_FAQS, STORE_FROM, PROJECTS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
+const { render, pages, FAQS, DURBAN_FAQS, DEV_FAQS, WORK_FAQS, ECOM_FAQS, STORE_FROM, PROJECTS, routedTowns, townPath, townMeta, townProblems, TOWN_SHARED_FAQS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
 
 const template = fs.readFileSync(path.resolve("dist/index.html"), "utf8");
 if (!template.includes('<div id="root"></div>')) throw new Error("Root placeholder not found in dist/index.html");
@@ -99,6 +99,51 @@ for (const [route, meta] of Object.entries(pages)) {
   fs.writeFileSync(path.resolve(out), html);
   console.log(`Pre-rendered ${route}`);
 }
+// Markup for a live town page: the page, the service in that town and its questions (built from the same text).
+const townLd = (t, meta) => `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebPage", "@id": `${SITE}${townPath(t)}#webpage`, url: `${SITE}${townPath(t)}`, name: meta.title, description: meta.description, inLanguage: "en-ZA", isPartOf: { "@id": `${SITE}/#website` } },
+    { "@type": "Service", name: `Website design for ${t.name} businesses`, serviceType: "Website development, SEO, AI SEO and digital marketing", provider: { "@id": `${SITE}/#organization` }, areaServed: { "@type": "City", name: t.name } },
+    { "@type": "FAQPage", mainEntity: [...t.faqs, ...TOWN_SHARED_FAQS].map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+  ],
+}).replace(/</g, "\\u003c")}</script>`;
+
+// Town pages (src/towns.js). A live town with missing facts stops the build. Drafts appear only in previews, marked
+// noindex, and are left out of the sitemap.
+for (const t of routedTowns()) {
+  if (t.live) {
+    const problems = townProblems(t);
+    if (problems.length) throw new Error(`Town page ${t.slug} cannot go live: ${problems.join("; ")}`);
+  }
+  const route = townPath(t);
+  const meta = townMeta(t);
+  const url = `${SITE}${route}`;
+  let html = template
+    .replace("</head>", `    ${preloads}\n  </head>`)
+    .replace('<div id="root"></div>', `<div id="root">${render(route)}</div>`)
+    .replace(/<noscript>[\s\S]*?<\/noscript>\s*/, "")
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(meta.title)}</title>`)
+    .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
+    .replace(/(<link rel="canonical" href=")[^"]*(")/, `$1${url}$2`)
+    .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${url}$2`)
+    .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(meta.title)}$2`)
+    .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
+    .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(meta.title)}$2`)
+    .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
+    .replace("</head>", t.live ? `    ${townLd(t, meta)}\n  </head>` : `    <meta name="robots" content="noindex">\n  </head>`);
+  fs.mkdirSync(path.dirname(path.resolve("dist", route.slice(1), "index.html")), { recursive: true });
+  fs.writeFileSync(path.resolve("dist", route.slice(1), "index.html"), html);
+  console.log(`Pre-rendered ${route}${t.live ? "" : " (draft)"}`);
+}
+const liveTowns = routedTowns().filter((t) => t.live);
+if (liveTowns.length) {
+  const sm = path.resolve("dist/sitemap.xml");
+  const today = new Date().toISOString().slice(0, 10);
+  const add = liveTowns.map((t) => `  <url>\n    <loc>${SITE}${townPath(t)}</loc>\n    <lastmod>${today}</lastmod>\n  </url>\n`).join("");
+  fs.writeFileSync(sm, fs.readFileSync(sm, "utf8").replace("</urlset>", `${add}</urlset>`));
+}
+
 // The page shown for addresses that do not exist. The host serves dist/404.html with a 404 status. It must not be indexed
 // and must not claim a canonical address, so those tags are replaced.
 {

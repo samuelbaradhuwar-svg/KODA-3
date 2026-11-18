@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react()],
+  // Town pages marked as drafts (src/towns.js) are built only in previews or with TOWN_DRAFTS=1, never in production.
+  define: { __TOWN_DRAFTS__: JSON.stringify(process.env.VERCEL_ENV === "preview" || process.env.TOWN_DRAFTS === "1") },
   resolve: {
     // The browser build loads the lower sections lazily; the server build imports them normally so the pre-rendered HTML is complete.
     alias: { "#sections": new URL(isSsrBuild ? "./src/sections.ssr.js" : "./src/sections.client.js", import.meta.url).pathname },

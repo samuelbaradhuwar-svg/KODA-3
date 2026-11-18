@@ -9,6 +9,7 @@ import Faq from "../components/Faq.jsx";
 import PageLinks from "../components/PageLinks.jsx";
 import Contact from "../components/Contact.jsx";
 import { scrollToId } from "../lib/utils.js";
+import { routedTowns, townPath } from "../towns.js";
 
 // Why a Durban business would pick us. Every line is something the site already says elsewhere.
 const WHY = [
@@ -206,7 +207,25 @@ export default function WebsiteDesignDurban() {
         </div>
       </section>
 
-      <PageLinks title="Website design across Durban" className="sec bg-paper2" />
+      {routedTowns().length > 0 && (
+        <section className="sec bg-paper2">
+          <div className="wrap">
+            <Reveal>
+              <Eyebrow>Areas we serve</Eyebrow>
+              <Headline className="h-section mt-5 mb-12 max-w-[18ch]">Website design across Durban.</Headline>
+            </Reveal>
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {routedTowns().map((t) => (
+                <li key={t.slug}>
+                  <a className="block rounded-2xl border border-ink/15 bg-paper px-5 py-4 text-[15px] transition-colors hover:border-ink/40" href={townPath(t)}>Website design {t.name}{t.live ? "" : " (draft)"}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      <PageLinks title="More from KODA" className="sec" />
       <Contact />
     </main>
   );
