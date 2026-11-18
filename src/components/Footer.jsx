@@ -4,11 +4,13 @@ import { NAV_LINKS, SOCIALS, BUSINESS, LEGAL_LINKS } from "../content.js";
 import { Logo, Koda } from "./ui.jsx";
 import { LETTER_PATHS } from "../lib/logo-paths.js";
 import { EMAIL, PHONE, openGmailCompose, scrollToId } from "../lib/utils.js";
+import { routedTowns, townPath } from "../towns.js";
 
 const ICONS = { Instagram: InstagramLogo, Facebook: FacebookLogo, LinkedIn: LinkedinLogo };
 
 export default function Footer() {
   const socials = SOCIALS.filter((s) => s.url);
+  const towns = routedTowns();
   return (
     <footer id="site-footer" className="keep-light bg-ink text-paper">
       <div className="wrap border-t border-paper/15 py-12">
@@ -62,6 +64,18 @@ export default function Footer() {
             )}
           </div>
         </div>
+        {towns.length > 0 && (
+          <nav aria-label="Areas we serve" className="mt-10 border-t border-paper/15 pt-8">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-paper/50">Website design, areas we serve</p>
+            <ul className="mt-3 flex flex-wrap gap-x-6">
+              {towns.map((t) => (
+                <li key={t.slug}>
+                  <a href={townPath(t)} aria-label={`Website design ${t.name}`} className="inline-flex min-h-11 items-center text-sm text-paper/70 transition-colors hover:text-accent">{t.name}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
         {/* the wordmark, drawn from the same traced letters as the hero lockup */}
         <svg viewBox="-483 380 961 160" aria-hidden="true" className="mt-16 w-full text-paper/[0.07]">
           {LETTER_PATHS.map((d, i) => (

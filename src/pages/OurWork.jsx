@@ -1,4 +1,6 @@
 import React from "react";
+import Breadcrumb from "../components/Breadcrumb.jsx";
+import { trailFor } from "../trail.js";
 import { PROJECTS, PLANS, WORK_FAQS, BUSINESS } from "../content.js";
 import { BrowserFrame, Button, Eyebrow, Headline, Reveal, TextLink, Koda } from "../components/ui.jsx";
 import Audit from "../components/Audit.jsx";
@@ -27,6 +29,7 @@ export default function OurWork() {
       <section className="pb-16 pt-32 lg:pb-24 lg:pt-40">
         <div className="wrap grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-9">
+            <Breadcrumb trail={trailFor("/our-work")} />
             <Reveal>
               <Eyebrow>Our work</Eyebrow>
             </Reveal>

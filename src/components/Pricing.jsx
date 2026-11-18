@@ -4,6 +4,8 @@ import { PLANS, MONTHLY_PLANS, INCLUDED, MOCKUP_OFFER } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal, Koda } from "./ui.jsx";
 import { cn, scrollToId } from "../lib/utils.js";
 import FreeMockup from "./FreeMockup.jsx";
+import Breadcrumb from "./Breadcrumb.jsx";
+import { trailFor } from "../trail.js";
 
 // One plan card, used for both the once-off websites and the monthly plans.
 function PlanCard({ p, i, id, monthly }) {
@@ -67,6 +69,7 @@ export default function Pricing({ page = false }) {
   return (
     <section id="pricing" className={page ? "sec pt-32 lg:pt-40" : "sec"}>
       <div className="wrap">
+        {page && <Breadcrumb trail={trailFor("/pricing")} />}
         <Reveal className="grid gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
             <Eyebrow>Pricing</Eyebrow>

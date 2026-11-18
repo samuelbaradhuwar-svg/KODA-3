@@ -1,4 +1,6 @@
 import React from "react";
+import Breadcrumb from "../components/Breadcrumb.jsx";
+import { trailFor } from "../trail.js";
 import { SERVICES, PLANS, PROJECTS, DURBAN_FAQS } from "../content.js";
 import { BrowserFrame, Button, Eyebrow, Headline, Reveal, TextLink, Koda } from "../components/ui.jsx";
 import { ServiceCard } from "../components/Services.jsx";
@@ -26,13 +28,7 @@ export default function WebsiteDesignDurban() {
       <section className="pb-16 pt-32 lg:pb-24 lg:pt-40">
         <div className="wrap grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-9">
-            <nav aria-label="Breadcrumb" className="mb-8 text-[13px] text-muted">
-              <ol className="flex flex-wrap items-center gap-2">
-                <li><a className="underline-offset-4 hover:underline" href="/">Home</a></li>
-                <li aria-hidden="true">/</li>
-                <li aria-current="page" className="text-ink">Website design in Durban</li>
-              </ol>
-            </nav>
+            <Breadcrumb trail={trailFor("/website-design-durban")} />
             <Reveal>
               <Eyebrow>Website design in Durban</Eyebrow>
             </Reveal>

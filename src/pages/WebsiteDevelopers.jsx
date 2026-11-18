@@ -1,4 +1,6 @@
 import React from "react";
+import Breadcrumb from "../components/Breadcrumb.jsx";
+import { trailFor } from "../trail.js";
 import { DEV_SERVICES, DEV_FAQS, BUSINESS } from "../content.js";
 import { Button, Eyebrow, Headline, Reveal, Koda } from "../components/ui.jsx";
 import { ServiceCard } from "../components/Services.jsx";
@@ -22,6 +24,7 @@ export default function WebsiteDevelopers() {
       <section className="pb-16 pt-32 lg:pb-24 lg:pt-40">
         <div className="wrap grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-9">
+            <Breadcrumb trail={trailFor("/website-developers-in-durban")} />
             <Reveal>
               <Eyebrow>Website developers in Durban</Eyebrow>
             </Reveal>

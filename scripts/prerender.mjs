@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 const SITE = "https://www.heykoda.co.za";
 const ssrDir = path.resolve("dist-ssr");
 const entry = fs.readdirSync(ssrDir).find((f) => /^entry-server.*\.(m?js)$/.test(f));
-const { render, pages, FAQS, DURBAN_FAQS, DEV_FAQS, WORK_FAQS, ECOM_FAQS, STORE_FROM, PROJECTS, routedTowns, townPath, townMeta, townProblems, TOWN_SHARED_FAQS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
+const { render, pages, FAQS, DURBAN_FAQS, DEV_FAQS, WORK_FAQS, ECOM_FAQS, STORE_FROM, PROJECTS, PLANS, MONTHLY_PLANS, trailFor, isIndexed, routedTowns, townPath, townMeta, townProblems, TOWN_SHARED_FAQS } = await import(pathToFileURL(path.join(ssrDir, entry)).href);
 
 const template = fs.readFileSync(path.resolve("dist/index.html"), "utf8");
 if (!template.includes('<div id="root"></div>')) throw new Error("Root placeholder not found in dist/index.html");
@@ -26,6 +26,40 @@ const faqLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+}).replace(/</g, "\\u003c")}</script>`;
+
+// Markup for the pricing page: the page, the plans as an ItemList of Offers (once off and monthly) and its questions.
+const numOf = (price) => Number(String(price).replace(/[^0-9]/g, ""));
+const offerOf = (p, monthly) => {
+  const from = p.price.startsWith("From ");
+  const spec = { "@type": monthly ? "UnitPriceSpecification" : "PriceSpecification", priceCurrency: "ZAR", [from ? "minPrice" : "price"]: numOf(p.price), ...(monthly ? { unitText: "MONTH" } : {}) };
+  return {
+    "@type": "Offer",
+    name: monthly ? `${p.name} monthly growth plan` : `${p.name} website`,
+    description: `${p.desc}${from ? " This is a starting price." : ""}`,
+    priceCurrency: "ZAR",
+    ...(from ? {} : { price: numOf(p.price) }),
+    priceSpecification: spec,
+    itemOffered: { "@type": "Service", name: monthly ? `${p.name} monthly growth plan` : `${p.name} website`, provider: { "@id": `${SITE}/#organization` } },
+  };
+};
+const pricingLd = (meta) => `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebPage", "@id": `${SITE}/pricing#webpage`, url: `${SITE}/pricing`, name: meta.title, description: meta.description, inLanguage: "en-ZA", isPartOf: { "@id": `${SITE}/#website` } },
+    { "@type": "ItemList", name: "KODA website and monthly growth plans", itemListElement: [...PLANS.map((p) => offerOf(p, false)), ...MONTHLY_PLANS.map((p) => offerOf(p, true))].map((o, i) => ({ "@type": "ListItem", position: i + 1, item: o })) },
+    { "@type": "FAQPage", mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+  ],
+}).replace(/</g, "\\u003c")}</script>`;
+const aboutLd = (meta) => `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "AboutPage", "@id": `${SITE}/about#webpage`, url: `${SITE}/about`, name: meta.title, description: meta.description, inLanguage: "en-ZA",
+  isPartOf: { "@id": `${SITE}/#website` }, about: { "@id": `${SITE}/#organization` },
+}).replace(/</g, "\\u003c")}</script>`;
+const breadcrumbLd = (trail) => `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: trail.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: `${SITE}${c.path === "/" ? "/" : c.path}` })),
 }).replace(/</g, "\\u003c")}</script>`;
 
 // Markup for the Durban page: the page, a breadcrumb trail, the service and its questions (built from the same text).
@@ -90,10 +124,14 @@ for (const [route, meta] of Object.entries(pages)) {
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(meta.title)}$2`)
     .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`);
   if (route === "/website-design-durban") html = html.replace("</head>", `    ${durbanLd(meta)}\n  </head>`);
+  else if (route === "/pricing") html = html.replace("</head>", `    ${pricingLd(meta)}\n  </head>`);
+  else if (route === "/about") html = html.replace("</head>", `    ${aboutLd(meta)}\n  </head>`);
   else if (route === "/ecommerce") html = html.replace("</head>", `    ${ecomLd(meta)}\n  </head>`);
   else if (route === "/our-work") html = html.replace("</head>", `    ${workLd(meta)}\n  </head>`);
   else if (route === "/website-developers-in-durban") html = html.replace("</head>", `    ${devLd(meta)}\n  </head>`);
   else if (html.includes(esc(FAQS[0].q)) || html.includes(FAQS[0].q)) html = html.replace("</head>", `    ${faqLd}\n  </head>`);
+  const trail = trailFor(route);
+  if (trail && route !== "/website-design-durban") html = html.replace("</head>", `    ${breadcrumbLd(trail)}\n  </head>`);
   const out = route === "/" ? "dist/index.html" : path.join("dist", route, "index.html");
   fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
   fs.writeFileSync(path.resolve(out), html);
@@ -131,12 +169,12 @@ for (const t of routedTowns()) {
     .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
     .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(meta.title)}$2`)
     .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(meta.description)}$2`)
-    .replace("</head>", t.live ? `    ${townLd(t, meta)}\n  </head>` : `    <meta name="robots" content="noindex">\n  </head>`);
+    .replace("</head>", isIndexed(t) ? `    ${townLd(t, meta)}\n    ${breadcrumbLd(trailFor(route))}\n  </head>` : `    <meta name="robots" content="noindex">\n  </head>`);
   fs.mkdirSync(path.dirname(path.resolve("dist", route.slice(1), "index.html")), { recursive: true });
   fs.writeFileSync(path.resolve("dist", route.slice(1), "index.html"), html);
   console.log(`Pre-rendered ${route}${t.live ? "" : " (draft)"}`);
 }
-const liveTowns = routedTowns().filter((t) => t.live);
+const liveTowns = routedTowns().filter(isIndexed);
 if (liveTowns.length) {
   const sm = path.resolve("dist/sitemap.xml");
   const today = new Date().toISOString().slice(0, 10);

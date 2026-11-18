@@ -179,5 +179,21 @@ export function townProblems(t) {
   return out;
 }
 
+// Towns that border each other, only where the sources said so. Shown on a town page as "Nearby areas with their own page".
+const NEAR = {
+  westville: ["pinetown", "queensburgh", "reservoir-hills"],
+  "reservoir-hills": ["westville"],
+  pinetown: ["westville", "new-germany"],
+  "new-germany": ["pinetown"],
+  queensburgh: ["westville", "pinetown"],
+  umhlanga: ["durban-north"],
+  "durban-north": ["umhlanga"],
+};
+export const nearTowns = (t) => (NEAR[t.slug] || []).map((s) => routedTowns().find((x) => x.slug === s)).filter(Boolean);
+
+// A live town can be kept out of Google (noindex, not in the sitemap) while it stays on the site and linked, by adding
+// index: false to its entry. Use it for a town page that is still thin.
+export const isIndexed = (t) => t.live && t.index !== false;
+
 export const routedTowns = () => TOWNS.filter((t) => t.live || SHOW_DRAFTS);
 export const townForPath = (p) => routedTowns().find((t) => townPath(t) === p);
