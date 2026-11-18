@@ -63,7 +63,7 @@ const entry = (slug, name, why, areas, live = false) => ({
   slug,
   name,
   live,
-  why: [why],
+  why: [].concat(why), // one sentence, or a list of sentences shown as separate paragraphs
   areas,
   serve: `We work with ${name} businesses by phone and video, and meet in person by arrangement.`,
   work: null,
@@ -80,9 +80,17 @@ const entry = (slug, name, why, areas, live = false) => ({
 export const TOWNS = [
   entry("durban-cbd", "Durban CBD", "Durban's central business district is the city's commercial core, with the beachfront, the Point waterfront, Albert Park and the Warwick Junction transport hub around it.", ["Central Business District", "Albert Park", "Greyville", "Warwick Junction", "The Point", "Berea"]),
   entry("durban-north", "Durban North", "Durban North is a large residential area between the N2 and the coast, with the Umgeni River as its southern boundary. Its suburbs include coastal Glenashley and Virginia, and Briardene is mainly an industrial area.", ["Glenashley", "Virginia", "Parkhill", "Kenville", "Briardene"]),
-  entry("umhlanga", "Umhlanga", "Umhlanga is a coastal business and shopping area north of Durban, with the established seafront of Umhlanga Rocks and the newer commercial centre of Umhlanga Ridge around the Gateway shopping centre.", ["Umhlanga Rocks", "Umhlanga Ridge", "La Lucia", "Somerset Park", "La Lucia Ridge"]),
+  entry("umhlanga", "Umhlanga", [
+    "Umhlanga is a coastal business and shopping area north of Durban, with the established seafront of Umhlanga Rocks and the newer commercial centre of Umhlanga Ridge around the Gateway shopping centre.",
+    "Umhlanga Ridge, a former sugarcane area, now has office parks and major shopping centres, and its growth was helped by King Shaka International Airport and the N2.",
+    "Neighbouring La Lucia Ridge, an office area between La Lucia and Somerset Park, adds more office parks and retail.",
+  ], ["Umhlanga Rocks", "Umhlanga Ridge", "La Lucia", "Somerset Park", "La Lucia Ridge"], true),
   entry("chatsworth", "Chatsworth", "Chatsworth is a large residential area of Durban made up of many named suburbs, each with its own local shops and businesses.", ["Bayview", "Croftdene", "Crossmoor", "Havenside", "Kharwastan", "Montford", "Silverglen"]),
-  entry("ballito", "Ballito", "Ballito is the main town on the Dolphin Coast, north of Durban. It sits in the KwaDukuza municipality, with Shaka's Rock, Salt Rock and Sheffield Beach joined to it along the coast.", ["Ballito", "Shaka's Rock", "Salt Rock", "Sheffield Beach", "Zimbali", "Umhlali", "Tinley Manor"]),
+  entry("ballito", "Ballito", [
+    "Ballito is the main town on the Dolphin Coast, north of Durban. It sits in the KwaDukuza municipality, with Shaka's Rock, Salt Rock and Sheffield Beach joined to it along the coast.",
+    "Ballito Junction, the regional shopping mall, was enlarged in 2017, and the Ballito commercial district around it has offices, service centres and shops.",
+    "Business in the area has grown alongside a large business park next to the N2 freeway and the development of King Shaka International Airport and Dube TradePort to the south.",
+  ], ["Ballito", "Shaka's Rock", "Salt Rock", "Sheffield Beach", "Zimbali", "Umhlali", "Tinley Manor"], true),
   entry("pinetown", "Pinetown", "Pinetown is a major commercial and industrial centre west of Durban. Westmead is known for manufacturing, automotive and logistics, while suburbs such as Cowies Hill and Sarnia are mainly residential.", ["Cowies Hill", "Westmead", "Sarnia", "Moseley", "Manors", "Mariannhill", "Caversham Glen"]),
   entry("westville", "Westville", "Westville is a suburb of Durban between Sherwood and Pinetown, next to Queensburgh and Reservoir Hills.", ["Westville", "Atholl Heights", "Berea West", "Chiltern Hills", "Dawncliffe", "Dawncrest", "Grayleigh"]),
   entry("queensburgh", "Queensburgh", "Queensburgh is the collective name for several suburbs south-west of Durban, mainly Malvern, Escombe and Northdene.", ["Malvern", "Escombe", "Northdene", "Queensmead (industrial)", "Burlington Greenfields"]),
