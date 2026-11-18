@@ -1,6 +1,7 @@
 import React from "react";
 import { PLANS, BUSINESS } from "../content.js";
-import { TOWN_SHARED_FAQS, routedTowns, townPath } from "../towns.js";
+import { TOWN_SHARED_FAQS } from "../towns.js";
+import TownLinks from "../components/TownLinks.jsx";
 import { Button, Eyebrow, Headline, Reveal, Koda } from "../components/ui.jsx";
 import FreeMockup from "../components/FreeMockup.jsx";
 import Audit from "../components/Audit.jsx";
@@ -174,19 +175,7 @@ export default function TownPage({ town }) {
       <Audit />
       <Faq title={`Questions from ${town.name} businesses`} items={faqs} />
 
-      <section className="sec bg-paper2">
-        <div className="wrap">
-          <Reveal>
-            <Headline className="h-section mb-12 max-w-[20ch]">Website design across Durban and nearby</Headline>
-          </Reveal>
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <li><a className="block rounded-2xl border border-ink/15 bg-paper px-5 py-4 text-[15px] transition-colors hover:border-ink/40" href="/website-design-durban">Website design Durban</a></li>
-            {routedTowns().filter((t) => t.slug !== town.slug).map((t) => (
-              <li key={t.slug}><a className="block rounded-2xl border border-ink/15 bg-paper px-5 py-4 text-[15px] transition-colors hover:border-ink/40" href={townPath(t)}>Website design {t.name}</a></li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <TownLinks hub exclude={town.slug} />
       <Contact />
     </main>
   );
