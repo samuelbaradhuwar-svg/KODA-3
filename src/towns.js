@@ -59,7 +59,7 @@ const draft = (slug, name) => ({
 // How KODA serves every town (option B): by phone and video, and in person by arrangement.
 // Each entry below holds the suggested areas and one factual sentence about the town, checked against web sources.
 // Check the areas against a map and keep only the ones you really serve. The second question still needs a real one.
-const entry = (slug, name, why, areas, live = false) => ({
+const entry = (slug, name, why, areas, live = false, extra = {}) => ({
   slug,
   name,
   live,
@@ -73,6 +73,7 @@ const entry = (slug, name, why, areas, live = false) => ({
     { q: `Can you meet me in ${name}?`, a: "Yes, by arrangement. We also work by phone and video.", shared: true },
     { q: "Can you set up my Google Business Profile as well?", a: "Yes. Google Business Profile setup is included with our Starter website.", shared: true },
   ],
+  ...extra,
 });
 
 // The towns and areas around Durban the site will have a page for (the same set as the pages your competitor has,
@@ -93,7 +94,7 @@ export const TOWNS = [
     "Umhlanga is a coastal business and shopping area north of Durban, with the established seafront of Umhlanga Rocks and the newer commercial centre of Umhlanga Ridge around the Gateway shopping centre.",
     "Umhlanga Ridge, a former sugarcane area, now has office parks and major shopping centres, and its growth was helped by King Shaka International Airport and the N2.",
     "Neighbouring La Lucia Ridge, an office area between La Lucia and Somerset Park, adds more office parks and retail.",
-  ], ["Umhlanga Rocks", "Umhlanga Ridge", "La Lucia", "Somerset Park", "La Lucia Ridge"], true),
+  ], ["Umhlanga Rocks", "Umhlanga Ridge", "La Lucia", "Somerset Park", "La Lucia Ridge"], true, {"serve": "We mostly work with Umhlanga businesses through video calls, and send drafts by email.", "work": {"name": "Trynetix", "text": "Trynetix is a B2B outbound lead generation and appointment setting agency headquartered in Umhlanga. We designed its website.", "href": "/our-work"}}),
   entry("chatsworth", "Chatsworth", [
     "Chatsworth is a large residential area of Durban made up of many named suburbs, each with its own local shops and businesses.",
     "Chatsworth Centre is the main shopping centre, and the area also has smaller centres such as Moorton Shopping Centre and The Ridge Shopping Centre.",
@@ -104,7 +105,7 @@ export const TOWNS = [
     "Ballito is the main town on the Dolphin Coast, north of Durban. It sits in the KwaDukuza municipality, with Shaka's Rock, Salt Rock and Sheffield Beach joined to it along the coast.",
     "Ballito Junction, the regional shopping mall, was enlarged in 2017, and the Ballito commercial district around it has offices, service centres and shops.",
     "Business in the area has grown alongside a large business park next to the N2 freeway and the development of King Shaka International Airport and Dube TradePort to the south.",
-  ], ["Ballito", "Shaka's Rock", "Salt Rock", "Sheffield Beach", "Zimbali", "Umhlali", "Tinley Manor"], true),
+  ], ["Ballito", "Shaka's Rock", "Salt Rock", "Sheffield Beach", "Zimbali", "Umhlali", "Tinley Manor"], true, {"serve": "We mostly work with Ballito businesses through video calls, and send drafts by email.", "work": {"name": "The Blooming Bilingual", "text": "The Blooming Bilingual is an online English tutoring business based in Ballito. We built its website, with lesson credits, open-slot booking and a student login, and we help manage its workflows.", "href": "/our-work"}}),
   entry("pinetown", "Pinetown", [
     "Pinetown is a major commercial and industrial centre west of Durban. Westmead is known for manufacturing, automotive and logistics, while suburbs such as Cowies Hill and Sarnia are mainly residential.",
     "The M31, Josiah Gumede Road, is the main road through the town, and Sarnia and Moseley both have stations on the Old Main Line.",
